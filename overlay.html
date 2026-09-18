@@ -6,10 +6,17 @@
 @media(max-width:650px){main{padding:0 16px}.sidebar{padding:18px 16px}.sidebar nav{gap:3px}.nav{padding:9px}.topbar>.pill{font-size:.625rem}.top-actions{width:100%;justify-content:space-between}.top-actions>.subtle{padding-left:0;font-size:.75rem}.top-actions .primary{font-size:.75rem;padding:10px}.status{font-size:.75rem}.page-heading{align-items:flex-start;flex-direction:column;gap:10px}.page-heading>.tag{font-size:.65rem}.eyebrow{font-size:.65rem}.stats{gap:10px}.stats article{padding:15px}.stats article>span{font-size:.8rem}.stats strong{font-size:1.8rem}.stats small{font-size:.7rem}.workspace,.gift-grid,.role-grid{grid-template-columns:1fr}.panel{padding:18px}.filters{flex-direction:row}.filters select{width:140px}.segmented button{padding:8px 11px}.inline-panel{align-items:stretch;flex-direction:column}.inline-panel button{width:100%}footer{font-size:.65rem}.overlay-duo{gap:12px}.overlay-duo .role-card{padding:16px}.overlay-duo .role-card h2{font-size:1.1rem}.overlay-duo .role-topline{letter-spacing:0;font-size:.75rem}.overlay-duo .role-topline span{display:none}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 #boot-error{position:fixed;z-index:1000;left:16px;right:16px;bottom:16px;padding:18px;border:2px solid #ff899b;border-radius:10px;background:#441721;color:#fff;font:16px/1.6 system-ui,sans-serif}noscript{display:block;padding:20px;background:#441721;color:white}
+/* v0.3 controls and independent overlay layouts */
+.sidebar{overflow-y:auto}.sidebar-bottom{padding-top:24px}.subnav{padding-left:40px;font-size:.8rem}.chevron{margin-left:auto}.two-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.button-row{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.visual-bar{margin-bottom:24px}.visual-bar .visual-form{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px;align-items:end}.visual-bar .visual-form>p{grid-column:1/-1;margin:0}.visual-bar label{margin-top:0}.visual-form input[type=color]{padding:4px;height:44px}.visual-form>label{margin-top:10px}.visual-form .wide{margin-top:12px}.history-controls{border:1px solid var(--line);padding:14px;border-radius:8px}.check{display:flex;align-items:center;gap:9px}.check input{width:auto}.reset-button{color:#ffb0b8;background:#382329;border-color:#6e3a44}.level-badge{display:inline-block;color:var(--yellow);border:1px solid #b8d96055;border-radius:5px;font-size:.7rem;line-height:1.4;padding:2px 6px;margin:3px 0}.block{display:block;font-size:.7rem}.table-wrap td{min-width:40px}.overlay-card.boxed{background:var(--overlay-bg,#191b1e)!important}.overlay-card.bare{background:transparent!important;border:0!important;box-shadow:none!important;padding:8px;border-radius:0}.bare .rank-row,.bare .gift-donor{border:0}.bare .overlay-kicker,.bare.rank-card>h2,.bare .role-topline,.bare .await-photo{display:none}.bare .gift-placeholder{background:transparent}.gift-card.bare{display:flex;align-items:center;gap:20px;flex-wrap:wrap}.gift-card.bare .gift-content{margin:0}.gift-card.bare .gift-donor{padding:0}.gift-card.bare .gift-donor small{display:none}.role-card.bare .avatar{margin-top:10px}.role-card.ribbon{display:grid;grid-template-columns:85px 1fr;gap:12px;align-items:center;max-width:600px;text-align:left;animation:role-glow 4s ease-in-out infinite}.role-card.ribbon .role-topline{grid-column:1/-1}.role-card.ribbon .avatar.large{width:78px;height:78px;margin:8px 0;flex-basis:78px}.role-card.ribbon h2{font-size:1.2rem}.role-card.ribbon.bare{animation:role-float 5s ease-in-out infinite}.role-card.ribbon.bare .role-identity{grid-column:2}.role-card.ribbon.bare .avatar{grid-column:1}.widget-preview{padding:20px;margin-top:20px}.widget-card{width:100%}.goal-count{font-size:1.8rem;display:block;margin:10px 0}.goal-count small{font-size:.875rem}.widget-card progress{width:100%;height:20px;accent-color:var(--yellow);border:0;border-radius:10px;overflow:hidden;background:#45484c}.widget-card progress::-webkit-progress-bar{background:#45484c}.widget-card progress::-webkit-progress-value{background:var(--yellow)}.widget-card>p{font-size:.8rem;color:var(--muted);margin:12px 0 0}.timer-clock{display:block;font-size:clamp(2rem,7vw,3.7rem);font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:1px}.timer-editor{grid-column:1/-1}.timer-editor .widget-preview{max-width:700px}.rule-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border-bottom:1px solid var(--line)}.analysis-controls{display:grid;grid-template-columns:2fr 1fr 1fr;gap:20px;margin-bottom:22px}.analysis-controls label{margin:0}#analysis-stats{grid-template-columns:repeat(3,minmax(0,1fr))}#analysis-stats strong{font-size:1.7rem}.sessions-panel{margin-top:25px}.creator-card{position:relative;text-align:center;padding:40px 26px}.creator-card .brand-mark{margin:0 auto 20px}.creator-card h2{font-size:1.6rem}.creator-card p{color:var(--muted)}.creator-links{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin:24px 0}.creator-links a{border:1px solid #495a2b;border-radius:8px;padding:12px;font-size:.875rem;color:var(--yellow)}dialog{color:var(--text);background:#1a1d1e;border:1px solid #4b553d;border-radius:16px;width:min(600px,92vw);max-height:85vh;padding:22px;overflow:auto}dialog::backdrop{background:#080a0edb;backdrop-filter:blur(5px)}.dialog-close{position:absolute;right:0;top:0;font-size:24px;padding:2px 12px}.creator-card .small{font-size:.75rem;margin-top:18px}.participant-choice{display:flex;align-items:center;gap:14px;text-align:left;width:100%;margin:6px 0}.participant-choice small{display:block}#participant-options{max-height:45vh;overflow:auto;margin-top:18px}#archive-result{max-height:250px;overflow:auto;margin-top:12px}#archive-result p{padding:7px;margin:0;border-bottom:1px solid var(--line)}
+@keyframes role-glow{0%,100%{box-shadow:0 0 0 transparent}50%{box-shadow:0 0 18px #80f0af24}}@keyframes role-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media(max-width:1100px){.visual-bar .visual-form{grid-template-columns:1fr 1fr}.visual-bar .two-fields{grid-column:1/-1}.workspace{grid-template-columns:1fr}.ranking-panel .filters{flex-direction:row}.sidebar nav{gap:5px}}
+@media(max-width:650px){.visual-bar .visual-form,.analysis-controls{grid-template-columns:1fr}.visual-bar .two-fields{grid-column:auto}#analysis-stats{grid-template-columns:1fr 1fr}#analysis-stats strong{font-size:1.2rem}.creator-card{padding:28px 8px}.creator-card h2{font-size:1.2rem}.creator-links{flex-direction:column}.timer-clock{font-size:2.3rem}.reset-button{padding:7px;font-size:.75rem}.role-card.ribbon{grid-template-columns:66px 1fr}.role-card.ribbon .avatar.large{width:60px;height:60px}.role-card.ribbon h2{font-size:1rem}.two-fields{gap:10px}.subnav{padding-left:14px}.rank-row .person strong{font-size:.85rem}}
+@media(prefers-reduced-motion:reduce){.role-card.ribbon{animation:none}}
+.settings-grid form+p,.timer-editor form+p{margin-top:14px}.overlay-body .overlay-duo:has(.ribbon){grid-template-columns:1fr}.overlay-body .overlay-duo .ribbon{max-width:600px}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v0.2: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v0.3: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
@@ -17,9 +24,98 @@ window.addEventListener('unhandledrejection',function(e){window.__amarillouFailu
 'use strict';
 try{
 
+// features.js
+// Additional state is versioned with the core; this file has no transport dependencies.
+const CREATOR={name:'xAMARILLOUx',tiktok:'https://www.tiktok.com/@xamarilloux',site:'https://amarillou.com.br/',support:'https://livepix.gg/xamarilloux'};
+const nonneg=(v,max=Number.MAX_SAFE_INTEGER)=>Math.min(max,Math.max(0,Number.isFinite(Number(v))?Number(v):0));
+const textValue=(v,n=120)=>String(v??'').slice(0,n);
+const validColor=v=>/^#[0-9a-f]{6}$/i.test(String(v))?String(v):'#191b1e';
+function dateAt(t,zone){const a=new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(t);return ['year','month','day'].map(k=>a.find(x=>x.type===k).value).join('-');}
+function calendarRange(period,t,zone){const d=dateAt(t,zone);if(period==='month')return [d.slice(0,7)+'-01',d];if(period==='week'){const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()-(x.getUTCDay()+6)%7);return [x.toISOString().slice(0,10),d];}return [d,d];}
+function levelThreshold(level){return Math.floor(50*1.03*(Math.pow(1.03,Math.max(0,Math.min(1000,level)-1))-1)/.03+1e-8);}
+function levelProgress(points){points=nonneg(points);let lo=1,hi=1000;while(lo<hi){const m=Math.ceil((lo+hi)/2);if(levelThreshold(m)<=points)lo=m;else hi=m-1;}const start=levelThreshold(lo),next=lo<1000?levelThreshold(lo+1):null;return {level:lo,points,start,next,remaining:next===null?0:Math.max(0,next-points),percent:next===null?100:Math.min(100,100*(points-start)/(next-start))};}
+function defaultVisual(){return {container:true,color:'#191b1e',showLevel:true,style:'classic'};}
+function newExtras(){return {points:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['rankLikes','rankCoins','gifts','roles','goal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
+function timerRemaining(timer,now=Date.now()){return Math.max(0,timer.running?timer.endAt-now:timer.remainingMs);}
+function addTimer(timer,seconds,now){const rem=Math.min(31536000000,timerRemaining(timer,now)+seconds*1000);timer.remainingMs=rem;if(timer.running)timer.endAt=now+rem;}
+function sessionHeartbeat(s,now=Date.now(),connected=false){const a=s.extra.activeSession;if(!a)return false;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
+function recordExtras(s,e,uid,delta,now){const x=s.extra;const coins=e.type==='gift'?delta*(e.unit??0):0,likes=e.type==='like'?e.likes:0;x.points[uid]=(x.points[uid]||0)+coins*x.weights.coins+likes*x.weights.likes;x.goal.current+=likes;
+ if(e.type==='follow'){x.followers=x.followers.filter(f=>f.userId!==uid);x.followers.unshift({userId:uid,time:now});x.followers=x.followers.slice(0,50);}
+ if(e.type==='gift'){
+  x.catalog['$'+e.giftId]={id:e.giftId,name:e.giftName};
+  if(coins>0)x.ledger.push({time:now,coins,userId:uid,sessionId:x.activeSession?.id||''});
+  if(delta>0){const rule=x.timer.rules.find(r=>r.giftId===e.giftId);if(rule)addTimer(x.timer,rule.seconds*delta,now);}
+ }
+}
+function rawRangeRows(s,start,end,metric){const out={};for(const [day,rows] of Object.entries(s.days))if(day>=start&&day<=end)for(const [id,r] of Object.entries(rows))out[id]=(out[id]||0)+(r[metric]||0);return out;}
+function historicalRanking(s,start,end,metric){return Object.entries(rawRangeRows(s,start,end,metric)).filter(([,v])=>v>0).map(([id,value])=>({...s.users[id],id,value})).sort((a,b)=>b.value-a.value||a.id.localeCompare(b.id));}
+function resetRanking(s,period,metric,now=Date.now()){
+ if(!['day','week','month'].includes(period)||!['likes','coins'].includes(metric))throw Error('Ranking inválido.');
+ for(const p of period==='month'?['day','week','month']:[period]){const [start,end]=calendarRange(p,now,s.settings.zone),key=metric+':'+p;const before=rawRangeRows(s,start,end,metric),old=s.extra.resets[key];const rows=Object.fromEntries(Object.entries(before).map(([id,value])=>[id,Math.max(0,value-(old?.calendar===start?old.baseline[id]||0:0))]).filter(([,v])=>v>0));s.extra.archives.unshift({period:p,metric,time:now,start:old?.calendar===start?old.startedAt:0,calendar:start,rows});s.extra.resets[key]={calendar:start,startedAt:now,baseline:before};}
+}
+function boundedInput(v,min,max,label){const n=Number(v);if(!Number.isFinite(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
+function applyCommand(s,command,p={},now=Date.now()){
+ const x=s.extra;
+ if(command==='reset-ranking')resetRanking(s,p.period,p.metric,now);
+ else if(command==='visual'){if(!Object.hasOwn(x.visuals,p.key))throw Error('Overlay inválido.');x.visuals[p.key]={container:p.container!==false,color:validColor(p.color),showLevel:p.showLevel!==false,style:p.style==='ribbon'?'ribbon':'classic'};}
+ else if(command==='weights')x.weights={coins:boundedInput(p.coins,0,100000,'Pontos por moeda'),likes:boundedInput(p.likes,0,100000,'Pontos por like')};
+ else if(command==='goal-target')x.goal.target=boundedInput(p.target,1,1e12,'Meta');
+ else if(command==='goal-reset')x.goal.current=0;
+ else if(command==='timer-set'){const seconds=boundedInput(p.seconds,1,31536000,'Duração');x.timer.baseSeconds=seconds;x.timer.remainingMs=seconds*1000;x.timer.running=false;x.timer.endAt=0;}
+ else if(command==='timer-start'){if(!x.timer.running){if(x.timer.remainingMs<=0)x.timer.remainingMs=x.timer.baseSeconds*1000;x.timer.endAt=now+x.timer.remainingMs;x.timer.running=true;}}
+ else if(command==='timer-pause'){x.timer.remainingMs=timerRemaining(x.timer,now);x.timer.running=false;}
+ else if(command==='timer-reset'){x.timer.remainingMs=x.timer.baseSeconds*1000;x.timer.running=false;x.timer.endAt=0;}
+ else if(command==='timer-rule'){const id=textValue(p.giftId).trim();if(!id)throw Error('Informe o ID do presente.');const seconds=boundedInput(p.seconds,1,86400,'Segundos por presente');x.timer.rules=x.timer.rules.filter(r=>r.giftId!==id);x.timer.rules.push({giftId:id,seconds});}
+ else if(command==='timer-rule-remove')x.timer.rules=x.timer.rules.filter(r=>r.giftId!==String(p.giftId));
+ else if(command==='session-start'){if(x.activeSession)throw Error('Já existe uma transmissão em monitoramento.');x.activeSession={id:'s'+now,name:textValue(p.name||'Transmissão'),start:now,end:0,lastTick:now,connected:false,segments:[],actualUsd:null};}
+ else if(command==='session-end'){if(!x.activeSession)throw Error('Nenhuma transmissão iniciada.');sessionHeartbeat(s,now,false);x.activeSession.end=now;x.sessions.unshift(x.activeSession);x.activeSession=null;}
+ else if(command==='conversion'){x.conversion={usdPerCoin:boundedInput(p.usdPerCoin,0,100,'USD por moeda'),brlPerUsd:boundedInput(p.brlPerUsd,0,1000,'BRL por dólar'),updatedAt:now,source:'manual'};}
+ else if(command==='calibrate'){const session=x.sessions.find(a=>a.id===p.sessionId);if(!session)throw Error('Selecione uma transmissão encerrada.');const coins=x.ledger.filter(a=>a.sessionId===session.id).reduce((a,b)=>a+b.coins,0);if(coins<=0)throw Error('A transmissão precisa ter moedas registradas.');const usd=boundedInput(p.usd,0,1e9,'Valor recebido');const rate=boundedInput(usd/coins,0,100,'USD por moeda calculado');session.actualUsd=usd;x.conversion={...x.conversion,usdPerCoin:rate,updatedAt:now,source:'calibração: '+session.name};}
+ else throw Error('Comando desconhecido.');s.updatedAt=now;
+}
+function monthBounds(month,zone){
+ if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))return [0,0];
+ const [year,m]=month.split('-').map(Number);
+ function boundary(y,m){const utc=Date.UTC(y,m,1),target=new Date(utc).toISOString().slice(0,10);let low=utc-172800000,high=utc+172800000;while(high-low>1){const mid=Math.floor((low+high)/2);if(dateAt(mid,zone)>=target)high=mid;else low=mid;}return high;}
+ return [boundary(year,m-1),boundary(year,m)];
+}
+function analysisSummary(s,period='24h',month='',now=Date.now()){
+ const x=s.extra,span={'24h':86400000,'7d':604800000,'30d':2592000000}[period];
+ const bounds=period==='month'?monthBounds(month,s.settings.zone):[span?now-span:0,now+1];
+ const [from,to]=bounds,inside=t=>t>=from&&t<to&&t<=now;
+ const tx=x.ledger.filter(r=>inside(r.time));let legacy=0;
+ if(period==='all'||period==='month')for(const [d,n] of Object.entries(x.legacyCoins))if(period==='all'||d.slice(0,7)===month)legacy+=n;
+ const all=[...x.sessions,...(x.activeSession?[x.activeSession]:[])];
+ const sessionRows=all.map(a=>{const records=tx.filter(r=>r.sessionId===a.id);const ms=a.segments.reduce((sum,[start,end])=>sum+Math.max(0,Math.min(end,to,now)-Math.max(start,from)),0);return {...a,coins:records.reduce((n,r)=>n+r.coins,0),ms};}).filter(a=>a.ms>0||a.coins>0||inside(a.start));
+ const coins=tx.reduce((n,r)=>n+r.coins,0)+legacy,ms=sessionRows.reduce((n,r)=>n+r.ms,0),sessionCoins=sessionRows.reduce((n,r)=>n+r.coins,0);
+ return {coins,legacy,usd:coins*x.conversion.usdPerCoin,ms,sessions:sessionRows,perHour:ms>0?sessionCoins*x.conversion.usdPerCoin/(ms/3600000):null,perSession:sessionRows.length?sessionCoins*x.conversion.usdPerCoin/sessionRows.length:null,unassigned:tx.filter(r=>!r.sessionId).reduce((n,r)=>n+r.coins,0),legacyExcluded:!!span&&Object.keys(x.legacyCoins).length>0};
+}
+// Strict JSON rebuilding: only known fields, finite counts and known participants survive import.
+function validateExtras(s,input,oldVersion){
+ const x=newExtras();
+ if(oldVersion===1||!input){for(const [day,rows] of Object.entries(s.days)){for(const [id,r] of Object.entries(rows)){x.points[id]=(x.points[id]||0)+r.coins+r.likes;x.legacyCoins[day]=(x.legacyCoins[day]||0)+r.coins;}}return x;}
+ const count=v=>{if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>Number.MAX_SAFE_INTEGER)throw Error('Contagem inválida no backup v0.3.');return v;};
+ const known=id=>Object.hasOwn(s.users,id);
+ for(const [id,v] of Object.entries(input.points||{}))if(known(id))x.points[id]=count(v);
+ if(input.weights)x.weights={coins:boundedInput(input.weights.coins,0,100000,'Pontos'),likes:boundedInput(input.weights.likes,0,100000,'Pontos')};
+ for(const k of Object.keys(x.visuals)){const v=input.visuals?.[k];if(v)x.visuals[k]={container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:v.style==='ribbon'?'ribbon':'classic'};}
+ for(const [k,r] of Object.entries(input.resets||{}))if(/^(coins|likes):(day|week|month)$/.test(k)){const baseline={};for(const [id,v] of Object.entries(r.baseline||{}))if(known(id))baseline[id]=count(v);if(!/^\d{4}-\d{2}-\d{2}$/.test(r.calendar))throw Error('Reset inválido.');x.resets[k]={calendar:r.calendar,startedAt:count(r.startedAt),baseline};}
+ for(const a of input.archives||[]){if(!['coins','likes'].includes(a.metric)||!['day','week','month'].includes(a.period))throw Error('Arquivo de competição inválido.');const rows={};for(const [id,v] of Object.entries(a.rows||{}))if(known(id))rows[id]=count(v);x.archives.push({metric:a.metric,period:a.period,time:count(a.time),start:count(a.start),calendar:textValue(a.calendar,10),rows});}
+ if(input.goal)x.goal={target:boundedInput(input.goal.target,1,1e12,'Meta'),current:count(input.goal.current)};
+ x.followers=(input.followers||[]).slice(0,50).filter(f=>known(f.userId)).map(f=>({userId:f.userId,time:count(f.time)}));
+ if(input.timer){const t=input.timer;x.timer={baseSeconds:boundedInput(t.baseSeconds,1,31536000,'Timer'),remainingMs:count(t.remainingMs),endAt:count(t.endAt),running:t.running===true,rules:[]};for(const r of t.rules||[])x.timer.rules.push({giftId:textValue(r.giftId),seconds:boundedInput(r.seconds,1,86400,'Regra do timer')});}
+ for(const [k,v] of Object.entries(input.catalog||{}))if(k.startsWith('$'))x.catalog[k]={id:textValue(v.id),name:textValue(v.name)};
+ x.ledger=(input.ledger||[]).map(r=>({time:count(r.time),coins:count(r.coins),userId:known(r.userId)?r.userId:'',sessionId:textValue(r.sessionId)}));
+ for(const [d,v] of Object.entries(input.legacyCoins||{})){if(!/^\d{4}-\d{2}-\d{2}$/.test(d))throw Error('Data legada inválida.');x.legacyCoins[d]=count(v);}
+ const session=a=>({id:textValue(a.id),name:textValue(a.name),start:count(a.start),end:count(a.end),lastTick:count(a.lastTick),connected:false,actualUsd:a.actualUsd===null?null:count(a.actualUsd),segments:(a.segments||[]).map(pair=>{const start=count(pair[0]),end=count(pair[1]);if(end<start)throw Error('Tempo inválido.');return [start,end];})});
+ x.sessions=(input.sessions||[]).map(session);x.activeSession=input.activeSession?session(input.activeSession):null;
+ if(input.conversion)x.conversion={usdPerCoin:boundedInput(input.conversion.usdPerCoin,0,100,'Conversão'),brlPerUsd:boundedInput(input.conversion.brlPerUsd,0,1000,'Câmbio'),updatedAt:count(input.conversion.updatedAt),source:textValue(input.conversion.source)};
+ x.trackingSince=count(input.trackingSince);return x;
+}
+
 // core.js
 // Domain layer: no browser or Node dependencies. One engine, multiple transports.
-const VERSION = 1;
+const VERSION = 2;
 const clean = (v, max = 120) => String(v ?? '').slice(0, max);
 const handle = v => clean(v).trim().replace(/^@/, '').toLowerCase();
 const number = v => Math.min(1e12, Math.max(0, Math.floor(Number(v) || 0)));
@@ -38,7 +134,7 @@ function periodRange(period, time, zone) {
   return [today, today];
 }
 function freshState() {
-  return {version: VERSION, createdAt: Date.now(), updatedAt: 0,
+  return {extra:newExtras(),version: VERSION, createdAt: Date.now(), updatedAt: 0,
     settings: {zone:'America/Sao_Paulo', endpoint:'ws://localhost:21213/'},
     users: {}, days:{}, roles:{hero:{handle:'',name:'',avatar:''},villain:{handle:'',name:'',avatar:''}},
     highlights:{day:'',last:null,recentCombo:null,bestCombo:null,expensive:null}, seen:{}, streaks:{},
@@ -53,7 +149,7 @@ function normalize(raw) {
   const username = handle(u.uniqueId || d.uniqueId);
   const avatar = imageURL(u.profilePictureUrl || d.profilePictureUrl || u.avatarThumb?.urlList?.[0]);
   const unitRaw = d.diamondCount ?? gd.diamondCount ?? d.gift?.diamondCount;
-  return {type, id, handle:username, name:clean(u.nickname || d.nickname || username || id), avatar,
+  return {type, id, handle:username, name:clean(u.nickname || d.nickname), avatar,
     msgId:clean(d.msgId || d.common?.msgId || p.msgId), groupId:clean(d.groupId || d.gift?.groupId),
     likes:number(d.likeCount), giftId:clean(d.giftId || gd.id || d.giftName),
     giftName:clean(d.giftName || gd.name || 'Presente'), giftImage:imageURL(d.giftPictureUrl || gd.image?.urlList?.[0]),
@@ -81,11 +177,12 @@ class Engine {
     }
     const uid = '$'+e.id;
     const old = s.users[uid] || {};
-    s.users[uid] = {id:e.id,handle:e.handle || old.handle || '',name:e.name || old.name || e.id,avatar:e.avatar || old.avatar || '',lastSeen:now};
+    s.users[uid] = {id:e.id,handle:e.handle || old.handle || '',name:e.name || old.name || e.handle || e.id,avatar:e.avatar || old.avatar || '',lastSeen:now};
     const day = dayKey(now, s.settings.zone);
     if (s.highlights.day !== day) s.highlights = {...freshState().highlights, day};
     s.days[day] ||= {};
     const row = s.days[day][uid] ||= {likes:0,coins:0,gifts:0};
+    let giftDelta=0;
     if (e.type === 'like') row.likes += e.likes;
     if (e.type === 'gift') {
       let delta = e.count;
@@ -99,6 +196,7 @@ class Engine {
         s.streaks[key] = {count:Math.max(previous,e.count),end:e.end || (!restart && prev?.end) || false,time:now};
         if (Object.keys(s.streaks).length > 5000) s.streaks = Object.fromEntries(Object.entries(s.streaks).filter(([,v])=>now-v.time < 86400000));
       }
+      giftDelta=delta;
       row.coins += delta * (e.unit ?? 0); row.gifts += delta;
       if (delta && e.unit === null) s.diagnostics.unpriced += delta;
       const item = {userId:uid,name:e.giftName,image:e.giftImage,unit:e.unit,count:e.count,time:now};
@@ -107,6 +205,7 @@ class Engine {
       if (e.count > 1 && (!s.highlights.bestCombo || e.count > s.highlights.bestCombo.count)) s.highlights.bestCombo = item;
       if (e.unit !== null && (!s.highlights.expensive || e.unit > s.highlights.expensive.unit)) s.highlights.expensive = item;
     }
+    recordExtras(s,e,uid,giftDelta,now);
     s.updatedAt = now; s.diagnostics.accepted++; s.diagnostics.lastEvent=now;
     return true;
   }
@@ -116,6 +215,8 @@ function ranking(s, period='day', metric='coins', now=Date.now()) {
   for (const [day,users] of Object.entries(s.days)) if (day>=start && day<=end) {
     for (const [id,row] of Object.entries(users)) totals.set(id,(totals.get(id)||0)+number(row[metric]));
   }
+  const reset=s.extra?.resets[metric+':'+period];
+  if(reset?.calendar===start)for(const [id,value] of totals)totals.set(id,Math.max(0,value-(reset.baseline[id]||0)));
   return [...totals].filter(([,value])=>value>0).map(([id,value])=>({...s.users[id],id,value}))
     .sort((a,b)=>b.value-a.value || a.id.localeCompare(b.id));
 }
@@ -130,7 +231,7 @@ function setRole(s, role, input) {
 }
 function validateState(input) {
   // Rebuild dictionaries instead of merging arbitrary imported properties.
-  if (!input || input.version!==VERSION || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
+  if (!input || ![1,VERSION].includes(input.version) || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
   const s=freshState();
   try { new Intl.DateTimeFormat('pt-BR',{timeZone:input.settings?.zone}).format(); } catch {throw Error('Fuso inválido no backup.');}
   s.settings.zone=input.settings?.zone || s.settings.zone;
@@ -162,6 +263,8 @@ function validateState(input) {
   for (const [id,v] of Object.entries(input.streaks || {}).slice(-5000)) if(id.startsWith('$') && v) s.streaks[id]={count:number(v.count),time:number(v.time),end:v.end===true};
   for (const k of ['received','accepted','duplicates','unknown','invalid','unpriced','lastEvent']) s.diagnostics[k]=number(input.diagnostics?.[k]);
   for (const [k,v] of Object.entries(input.diagnostics?.types || {}).slice(0,100)) if(k.startsWith('$')) s.diagnostics.types[k]=number(v);
+  if(input.version===2&&!input.extra)throw Error('Backup incompleto.');
+  s.extra=validateExtras(s,input.extra,input.version);
   return s;
 }
 function validateEndpoint(value) {
@@ -201,31 +304,33 @@ async function loadState(){const d=await openDB();return new Promise((resolve,re
 async function saveState(s){const d=await openDB();return new Promise((resolve,reject)=>{const tx=d.transaction('state','readwrite');tx.objectStore('state').put(s,'main');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});}
 
 // views.js
-const fmt=n=>new Intl.NumberFormat('pt-BR').format(n ?? 0);
-const esc=s=>String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:2}).format(n??0);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const periods={day:'do dia',week:'da semana',month:'do mês'};
 const giftTitles={last:'Último presente',recentCombo:'Combo recente',bestCombo:'Maior combo',expensive:'Presente mais caro'};
-function avatar(user,large=false){return `<span class="avatar ${large?'large':''}"><span>${esc((user?.name || user?.handle || '?').slice(0,2).toUpperCase())}</span>${user?.avatar?`<img alt="" src="${esc(user.avatar)}" loading="lazy">`:''}</span>`;}
-function watchImages(root){for(const i of root.querySelectorAll('img'))i.addEventListener('error',()=>i.remove(),{once:true});}
-function rankView(s,{period='day',metric='coins',limit=5}={}){
-  const rows=ranking(s,period,metric).slice(0,limit);
-  return `<div class="overlay-card rank-card"><div class="overlay-kicker">TOP ${esc(periods[period] || periods.day)}</div><h2>${metric==='likes'?'Quem dá mais likes':'Quem manda mais moedas'}</h2>${rows.length?rows.map((u,i)=>`<div class="rank-row"><b class="position">${i+1}</b>${avatar(u)}<div class="person"><strong>${esc(u.name)}</strong><small>@${esc(u.handle || u.id.slice(1))}</small></div><b class="score">${fmt(u.value)}<small>${metric==='likes'?'likes':'moedas'}</small></b></div>`).join(''):'<p class="overlay-empty">Aguardando os primeiros eventos</p>'}</div>`;
+function avatar(user,large=false){return `<span class="avatar ${large?'large':''}"><span>${esc((user?.name||user?.handle||'?').slice(0,2).toUpperCase())}</span>${user?.avatar?`<img alt="" src="${esc(user.avatar)}" loading="lazy">`:''}</span>`;}
+function watchImages(root){for(const i of root.querySelectorAll('img'))i.addEventListener('error',()=>i.remove(),{once:true});for(const el of root.querySelectorAll('[data-bg]'))el.style.setProperty('--overlay-bg',validColor(el.dataset.bg));}
+function visualOf(s,key,override={}){return {...defaultVisual(),...s.extra?.visuals[key],...override};}
+function cardAttrs(v,classes){return `class="overlay-card ${classes} ${v.container?'boxed':'bare'} ${v.style==='ribbon'?'ribbon':''}" data-bg="${validColor(v.color)}"`;}
+function rankView(s,{period='day',metric='coins',limit=5,start='',end='',...overrides}={}){
+ const v=visualOf(s,metric==='likes'?'rankLikes':'rankCoins',overrides);const rows=(start&&end?historicalRanking(s,start,end,metric):ranking(s,period,metric)).slice(0,limit);
+ return `<div ${cardAttrs(v,'rank-card')}><div class="overlay-kicker">TOP ${start?'DO PERÍODO':esc(periods[period]||periods.day)}</div><h2>${metric==='likes'?'Quem dá mais likes':'Quem manda mais moedas'}</h2>${rows.length?rows.map((u,i)=>{const l=levelProgress(s.extra?.points[u.id]||0);return `<div class="rank-row"><b class="position">${i+1}</b>${avatar(u)}<div class="person"><strong>${esc(u.name)}</strong><small>@${esc(u.handle||u.id.slice(1))}</small>${v.showLevel?`<span class="level-badge">Nível ${l.level}</span>`:''}</div><b class="score">${fmt(u.value)}<small>${metric==='likes'?'likes':'moedas'}</small></b></div>`;}).join(''):'<p class="overlay-empty">Aguardando os primeiros eventos</p>'}</div>`;
 }
-function giftView(s,key){
-  const item=s.highlights.day===dayKey(Date.now(),s.settings.zone)?s.highlights[key]:null;
-  const user=item?s.users[item.userId]:null;
-  return `<div class="overlay-card gift-card"><div class="overlay-kicker">${esc(giftTitles[key] || 'Presente')}</div>${item?`<div class="gift-content">${item.image?`<img class="gift-image" alt="" src="${esc(item.image)}">`:'<span class="gift-placeholder">✦</span>'}<div><h2>${esc(item.name)}</h2><p class="gift-count">×${fmt(item.count)}</p></div></div><div class="gift-donor">${avatar(user)}<div><strong>${esc(user?.name)}</strong><small>${item.unit===null?'Valor em moedas indisponível':`${fmt(item.unit)} moedas por unidade · ${fmt(item.unit*item.count)} no combo`}</small></div></div>`:'<p class="overlay-empty">Aguardando presente</p>'}</div>`;
+function giftView(s,key,overrides={}){const v=visualOf(s,'gifts',overrides),item=s.highlights.day===dayKey(Date.now(),s.settings.zone)?s.highlights[key]:null,user=item?s.users[item.userId]:null;return `<div ${cardAttrs(v,'gift-card')}><div class="overlay-kicker">${esc(giftTitles[key]||'Presente')}</div>${item?`<div class="gift-content">${item.image?`<img class="gift-image" alt="" src="${esc(item.image)}">`:'<span class="gift-placeholder">✦</span>'}<div><h2>${esc(item.name)}</h2><p class="gift-count">×${fmt(item.count)}</p></div></div><div class="gift-donor">${avatar(user)}<div><strong>${esc(user?.name)}</strong><small>${item.unit===null?'Valor em moedas indisponível':`${fmt(item.unit)} moedas por unidade · ${fmt(item.unit*item.count)} no combo`}</small></div></div>`:'<p class="overlay-empty">Aguardando presente</p>'}</div>`;}
+function roleView(s,role,overrides={}){const v=visualOf(s,'roles',overrides),u=resolveRole(s,role),hero=role==='hero';return `<div ${cardAttrs(v,'role-card '+(hero?'hero':'villain'))}><div class="role-topline">${hero?'✦ HERÓI':'✧ VILÃO'} <span>DA LIVE</span></div>${avatar(u,true)}<div class="role-identity"><h2>${esc(u.name||'Quem será?')}</h2><p>${u.handle?'@'+esc(u.handle):'Escolha no painel'}</p>${u.handle&&!u.avatar?'<small class="await-photo">Aguardando foto do participante</small>':''}</div></div>`;}
+function clock(ms){const secs=Math.max(0,Math.ceil(ms/1000));return [Math.floor(secs/3600),Math.floor(secs%3600/60),secs%60].map(n=>String(n).padStart(2,'0')).join(':');}
+function widgetView(s,kind,overrides={}){const key=['lastFollower','followers'].includes(kind)?'followers':kind,v=visualOf(s,key,overrides);const x=s.extra;let content='';
+ if(kind==='goal'){const p=Math.min(100,x.goal.current/x.goal.target*100);content=`<h2>Meta de curtidas</h2><strong class="goal-count">${fmt(x.goal.current)} <small>/ ${fmt(x.goal.target)}</small></strong><progress max="100" value="${p}" aria-label="Progresso da meta"></progress><p>${fmt(p)}% · ${p>=100?'Meta alcançada!':'Cada tap conta'}</p>`;}
+ else if(kind==='timer')content=`<div class="overlay-kicker">TEMPORIZADOR</div><strong class="timer-clock">${clock(timerRemaining(x.timer))}</strong><small>${x.timer.running?(timerRemaining(x.timer)>0?'Em andamento':'Tempo esgotado'):'Pausado'}</small>`;
+ else content=`<div class="overlay-kicker">${kind==='lastFollower'?'ÚLTIMO SEGUIDOR':'ÚLTIMOS SEGUIDORES'}</div>${x.followers.slice(0,kind==='lastFollower'?1:5).map(f=>{const u=s.users[f.userId];return `<div class="rank-row">${avatar(u)}<div class="person"><strong>${esc(u?.name)}</strong><small>@${esc(u?.handle)}</small></div></div>`;}).join('')||'<p class="overlay-empty">Aguardando novos seguidores</p>'}`;
+ return `<div ${cardAttrs(v,'widget-card')}>${content}</div>`;
 }
-function roleView(s,role){
-  const u=resolveRole(s,role);const hero=role==='hero';
-  return `<div class="overlay-card role-card ${hero?'hero':'villain'}"><div class="role-topline">${hero?'✦ HERÓI':'✧ VILÃO'} <span>DA LIVE</span></div>${avatar(u,true)}<h2>${esc(u.name || 'Quem será?')}</h2><p>${u.handle?'@'+esc(u.handle):'Escolha no painel'}</p>${u.handle&&!u.avatar?'<small class="await-photo">Aguardando foto do participante</small>':''}</div>`;
-}
-function overlayView(s,params){
-  const kind=params.get('kind') || 'ranking';
-  if(kind==='ranking')return rankView(s,{period:['day','week','month'].includes(params.get('period'))?params.get('period'):'day',metric:params.get('metric')==='likes'?'likes':'coins',limit:Math.min(20,Math.max(1,Number(params.get('limit'))||5))});
-  if(kind==='roles')return `<div class="overlay-duo">${roleView(s,'hero')}${roleView(s,'villain')}</div>`;
-  if(['hero','villain'].includes(kind))return roleView(s,kind);
-  return giftView(s,Object.hasOwn(giftTitles,kind)?kind:'last');
+function overlayView(s,params){const kind=params.get('kind')||'ranking',v={};if(params.has('container'))v.container=params.get('container')!=='0';if(params.has('color'))v.color=validColor(params.get('color'));if(params.has('level'))v.showLevel=params.get('level')!=='0';if(params.has('style'))v.style=params.get('style');
+ if(kind==='ranking')return rankView(s,{period:['day','week','month'].includes(params.get('period'))?params.get('period'):'day',metric:params.get('metric')==='likes'?'likes':'coins',limit:Math.min(20,Math.max(1,Number(params.get('limit'))||5)),start:params.get('start')||'',end:params.get('end')||'',...v});
+ if(kind==='roles')return `<div class="overlay-duo">${roleView(s,'hero',v)}${roleView(s,'villain',v)}</div>`;
+ if(['hero','villain'].includes(kind))return roleView(s,kind,v);
+ if(['goal','followers','lastFollower','timer'].includes(kind))return widgetView(s,kind,v);
+ return giftView(s,Object.hasOwn(giftTitles,kind)?kind:'last',v);
 }
 
 // demo.js
@@ -238,6 +343,9 @@ function demoState(){
     e.ingest({event:'like',data:{...u,likeCount:likes,msgId:'l'+id}});
   }
   e.ingest({event:'gift',data:{userId:'luna',uniqueId:'luna',nickname:'Luna Costa',giftId:'rose',giftName:'Rosa',diamondCount:1,repeatCount:50,giftType:1,repeatEnd:true,groupId:'demo-streak',msgId:'combo-demo'}});
+  e.ingest({event:'follow',data:{userId:'mari',uniqueId:'mari',nickname:'Mariana',msgId:'demo-follow'}});
+  e.state.extra.goal.current=48300;e.state.extra.goal.target=50000;
+  e.state.extra.timer.running=true;e.state.extra.timer.endAt=Date.now()+300000;
   setRole(e.state,'hero',{handle:'luna'});setRole(e.state,'villain',{handle:'pedro'});return e.state;
 }
 
@@ -246,19 +354,19 @@ const params=new URLSearchParams(location.search),token=new URLSearchParams(loca
 const root=document.querySelector('#overlay-root'),badge=document.querySelector('#overlay-status');
 let lastPacket=0,current=freshState(),lastHTML='';
 function render(){const html=overlayView(current,params);if(html!==lastHTML){root.innerHTML=html;watchImages(root);lastHTML=html;}}
-function receive(packet){current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
+function receive(packet){if(!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.3.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
 if(params.get('demo')==='1'){
   current=demoState();render();badge.textContent='DEMONSTRAÇÃO';
 }else if(token && location.hostname==='127.0.0.1'){
   async function poll(){try{const r=await fetch('./api/state',{headers:{Authorization:'Bearer '+token},cache:'no-store',signal:AbortSignal.timeout(5000)});if(!r.ok)throw Error('Link inválido. Copie novamente no painel.');receive(await r.json());}catch(e){badge.hidden=false;badge.textContent='Sem ponte local · '+e.message;}setTimeout(poll,1000);}void poll();
 }else{
-  try{const cached=await loadState();if(cached)current=cached;}catch{}
+  try{const cached=await loadState();if(cached)current=validateState(cached);}catch{}
   render();
   let channel=null;try{if(typeof BroadcastChannel!=='undefined')channel=new BroadcastChannel(channelName);}catch{}
   if(channel){channel.onmessage=e=>{if(e.data?.type==='snapshot')receive(e.data);};channel.postMessage({type:'request'});}
   badge.textContent='Abra o painel no mesmo navegador. Para OBS, use o link do modo local.';
 }
-setInterval(()=>{render();if(params.get('demo')!=='1' && lastPacket && Date.now()-lastPacket>7000){badge.hidden=false;badge.textContent='Sem atualização · confira o painel ou a ponte local';}},3000);
+setInterval(()=>{render();if(params.get('demo')!=='1' && lastPacket && Date.now()-lastPacket>7000){badge.hidden=false;badge.textContent='Sem atualização · confira o painel ou a ponte local';}},1000);
 
 window.__amarillouReady=true;
 }catch(error){window.__amarillouFailure(error);}

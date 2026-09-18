@@ -1,15 +1,18 @@
-# AMARILLOU LIVE — v0.2.0
+# AMARILLOU Live Control — v0.3.0
 
 Painel modular de TikTok LIVE em português. HTML, CSS e JavaScript nativos, sem dependências de produção. Os HTMLs entregues já incluem o código e o estilo; não exigem build para publicar. Hospedagem estática no GitHub Pages; ponte local opcional para compartilhar estado com OBS/Live Studio.
 
-**Comece por [ATUALIZAR-v0.2.txt](ATUALIZAR-v0.2.txt) e [GUIA.html](GUIA.html)**, que pode ser aberto diretamente no navegador, ou pelo guia abaixo.
+**Comece por [ATUALIZAR-v0.3.txt](ATUALIZAR-v0.3.txt) e [GUIA.html](GUIA.html)**, que pode ser aberto diretamente no navegador, ou pelo guia abaixo.
 
 ## Incluído
 
-- Rankings de likes/tap taps e moedas: dia, semana e mês, com links de overlay.
+- Rankings independentes de likes/taps e moedas: dia, semana, mês, histórico por datas, competições arquivadas e resets hierárquicos com confirmação.
 - Último presente, combo recente, maior combo e presente de maior valor unitário do dia.
 - Herói e vilão escolhidos por @, identificação pelos eventos da live e imagem/nome manuais opcionais.
-- Overlays transparentes individuais ou dupla; seleção de Top 1, 3, 5 e 10.
+- Overlays individuais ou dupla; Top 1, 3, 5 e 10; com/sem container, cor hexadecimal, nível opcional e estilo alternativo de herói/vilão.
+- Níveis persistentes com pesos configuráveis, meta de curtidas, últimos seguidores e timer com tempo adicionado por presentes.
+- Análises: janelas móveis, mês específico, sessões monitoradas, estimativas USD/BRL e calibração por recebimento real.
+- Pop-up do criador uma vez por carregamento, TikTok, site e apoio pelo Live Pix.
 - Coleta compartilhada, reconexão, deduplicação por identificador e contagem incremental de combos.
 - IndexedDB no modo web; JSON automático no modo local; exportação/importação de backup.
 - Demonstração isolada, sem alterar o histórico real.
@@ -56,7 +59,7 @@ No macOS/Linux: abra um terminal na pasta e execute `node local/server.mjs`. Nã
 - As datas usam o momento de recebimento neste computador. O relógio do PC precisa estar correto. Um combo que atravessa meia-noite tem os incrementos em cada dia.
 - Empates são ordenados pelo identificador do participante. Top da tabela do painel mostra até 100; o histórico guarda todos.
 - Combo recente = última sequência com quantidade maior que 1; maior combo = maior quantidade em uma sequência de hoje; último presente = último incremento recebido; mais caro = maior preço de uma unidade hoje (primeiro em caso de empate).
-- Follows, shares, chat, entradas e inscrições reconhecidos atualizam identificação/diagnóstico; não pontuam. São pontos de extensão para próximos módulos, não funcionalidades extras já implementadas.
+- Follows atualizam a lista de últimos seguidores. Shares, chat, entradas e inscrições reconhecidos atualizam identificação/diagnóstico; não pontuam. Likes e moedas geram pontos conforme os pesos configurados.
 - Sem preço informado, o presente entra na quantidade, mas não soma moedas. O diagnóstico registra isso para evitar inventar valores.
 - Foto por @ só aparece automaticamente após identificação daquele perfil em algum evento. Não há scraper ou consulta pública de perfil; URLs de foto podem expirar. Nome e foto manuais têm prioridade; limpar os campos manuais volta ao automático.
 
@@ -78,7 +81,7 @@ No macOS/Linux: abra um terminal na pasta e execute `node local/server.mjs`. Nã
 4. Sem `msgId`, não há deduplicação perfeita de mensagens independentes. Sem `groupId`, o fallback distingue combos pela conclusão/reinício e intervalo; finais isolados repetidos ou sequências sem início podem ser ambíguos. A deduplicação mantém uma janela limitada (8–12 mil mensagens) e não elimina replays arbitrariamente antigos.
 5. HTTPS → WebSocket local depende da versão do navegador, permissões e política do servidor. Não se promete compatibilidade universal. Use o modo local se o navegador bloquear; a ponte se conecta ao TikFinity fora do navegador e as páginas locais consultam HTTP na mesma origem.
 6. GitHub Pages sozinho não oferece backend para sincronização entre aplicativos/dispositivos. A versão incluída resolve isso com ponte no próprio computador. Uma evolução totalmente online poderá usar backend autenticado com salas, persistência e sincronização remota.
-7. Há limites práticos de armazenamento do navegador, memória e tamanho de snapshots. Backup aceito até 32 MB; até 100 mil perfis por importação. Esta é uma base modular v0.2, não uma plataforma multiusuário em nuvem já operada em escala.
+7. Há limites práticos de armazenamento do navegador, memória e tamanho de snapshots. Backup aceito até 32 MB; até 100 mil perfis por importação. Esta é uma base modular v0.3, não uma plataforma multiusuário em nuvem já operada em escala.
 
 ## Testes
 
@@ -103,3 +106,51 @@ Projeto independente, sem afiliação com TikTok ou TikFinity.
 A causa exata na publicação do usuário não foi confirmada, pois a URL não foi fornecida. A v0.2 elimina a dependência de carregamento que poderia produzir o sintoma relatado.
 
 Os fontes modulares continuam disponíveis. Para desenvolver: edite `src/`, `styles.css` e `ui/*.template.html`, depois execute `npm run build` para atualizar os HTMLs independentes e `npm test`. Node só é necessário para desenvolvimento ou ponte local, nunca para publicar os HTMLs prontos.
+
+## Regras novas da v0.3
+
+### Histórico e resets
+
+O intervalo exibido é o período do calendário. Histórico por datas consulta dados efetivamente recebidos; não há recuperação retroativa do TikFinity. Dados anteriores aos resets continuam em `days`, para histórico e análises. Reset cria uma baseline de subtração para a competição atual e arquiva a classificação encerrada.
+
+| Reset na métrica escolhida | Diário | Semanal | Mensal | Outra métrica / níveis / análises |
+|---|---|---|---|---|
+| Diário | Reinicia | Preserva | Preserva | Preserva |
+| Semanal | Preserva | Reinicia | Preserva | Preserva |
+| Mensal | Reinicia | Reinicia | Reinicia | Preserva |
+
+O reset semanal inicia uma nova contagem dentro da semana do calendário; a próxima segunda continua iniciando a próxima semana. Não é uma janela móvel de sete dias após o reset. Cada reset exige confirmação e afeta apenas Likes/Taps OU Moedas, explicitamente indicado no pop-up. Reset da meta de curtidas é independente dos rankings. Os cartões de totais hoje mostram o histórico original recebido, não a competição após reset.
+
+### Níveis
+
+Pontos padrão = 1 por moeda + 1 por like. Pesos podem ser alterados em Conexão & dados, apenas para eventos futuros. Os valores coletados na v0.2 são convertidos uma vez com esses pesos padrão. Importar novamente o mesmo backup substitui o estado, não soma os pontos outra vez.
+
+Fórmula inferida: `floor(50 * 1.03 * (1.03 ** (nível - 1) - 1) / 0.03)`. Ela reproduz todas as referências iniciais fornecidas (nível 13 = **730**, não 7.030) e nível 300 = **11.829.139**. Não foi confirmada como a fórmula oficial do TikFinity. A função inclui pequena tolerância numérica para arredondamento de ponto flutuante. O cálculo continua além do nível 300, com teto de exibição no 1.000.
+
+### Overlays e participantes
+
+Os links de Likes e Moedas são independentes. O estilo é gravado no link para poder usar versões diferentes simultaneamente. Depois de aplicar uma cor/layout/visibilidade do nível, copie o novo link. Isso não altera pontos nem eventos. Os dados do conteúdo continuam atualizando.
+
+A seleção de participantes abre uma lista própria, congelada naquele momento. Digitar no campo de busca filtra a cópia, sem substituir os nomes quando chegam eventos. “Atualizar lista agora” renova a cópia explicitamente. A lista indica quem foi identificado na coleta, não confirma presença online. Selecionar preenche o @; clique em Salvar para aplicar.
+
+### Meta, seguidores e timer
+
+Meta soma likes futuros recebidos desde seu próprio reset. Não puxa automaticamente um total global da sala. Último seguidor e últimos 5 são duas opções de link; guarda até 50 participantes recentes distintos. Sem evento follow entregue pela origem, não inventa seguidores.
+
+Timer usa duração em segundos e relógio absoluto ao executar. Pausar guarda o restante. Recarregar não reinicia o relógio. Regras associam **ID do presente** a segundos por unidade, incluindo incrementos de combo; o final do combo não duplica tempo. Com timer pausado, o tempo adicionado fica acumulado. Com página web fechada não chegam novos presentes; o relógio em execução continua transcorrendo. A ponte local aberta pode continuar coletando.
+
+### Análises
+
+Inicie/encerre manualmente uma transmissão em Análises. Só o tempo monitorado pelo coletor conectado entra na duração (heartbeat contínuo com lacunas de no máximo 6 segundos). Não afirmamos que esse seja o tempo oficial da live. Fechamento, suspensão ou desconexão não são contados como se houvesse monitoramento. No modo local, o coletor permanece no processo Node mesmo sem painel aberto.
+
+Moedas recebidas fora de sessão são mostradas no total e identificadas separadamente; não entram nas médias por hora/transmissão. As médias usam sessões listadas no período (inclusive a atual) e valores associados a elas. Se não existe duração monitorada, a média por hora fica indisponível.
+
+Janelas de 24h, 7d e 30d usam timestamps das transações coletadas a partir da v0.3. O mês usa o fuso do painel. Dados antigos da v0.2 só possuíam agregação diária: entram em “Todo o período” ou “Mês específico”, mas ficam fora das janelas móveis, com aviso. Não criamos sessões ou horários antigos fictícios.
+
+Conversão é manual: USD recebido por moeda e BRL por USD. Calibração = USD real informado / moedas coletadas na sessão encerrada. A estimativa de todos os períodos usa a referência atual; os recebimentos reais informados ficam separados e preservados, em USD, para a transmissão inteira. BRL requer câmbio informado. Nenhuma taxa foi preenchida automaticamente, nenhuma cotação ao vivo é prometida e nenhuma estimativa equivale a saldo oficial.
+
+### Criador e atualização
+
+Pop-up aparece só no painel, uma vez por carregamento/F5. Não aparece em overlays. Fechar não apaga dados. Links fixos: TikTok `@xamarilloux`, https://amarillou.com.br/ e https://livepix.gg/xamarilloux. O botão de apoio usa um coração genérico e o nome Live Pix, não um logotipo oficial inventado.
+
+Schema do backup evoluiu de 1 para 2, preservando a base IndexedDB e as identidades. A v0.3 lê backups da v0.2; a v0.2 não lê backups novos. Exporte uma cópia antes da atualização e não rode coletores de versões diferentes simultaneamente. Nenhuma migração apaga o histórico original.

@@ -1,0 +1,30 @@
+AMARILLOU LIVE CONTROL v0.3
+
+ANTES: no painel v0.2, exporte um backup em Conexão & dados. Feche outras abas do painel.
+
+GITHUB PAGES
+1. Extraia este ZIP.
+2. No mesmo repositório/pasta onde seu site está publicado, substitua index.html e overlay.html e envie GUIA.html.
+3. Confirme o envio e aguarde a publicação do GitHub Pages.
+4. Abra o MESMO endereço/perfil de navegador e pressione Ctrl+F5. Confira v0.3 no painel.
+5. Feche o pop-up do criador. Seus dados anteriores são migrados automaticamente, sem reset.
+6. Teste a demo. Depois saia dela para acompanhar eventos reais.
+
+Não altere CNAME/domínio, não apague os dados do navegador e não abra o HTML por duplo clique para coletar. Se mudar de domínio/navegador, restaure o backup. Não volte a usar v0.2 na mesma base depois da atualização.
+
+MODO LOCAL OPCIONAL
+Substitua o projeto extraído inteiro por esta versão e reinicie INICIAR-LOCAL.bat. O save permanece em %USERPROFILE%\.amarillou-live\state.json. Exporte backup antes. A página nova exige a ponte local nova.
+
+USO
+- Rank abre Likes/Taps e Moedas, com configurações e links independentes.
+- Reset afeta só a métrica escolhida: dia preserva semana/mês; semana preserva dia/mês; mês reinicia os três. Histórico original, níveis e análises são preservados.
+- Os períodos ainda seguem o calendário. Reset semanal inicia outra contagem dentro da semana atual.
+- Consultar datas mostra o histórico original já coletado; Competições encerradas mostra a classificação antes de cada reset.
+- Níveis: padrão 1 ponto/moeda + 1 ponto/like. Edite pesos futuros em Conexão & dados. Nível 13 = 730; nível 300 = 11.829.139.
+- Aplique o visual e copie o NOVO link para usar cor, container ou nível diferente no overlay.
+- Participantes: lista congelada; selecione o @ e clique Salvar.
+- Análises: inicie uma sessão manualmente, encerre e informe o recebimento USD para calibrar. Preencha também USD→BRL para ver reais. Não usamos taxa presumida.
+- Históricos v0.2 não têm horários/sessões: podem ser vistos por mês ou todo o período, mas não são inventados nas janelas móveis.
+- Pop-up aparece uma vez por carregamento. Fechar/abrir o pop-up não altera dados.
+
+41 testes automatizados passaram, além dos testes de interface em Chromium. Teste também na sua live/OBS antes de usar em produção.
