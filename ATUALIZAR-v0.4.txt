@@ -1,0 +1,33 @@
+AMARILLOU LIVE CONTROL v0.4.0
+
+GITHUB PAGES
+1. Extraia o ZIP.
+2. No mesmo repositório/pasta publicado, substitua index.html, overlay.html e GUIA.html.
+3. Envie também README.md e RELEASE-v0.4.0.md se quiser atualizar a apresentação do repositório.
+4. Aguarde a publicação, feche abas antigas e abra o MESMO endereço/perfil de navegador com Ctrl+F5.
+5. Confira v0.4 na lateral. Informe seu @ próximo de Conectar e clique em Salvar.
+6. Copie novamente os links se alterar o estilo dos overlays.
+
+PARA COMEÇAR DO ZERO
+Conexão & dados → Resetar toda a plataforma → digite ZERAR → Apagar tudo.
+Isso desconecta e apaga todos os dados e configurações DESTA instalação. Depois informe seu @ e reconecte.
+A atualização por si só NÃO zera a base. Fechar o pop-up/F5 também não zera nada.
+Resetar presentes de hoje é uma ação separada, na aba Presentes.
+
+ANÁLISES
+Use Adicionar transmissão: início, duração em minutos, moedas, nome opcional e USD real opcional.
+Não precisa iniciar/encerrar monitoramento. Eventos da conexão não duplicam os valores registrados.
+As sessões v0.3 são migradas uma vez com o tempo monitorado. Para corrigir, exclua e cadastre novamente.
+USD por moeda continua manual. USD→BRL é automático, com modo manual em caso de falha.
+
+MODO LOCAL
+Substitua todo o projeto e reinicie INICIAR-LOCAL.bat. Não basta trocar só index.html.
+O save e as chaves continuam em %USERPROFILE%\.amarillou-live. Não publique esses arquivos.
+
+RELEASE
+Tag: v0.4.0
+Título: AMARILLOU Live Control v0.4.0
+Descrição: copie o conteúdo de RELEASE-v0.4.0.md.
+Anexe este ZIP à release. O anexo não atualiza o Pages; os HTMLs precisam ser substituídos normalmente.
+
+Se quiser preservar dados, exporte um JSON antes. Não volte a usar v0.3/v0.2 sobre esta base migrada.

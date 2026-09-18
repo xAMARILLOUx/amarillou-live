@@ -13,10 +13,21 @@
 @media(max-width:650px){.visual-bar .visual-form,.analysis-controls{grid-template-columns:1fr}.visual-bar .two-fields{grid-column:auto}#analysis-stats{grid-template-columns:1fr 1fr}#analysis-stats strong{font-size:1.2rem}.creator-card{padding:28px 8px}.creator-card h2{font-size:1.2rem}.creator-links{flex-direction:column}.timer-clock{font-size:2.3rem}.reset-button{padding:7px;font-size:.75rem}.role-card.ribbon{grid-template-columns:66px 1fr}.role-card.ribbon .avatar.large{width:60px;height:60px}.role-card.ribbon h2{font-size:1rem}.two-fields{gap:10px}.subnav{padding-left:14px}.rank-row .person strong{font-size:.85rem}}
 @media(prefers-reduced-motion:reduce){.role-card.ribbon{animation:none}}
 .settings-grid form+p,.timer-editor form+p{margin-top:14px}.overlay-body .overlay-duo:has(.ribbon){grid-template-columns:1fr}.overlay-body .overlay-duo .ribbon{max-width:600px}
+
+/* v0.4: AMARILLOU purple / gold, readable tables and compact gift portrait. */
+:root{--bg:#120e1a;--panel:#1d1629;--line:#3b2c4f;--muted:#b4a9c4;--yellow:#ffd045;--text:#faf7ff}
+body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,transparent 55%),var(--bg)}
+.sidebar{background:linear-gradient(180deg,#231331,#120e1a)}.brand{color:#ffd045}.brand-mark{color:#fff}.brand-sub{color:#d1bcdf}.nav.active{background:#63359940;border-color:#8252b8;color:#ffdc68}.nav.active span{color:#ffdc68}.nav-caption{margin-top:32px}.nav{padding-top:11px;padding-bottom:11px}
+.stats article{background:linear-gradient(120deg,#2d203c,#1b1525)}button.primary,.primary{background:#ffd045;color:#261a00;border-color:#ffd045}button.primary:hover{background:#ffe286}input,select{background:#130e1c;border-color:#4b385d}.segmented{background:#130e1c}.segmented button.selected{background:#46305d;color:#ffe286}.notice{background:#2e203b;border-color:#664484;color:#f0e4fb}.level-badge{border-color:#aa833a88;color:#ffda67}.panel{box-shadow:0 8px 30px #07040d22}dialog{background:#21162d;border-color:#78509b}.creator-card{background:radial-gradient(ellipse at top,#62319165,transparent 72%);border-radius:12px}.creator-avatar{width:142px;height:142px;object-fit:cover;border-radius:50%;border:3px solid #ffd045;box-shadow:0 0 40px #b053e63a;margin:0 auto 20px;display:block}.creator-x{display:block;font-size:25px;font-weight:950;color:#fff;transform:skew(-10deg);margin-bottom:12px}.creator-links a{display:flex;justify-content:center;align-items:center;gap:8px;border-color:#705087;background:#352142}.creator-links a:hover{background:#533068;text-decoration:none}.creator-links svg{width:22px;height:22px;flex-shrink:0}.livepix-mark{width:42px;max-height:24px;object-fit:contain}
+.topbar{height:auto;min-height:110px;flex-wrap:wrap;padding:16px 0}.channel-form{min-width:180px;max-width:260px;flex:1}.channel-form label{font-size:.72rem;margin:0 0 4px}.channel-form>div{display:flex;gap:6px}.channel-form input{padding:8px 10px}.channel-form button{padding:8px 12px}.channel-form small{font-size:.65rem}.top-actions{gap:10px;flex-wrap:wrap}
+.table-wrap{scrollbar-gutter:stable;padding-right:18px}th,td{padding-left:8px;padding-right:12px}th:last-child,td:last-child{padding-right:18px}.ranking-panel table{table-layout:fixed;min-width:460px}.ranking-panel th:first-child{width:8%}.ranking-panel th:nth-child(2){width:40%}.ranking-panel th:nth-child(3){width:32%}.ranking-panel th:last-child{width:20%}.participant{min-width:0;gap:9px}.participant>div{min-width:0}.participant strong,.participant small{overflow-wrap:anywhere}.ranking-panel .level-badge{white-space:nowrap}.points-table table{min-width:680px}.points-table progress{width:140px;height:7px;accent-color:#bb70f1}.sessions-panel table{min-width:780px}.sessions-panel td:first-child{max-width:260px;overflow-wrap:anywhere}.danger-zone{border-color:#ac4a61}.danger-zone h2{color:#ffacbc}
+.gift-card.portrait,.gift-card.portrait.bare{display:block;text-align:center}.gift-portrait{display:flex;flex-direction:column;align-items:center;gap:16px;padding:14px 0}.portrait-cluster{position:relative;width:195px;height:175px}.portrait-cluster .avatar.large{position:absolute;left:5px;top:0;width:148px;height:148px;margin:0;border:3px solid #ffd045;font-size:38px;background:#352442;color:#ffd045}.portrait-accessory{position:absolute;right:0;bottom:0;display:flex;align-items:center;flex-direction:column;filter:drop-shadow(0 3px 5px #0008)}.portrait-accessory .gift-image,.portrait-accessory .gift-placeholder{width:74px;height:74px}.portrait-count{font-size:1.4rem;color:#ffdf6d;line-height:1.1;text-shadow:0 2px 3px #000;max-width:180px;overflow-wrap:anywhere}.portrait-identity strong{display:block;font-size:1.15rem;overflow-wrap:anywhere}.portrait-identity small{display:block}.portrait-identity>span{display:block;color:#ffd045;font-size:.8rem;margin-top:5px}.gift-card.portrait.bare{padding:8px}.gift-card.portrait.bare .gift-portrait{padding:8px 0}.visual-bar .visual-form{grid-template-columns:2fr 1fr 1.5fr 1fr}
+@media(max-width:1250px){.topbar>.pill{display:none}.visual-bar .visual-form{grid-template-columns:1fr 1fr}.top-actions{gap:6px}.top-actions button{padding:9px}}
+@media(max-width:650px){.channel-form{max-width:none;width:100%;flex-basis:100%}.topbar{gap:14px}.visual-bar .visual-form{grid-template-columns:1fr}.table-wrap{padding-right:12px}.creator-avatar{width:120px;height:120px}.ranking-panel .table-wrap{max-height:450px}.creator-links{gap:8px}.creator-links a{padding:10px}.portrait-cluster{transform:scale(.95);transform-origin:center}.stats strong{overflow-wrap:anywhere}}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v0.3: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v0.4: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
@@ -25,7 +36,7 @@ window.addEventListener('unhandledrejection',function(e){window.__amarillouFailu
 try{
 
 // features.js
-// Additional state is versioned with the core; this file has no transport dependencies.
+// State and domain rules, plus an optional fixed-endpoint FX fetch helper.
 const CREATOR={name:'xAMARILLOUx',tiktok:'https://www.tiktok.com/@xamarilloux',site:'https://amarillou.com.br/',support:'https://livepix.gg/xamarilloux'};
 const nonneg=(v,max=Number.MAX_SAFE_INTEGER)=>Math.min(max,Math.max(0,Number.isFinite(Number(v))?Number(v):0));
 const textValue=(v,n=120)=>String(v??'').slice(0,n);
@@ -35,7 +46,7 @@ function calendarRange(period,t,zone){const d=dateAt(t,zone);if(period==='month'
 function levelThreshold(level){return Math.floor(50*1.03*(Math.pow(1.03,Math.max(0,Math.min(1000,level)-1))-1)/.03+1e-8);}
 function levelProgress(points){points=nonneg(points);let lo=1,hi=1000;while(lo<hi){const m=Math.ceil((lo+hi)/2);if(levelThreshold(m)<=points)lo=m;else hi=m-1;}const start=levelThreshold(lo),next=lo<1000?levelThreshold(lo+1):null;return {level:lo,points,start,next,remaining:next===null?0:Math.max(0,next-points),percent:next===null?100:Math.min(100,100*(points-start)/(next-start))};}
 function defaultVisual(){return {container:true,color:'#191b1e',showLevel:true,style:'classic'};}
-function newExtras(){return {points:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['rankLikes','rankCoins','gifts','roles','goal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
+function newExtras(){return {channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['rankLikes','rankCoins','gifts','roles','goal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
 function timerRemaining(timer,now=Date.now()){return Math.max(0,timer.running?timer.endAt-now:timer.remainingMs);}
 function addTimer(timer,seconds,now){const rem=Math.min(31536000000,timerRemaining(timer,now)+seconds*1000);timer.remainingMs=rem;if(timer.running)timer.endAt=now+rem;}
 function sessionHeartbeat(s,now=Date.now(),connected=false){const a=s.extra.activeSession;if(!a)return false;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
@@ -56,8 +67,22 @@ function resetRanking(s,period,metric,now=Date.now()){
 function boundedInput(v,min,max,label){const n=Number(v);if(!Number.isFinite(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
 function applyCommand(s,command,p={},now=Date.now()){
  const x=s.extra;
- if(command==='reset-ranking')resetRanking(s,p.period,p.metric,now);
- else if(command==='visual'){if(!Object.hasOwn(x.visuals,p.key))throw Error('Overlay inválido.');x.visuals[p.key]={container:p.container!==false,color:validColor(p.color),showLevel:p.showLevel!==false,style:p.style==='ribbon'?'ribbon':'classic'};}
+ if(command==='channel'){const name=String(p.handle??'').trim().replace(/^@/,'').toLowerCase();if(name&&!/^[a-z0-9_.]{1,24}$/.test(name))throw Error('Use apenas o @ do canal, sem link ou espaços.');x.channel=name;}
+ else if(command==='reset-gifts'){x.highlightBaselines=Object.fromEntries(Object.entries(s.streaks||{}).map(([key,v])=>[key,v.count]));s.highlights={day:dateAt(now,s.settings.zone),last:null,recentCombo:null,bestCombo:null,expensive:null};for(const row of Object.values(s.days[dateAt(now,s.settings.zone)]||{}))row.gifts=0;}
+ else if(command==='live-add'){
+  const start=boundedInput(p.start,0,now,'Data da transmissão'),duration=boundedInput(p.durationMinutes,1,10080,'Duração em minutos'),coins=boundedInput(p.coins,0,1e12,'Moedas');
+  if(!Number.isInteger(coins))throw Error('Informe um número inteiro de moedas.');
+  const actualUsd=p.actualUsd===null||p.actualUsd===undefined||p.actualUsd===''?null:boundedInput(p.actualUsd,0,1e9,'Recebimento USD');
+  const end=start+duration*60000;if(end>now+60000)throw Error('A transmissão deve ter terminado. Confira data, horário e duração.');
+  let id='m'+now;while(x.manualLives.some(l=>l.id===id))id+='x';
+  x.manualLives.unshift({id,name:textValue(p.name||'Transmissão'),channel:x.channel,start,end,durationMs:duration*60000,coins,actualUsd,source:'manual'});
+ }
+ else if(command==='live-delete'){if(!x.manualLives.some(l=>l.id===p.id))throw Error('Transmissão não encontrada.');x.manualLives=x.manualLives.filter(l=>l.id!==p.id);}
+ else if(command==='fx-mode'){if(!['auto','manual'].includes(p.mode))throw Error('Modo de câmbio inválido.');x.fx.mode=p.mode;}
+ else if(command==='fx-rate'){const quote=parseFxQuote(p.quote,now);x.conversion.brlPerUsd=quote.rate;x.fx={mode:x.fx.mode,date:quote.date,fetchedAt:now,source:'Frankfurter / referência diária'};}
+ else if(command==='live-calibrate'){const live=x.manualLives.find(l=>l.id===p.id);if(!live||live.coins<=0)throw Error('Selecione uma transmissão com moedas.');const usd=boundedInput(p.usd,0,1e9,'Recebido em USD');const rate=boundedInput(usd/live.coins,0,100,'USD por moeda calculado');live.actualUsd=usd;x.conversion={...x.conversion,usdPerCoin:rate,updatedAt:now,source:'calibração: '+live.name};}
+ else if(command==='reset-ranking')resetRanking(s,p.period,p.metric,now);
+ else if(command==='visual'){if(!Object.hasOwn(x.visuals,p.key))throw Error('Overlay inválido.');x.visuals[p.key]={container:p.container!==false,color:validColor(p.color),showLevel:p.showLevel!==false,style:['ribbon','portrait'].includes(p.style)?p.style:'classic'};}
  else if(command==='weights')x.weights={coins:boundedInput(p.coins,0,100000,'Pontos por moeda'),likes:boundedInput(p.likes,0,100000,'Pontos por like')};
  else if(command==='goal-target')x.goal.target=boundedInput(p.target,1,1e12,'Meta');
  else if(command==='goal-reset')x.goal.current=0;
@@ -69,7 +94,7 @@ function applyCommand(s,command,p={},now=Date.now()){
  else if(command==='timer-rule-remove')x.timer.rules=x.timer.rules.filter(r=>r.giftId!==String(p.giftId));
  else if(command==='session-start'){if(x.activeSession)throw Error('Já existe uma transmissão em monitoramento.');x.activeSession={id:'s'+now,name:textValue(p.name||'Transmissão'),start:now,end:0,lastTick:now,connected:false,segments:[],actualUsd:null};}
  else if(command==='session-end'){if(!x.activeSession)throw Error('Nenhuma transmissão iniciada.');sessionHeartbeat(s,now,false);x.activeSession.end=now;x.sessions.unshift(x.activeSession);x.activeSession=null;}
- else if(command==='conversion'){x.conversion={usdPerCoin:boundedInput(p.usdPerCoin,0,100,'USD por moeda'),brlPerUsd:boundedInput(p.brlPerUsd,0,1000,'BRL por dólar'),updatedAt:now,source:'manual'};}
+ else if(command==='conversion'){x.conversion={usdPerCoin:boundedInput(p.usdPerCoin,0,100,'USD por moeda'),brlPerUsd:boundedInput(p.brlPerUsd,0,1000,'BRL por dólar'),updatedAt:now,source:'manual'};if(x.fx.mode==='manual')x.fx={mode:'manual',date:dateAt(now,'UTC'),fetchedAt:now,source:'Manual'};}
  else if(command==='calibrate'){const session=x.sessions.find(a=>a.id===p.sessionId);if(!session)throw Error('Selecione uma transmissão encerrada.');const coins=x.ledger.filter(a=>a.sessionId===session.id).reduce((a,b)=>a+b.coins,0);if(coins<=0)throw Error('A transmissão precisa ter moedas registradas.');const usd=boundedInput(p.usd,0,1e9,'Valor recebido');const rate=boundedInput(usd/coins,0,100,'USD por moeda calculado');session.actualUsd=usd;x.conversion={...x.conversion,usdPerCoin:rate,updatedAt:now,source:'calibração: '+session.name};}
  else throw Error('Comando desconhecido.');s.updatedAt=now;
 }
@@ -95,10 +120,10 @@ function validateExtras(s,input,oldVersion){
  const x=newExtras();
  if(oldVersion===1||!input){for(const [day,rows] of Object.entries(s.days)){for(const [id,r] of Object.entries(rows)){x.points[id]=(x.points[id]||0)+r.coins+r.likes;x.legacyCoins[day]=(x.legacyCoins[day]||0)+r.coins;}}return x;}
  const count=v=>{if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>Number.MAX_SAFE_INTEGER)throw Error('Contagem inválida no backup v0.3.');return v;};
- const known=id=>Object.hasOwn(s.users,id);
+ const known=id=>Object.hasOwn(s.users,id);for(const [key,n] of Object.entries(input.highlightBaselines||{}))if(key.startsWith('$'))x.highlightBaselines[key]=count(n);
  for(const [id,v] of Object.entries(input.points||{}))if(known(id))x.points[id]=count(v);
  if(input.weights)x.weights={coins:boundedInput(input.weights.coins,0,100000,'Pontos'),likes:boundedInput(input.weights.likes,0,100000,'Pontos')};
- for(const k of Object.keys(x.visuals)){const v=input.visuals?.[k];if(v)x.visuals[k]={container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:v.style==='ribbon'?'ribbon':'classic'};}
+ for(const k of Object.keys(x.visuals)){const v=input.visuals?.[k];if(v)x.visuals[k]={container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:['ribbon','portrait'].includes(v.style)?v.style:'classic'};}
  for(const [k,r] of Object.entries(input.resets||{}))if(/^(coins|likes):(day|week|month)$/.test(k)){const baseline={};for(const [id,v] of Object.entries(r.baseline||{}))if(known(id))baseline[id]=count(v);if(!/^\d{4}-\d{2}-\d{2}$/.test(r.calendar))throw Error('Reset inválido.');x.resets[k]={calendar:r.calendar,startedAt:count(r.startedAt),baseline};}
  for(const a of input.archives||[]){if(!['coins','likes'].includes(a.metric)||!['day','week','month'].includes(a.period))throw Error('Arquivo de competição inválido.');const rows={};for(const [id,v] of Object.entries(a.rows||{}))if(known(id))rows[id]=count(v);x.archives.push({metric:a.metric,period:a.period,time:count(a.time),start:count(a.start),calendar:textValue(a.calendar,10),rows});}
  if(input.goal)x.goal={target:boundedInput(input.goal.target,1,1e12,'Meta'),current:count(input.goal.current)};
@@ -110,15 +135,44 @@ function validateExtras(s,input,oldVersion){
  const session=a=>({id:textValue(a.id),name:textValue(a.name),start:count(a.start),end:count(a.end),lastTick:count(a.lastTick),connected:false,actualUsd:a.actualUsd===null?null:count(a.actualUsd),segments:(a.segments||[]).map(pair=>{const start=count(pair[0]),end=count(pair[1]);if(end<start)throw Error('Tempo inválido.');return [start,end];})});
  x.sessions=(input.sessions||[]).map(session);x.activeSession=input.activeSession?session(input.activeSession):null;
  if(input.conversion)x.conversion={usdPerCoin:boundedInput(input.conversion.usdPerCoin,0,100,'Conversão'),brlPerUsd:boundedInput(input.conversion.brlPerUsd,0,1000,'Câmbio'),updatedAt:count(input.conversion.updatedAt),source:textValue(input.conversion.source)};
- x.trackingSince=count(input.trackingSince);return x;
+ x.trackingSince=count(input.trackingSince);
+ x.channel=textValue(input.channel,24).replace(/^@/,'').toLowerCase();if(x.channel&&!/^[a-z0-9_.]{1,24}$/.test(x.channel))throw Error('Canal inválido.');
+ if(input.fx)x.fx={mode:input.fx.mode==='manual'?'manual':'auto',date:textValue(input.fx.date,10),fetchedAt:count(input.fx.fetchedAt),source:textValue(input.fx.source)};
+ const ids=new Set();x.manualLives=(input.manualLives||[]).map(a=>{const id=textValue(a.id);if(!id||ids.has(id))throw Error('Transmissão duplicada.');ids.add(id);const start=count(a.start),durationMs=boundedInput(a.durationMs,0,604800000,'Duração'),coins=count(a.coins);if(!Number.isInteger(coins))throw Error('Moedas inválidas.');return {id,name:textValue(a.name),channel:textValue(a.channel,24),start,end:start+durationMs,durationMs,coins,actualUsd:a.actualUsd==null?null:boundedInput(a.actualUsd,0,1e9,'USD'),source:a.source==='v0.3'?'v0.3':'manual'};});
+ if(oldVersion<3){for(const a of [...x.sessions,...(x.activeSession?[x.activeSession]:[])]){const durationMs=a.segments.reduce((sum,[b,e])=>sum+e-b,0);x.manualLives.push({id:a.id,name:a.name,channel:x.channel,start:a.start,end:a.end||a.lastTick,durationMs,coins:x.ledger.filter(t=>t.sessionId===a.id).reduce((sum,t)=>sum+t.coins,0),actualUsd:a.actualUsd,source:'v0.3'});}x.activeSession=null;}
+ return x;
+}
+
+// Manual transmission accounting is independent of the live event ledger.
+function transmissionSummary(s,period='24h',month='',now=Date.now()){
+ const span={'24h':86400000,'7d':604800000,'30d':2592000000}[period];
+ const [from,to]=period==='month'?monthBounds(month,s.settings.zone):[span?now-span:0,now+1];
+ const sessions=s.extra.manualLives.filter(l=>l.start>=from&&l.start<to&&l.start<=now).sort((a,b)=>b.start-a.start);
+ const coins=sessions.reduce((sum,l)=>sum+l.coins,0),ms=sessions.reduce((sum,l)=>sum+l.durationMs,0),usd=coins*s.extra.conversion.usdPerCoin;
+ const received=sessions.filter(l=>l.actualUsd!==null);
+ return {coins,ms,usd,sessions,perHour:ms>0?usd/(ms/3600000):null,perSession:sessions.length?usd/sessions.length:null,actualUsd:received.reduce((sum,l)=>sum+l.actualUsd,0),actualCount:received.length};
+}
+function pointsRanking(s,sort='points',direction='desc',query=''){
+ const totals={};for(const rows of Object.values(s.days))for(const [id,r] of Object.entries(rows)){totals[id]||={coins:0,likes:0};totals[id].coins+=r.coins;totals[id].likes+=r.likes;}
+ const q=String(query).toLocaleLowerCase('pt-BR'),key=['points','level','coins','likes','name'].includes(sort)?sort:'points',sign=direction==='asc'?1:-1;
+ return Object.entries(s.users).map(([id,u])=>({...u,id,...(totals[id]||{coins:0,likes:0}),...levelProgress(s.extra.points[id]||0)})).filter(u=>(u.name+' '+u.handle).toLocaleLowerCase('pt-BR').includes(q)).sort((a,b)=>sign*(key==='name'?a.name.localeCompare(b.name,'pt-BR'):a[key]-b[key])||(key==='level'?sign*(a.points-b.points):0)||a.id.localeCompare(b.id));
+}
+const FX_URL='https://api.frankfurter.dev/v2/rate/USD/BRL';
+function parseFxQuote(q,now=Date.now()){
+ if(!q||q.base!=='USD'||q.quote!=='BRL'||!/^\d{4}-\d{2}-\d{2}$/.test(q.date)||!Number.isFinite(Date.parse(q.date))||q.date>dateAt(now,'UTC')||new Date(q.date).toISOString().slice(0,10)!==q.date)throw Error('Resposta de câmbio inválida.');
+ return {base:'USD',quote:'BRL',rate:boundedInput(q.rate,0.000001,1000,'Cotação'),date:q.date};
+}
+async function fetchFxQuote(fetcher=globalThis.fetch,now=Date.now()){
+ const response=await fetcher(FX_URL,{signal:AbortSignal.timeout(10000),cache:'no-store'});if(!response.ok)throw Error('A fonte de câmbio está indisponível.');return parseFxQuote(await response.json(),now);
 }
 
 // core.js
 // Domain layer: no browser or Node dependencies. One engine, multiple transports.
-const VERSION = 2;
+const VERSION = 3;
 const clean = (v, max = 120) => String(v ?? '').slice(0, max);
 const handle = v => clean(v).trim().replace(/^@/, '').toLowerCase();
 const number = v => Math.min(1e12, Math.max(0, Math.floor(Number(v) || 0)));
+const timestamp=v=>Math.min(Number.MAX_SAFE_INTEGER,Math.max(0,Math.floor(Number(v)||0)));
 function imageURL(v) {
   const s = clean(v, 2000);
   try { const u = new URL(s); return ['https:', 'http:'].includes(u.protocol) && !u.username && !u.password ? u.href : ''; } catch { return ''; }
@@ -185,13 +239,15 @@ class Engine {
     let giftDelta=0;
     if (e.type === 'like') row.likes += e.likes;
     if (e.type === 'gift') {
-      let delta = e.count;
+      let delta = e.count,displayCount=e.count;
       if (e.streak) {
         const key = '$'+[e.id,e.giftId,e.groupId || 'fallback'].join('|');
         const prev = s.streaks[key];
         // Without a groupId, completion followed by a nonfinal packet starts a new streak.
         const restart = !prev || (!e.groupId && ((prev.end && !e.end) || (now-prev.time > 120000)));
         const previous = restart ? 0 : prev.count;
+        if(restart)delete s.extra.highlightBaselines[key];
+        displayCount=Math.max(0,e.count-(s.extra.highlightBaselines[key]||0));
         delta = Math.max(0,e.count-previous);
         s.streaks[key] = {count:Math.max(previous,e.count),end:e.end || (!restart && prev?.end) || false,time:now};
         if (Object.keys(s.streaks).length > 5000) s.streaks = Object.fromEntries(Object.entries(s.streaks).filter(([,v])=>now-v.time < 86400000));
@@ -199,11 +255,11 @@ class Engine {
       giftDelta=delta;
       row.coins += delta * (e.unit ?? 0); row.gifts += delta;
       if (delta && e.unit === null) s.diagnostics.unpriced += delta;
-      const item = {userId:uid,name:e.giftName,image:e.giftImage,unit:e.unit,count:e.count,time:now};
+      const item = {userId:uid,name:e.giftName,image:e.giftImage,unit:e.unit,count:displayCount,time:now};
       if (delta) s.highlights.last = item;
-      if (e.count > 1 && delta) s.highlights.recentCombo = item;
-      if (e.count > 1 && (!s.highlights.bestCombo || e.count > s.highlights.bestCombo.count)) s.highlights.bestCombo = item;
-      if (e.unit !== null && (!s.highlights.expensive || e.unit > s.highlights.expensive.unit)) s.highlights.expensive = item;
+      if (displayCount > 1 && delta) s.highlights.recentCombo = item;
+      if (delta && displayCount > 1 && (!s.highlights.bestCombo || displayCount > s.highlights.bestCombo.count)) s.highlights.bestCombo = item;
+      if (delta && e.unit !== null && (!s.highlights.expensive || e.unit > s.highlights.expensive.unit)) s.highlights.expensive = item;
     }
     recordExtras(s,e,uid,giftDelta,now);
     s.updatedAt = now; s.diagnostics.accepted++; s.diagnostics.lastEvent=now;
@@ -231,16 +287,16 @@ function setRole(s, role, input) {
 }
 function validateState(input) {
   // Rebuild dictionaries instead of merging arbitrary imported properties.
-  if (!input || ![1,VERSION].includes(input.version) || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
+  if (!input || ![1,2,VERSION].includes(input.version) || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
   const s=freshState();
   try { new Intl.DateTimeFormat('pt-BR',{timeZone:input.settings?.zone}).format(); } catch {throw Error('Fuso inválido no backup.');}
   s.settings.zone=input.settings?.zone || s.settings.zone;
   if (input.settings?.endpoint) s.settings.endpoint=validateEndpoint(input.settings.endpoint);
-  s.createdAt=number(input.createdAt); s.updatedAt=number(input.updatedAt);
+  s.createdAt=timestamp(input.createdAt); s.updatedAt=timestamp(input.updatedAt);
   if (Object.keys(input.users).length>100000) throw Error('Backup excede 100 mil participantes.');
   for (const [id,u] of Object.entries(input.users)) {
     if (!id.startsWith('$') || !u || typeof u!=='object') throw Error('Participante inválido.');
-    s.users[id]={id:clean(u.id),handle:handle(u.handle),name:clean(u.name),avatar:imageURL(u.avatar),lastSeen:number(u.lastSeen)};
+    s.users[id]={id:clean(u.id),handle:handle(u.handle),name:clean(u.name),avatar:imageURL(u.avatar),lastSeen:timestamp(u.lastSeen)};
   }
   for (const [day,rows] of Object.entries(input.days)) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !rows || typeof rows!=='object') throw Error('Data inválida.');
@@ -256,14 +312,15 @@ function validateState(input) {
   if (h && /^\d{4}-\d{2}-\d{2}$/.test(h.day)) {
     s.highlights.day=h.day;
     for (const k of ['last','recentCombo','bestCombo','expensive']) {
-      const g=h[k]; if(g && s.users[g.userId]) s.highlights[k]={userId:g.userId,name:clean(g.name),image:imageURL(g.image),unit:g.unit===null?null:number(g.unit),count:number(g.count),time:number(g.time)};
+      const g=h[k]; if(g && s.users[g.userId]) s.highlights[k]={userId:g.userId,name:clean(g.name),image:imageURL(g.image),unit:g.unit===null?null:number(g.unit),count:number(g.count),time:timestamp(g.time)};
     }
   }
-  for (const [id,t] of Object.entries(input.seen || {}).slice(-12000)) if(id.startsWith('$')) s.seen[id]=number(t);
-  for (const [id,v] of Object.entries(input.streaks || {}).slice(-5000)) if(id.startsWith('$') && v) s.streaks[id]={count:number(v.count),time:number(v.time),end:v.end===true};
+  for (const [id,t] of Object.entries(input.seen || {}).slice(-12000)) if(id.startsWith('$')) s.seen[id]=timestamp(t);
+  for (const [id,v] of Object.entries(input.streaks || {}).slice(-5000)) if(id.startsWith('$') && v) s.streaks[id]={count:number(v.count),time:timestamp(v.time),end:v.end===true};
   for (const k of ['received','accepted','duplicates','unknown','invalid','unpriced','lastEvent']) s.diagnostics[k]=number(input.diagnostics?.[k]);
+  s.diagnostics.lastEvent=timestamp(input.diagnostics?.lastEvent);
   for (const [k,v] of Object.entries(input.diagnostics?.types || {}).slice(0,100)) if(k.startsWith('$')) s.diagnostics.types[k]=number(v);
-  if(input.version===2&&!input.extra)throw Error('Backup incompleto.');
+  if(input.version>=2&&!input.extra)throw Error('Backup incompleto.');
   s.extra=validateExtras(s,input.extra,input.version);
   return s;
 }
@@ -311,12 +368,15 @@ const giftTitles={last:'Último presente',recentCombo:'Combo recente',bestCombo:
 function avatar(user,large=false){return `<span class="avatar ${large?'large':''}"><span>${esc((user?.name||user?.handle||'?').slice(0,2).toUpperCase())}</span>${user?.avatar?`<img alt="" src="${esc(user.avatar)}" loading="lazy">`:''}</span>`;}
 function watchImages(root){for(const i of root.querySelectorAll('img'))i.addEventListener('error',()=>i.remove(),{once:true});for(const el of root.querySelectorAll('[data-bg]'))el.style.setProperty('--overlay-bg',validColor(el.dataset.bg));}
 function visualOf(s,key,override={}){return {...defaultVisual(),...s.extra?.visuals[key],...override};}
-function cardAttrs(v,classes){return `class="overlay-card ${classes} ${v.container?'boxed':'bare'} ${v.style==='ribbon'?'ribbon':''}" data-bg="${validColor(v.color)}"`;}
+function cardAttrs(v,classes){return `class="overlay-card ${classes} ${v.container?'boxed':'bare'} ${v.style==='ribbon'?'ribbon':v.style==='portrait'?'portrait':''}" data-bg="${validColor(v.color)}"`;}
 function rankView(s,{period='day',metric='coins',limit=5,start='',end='',...overrides}={}){
  const v=visualOf(s,metric==='likes'?'rankLikes':'rankCoins',overrides);const rows=(start&&end?historicalRanking(s,start,end,metric):ranking(s,period,metric)).slice(0,limit);
  return `<div ${cardAttrs(v,'rank-card')}><div class="overlay-kicker">TOP ${start?'DO PERÍODO':esc(periods[period]||periods.day)}</div><h2>${metric==='likes'?'Quem dá mais likes':'Quem manda mais moedas'}</h2>${rows.length?rows.map((u,i)=>{const l=levelProgress(s.extra?.points[u.id]||0);return `<div class="rank-row"><b class="position">${i+1}</b>${avatar(u)}<div class="person"><strong>${esc(u.name)}</strong><small>@${esc(u.handle||u.id.slice(1))}</small>${v.showLevel?`<span class="level-badge">Nível ${l.level}</span>`:''}</div><b class="score">${fmt(u.value)}<small>${metric==='likes'?'likes':'moedas'}</small></b></div>`;}).join(''):'<p class="overlay-empty">Aguardando os primeiros eventos</p>'}</div>`;
 }
-function giftView(s,key,overrides={}){const v=visualOf(s,'gifts',overrides),item=s.highlights.day===dayKey(Date.now(),s.settings.zone)?s.highlights[key]:null,user=item?s.users[item.userId]:null;return `<div ${cardAttrs(v,'gift-card')}><div class="overlay-kicker">${esc(giftTitles[key]||'Presente')}</div>${item?`<div class="gift-content">${item.image?`<img class="gift-image" alt="" src="${esc(item.image)}">`:'<span class="gift-placeholder">✦</span>'}<div><h2>${esc(item.name)}</h2><p class="gift-count">×${fmt(item.count)}</p></div></div><div class="gift-donor">${avatar(user)}<div><strong>${esc(user?.name)}</strong><small>${item.unit===null?'Valor em moedas indisponível':`${fmt(item.unit)} moedas por unidade · ${fmt(item.unit*item.count)} no combo`}</small></div></div>`:'<p class="overlay-empty">Aguardando presente</p>'}</div>`;}
+function giftView(s,key,overrides={}){const v=visualOf(s,'gifts',overrides),item=s.highlights.day===dayKey(Date.now(),s.settings.zone)?s.highlights[key]:null,user=item?s.users[item.userId]:null;
+ const gift=item?(item.image?`<img class="gift-image" alt="${esc(item.name)}" src="${esc(item.image)}">`:'<span class="gift-placeholder">✦</span>'):'';
+ const content=!item?'<p class="overlay-empty">Aguardando presente</p>':v.style==='portrait'?`<div class="gift-portrait"><div class="portrait-cluster">${avatar(user,true)}<div class="portrait-accessory">${gift}<b class="portrait-count">×${fmt(item.count)}</b></div></div><div class="portrait-identity"><strong>${esc(user?.name)}</strong><small>@${esc(user?.handle||'')}</small><span>${esc(item.name)}</span></div></div>`:`<div class="gift-content">${gift}<div><h2>${esc(item.name)}</h2><p class="gift-count">×${fmt(item.count)}</p></div></div><div class="gift-donor">${avatar(user)}<div><strong>${esc(user?.name)}</strong><small>${item.unit===null?'Valor em moedas indisponível':`${fmt(item.unit)} moedas por unidade · ${fmt(item.unit*item.count)} no combo`}</small></div></div>`;
+ return `<div ${cardAttrs(v,'gift-card')}><div class="overlay-kicker">${esc(giftTitles[key]||'Presente')}</div>${content}</div>`;}
 function roleView(s,role,overrides={}){const v=visualOf(s,'roles',overrides),u=resolveRole(s,role),hero=role==='hero';return `<div ${cardAttrs(v,'role-card '+(hero?'hero':'villain'))}><div class="role-topline">${hero?'✦ HERÓI':'✧ VILÃO'} <span>DA LIVE</span></div>${avatar(u,true)}<div class="role-identity"><h2>${esc(u.name||'Quem será?')}</h2><p>${u.handle?'@'+esc(u.handle):'Escolha no painel'}</p>${u.handle&&!u.avatar?'<small class="await-photo">Aguardando foto do participante</small>':''}</div></div>`;}
 function clock(ms){const secs=Math.max(0,Math.ceil(ms/1000));return [Math.floor(secs/3600),Math.floor(secs%3600/60),secs%60].map(n=>String(n).padStart(2,'0')).join(':');}
 function widgetView(s,kind,overrides={}){const key=['lastFollower','followers'].includes(kind)?'followers':kind,v=visualOf(s,key,overrides);const x=s.extra;let content='';
@@ -354,7 +414,7 @@ const params=new URLSearchParams(location.search),token=new URLSearchParams(loca
 const root=document.querySelector('#overlay-root'),badge=document.querySelector('#overlay-status');
 let lastPacket=0,current=freshState(),lastHTML='';
 function render(){const html=overlayView(current,params);if(html!==lastHTML){root.innerHTML=html;watchImages(root);lastHTML=html;}}
-function receive(packet){if(!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.3.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
+function receive(packet){if(packet.state?.version!==3||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.4.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
 if(params.get('demo')==='1'){
   current=demoState();render();badge.textContent='DEMONSTRAÇÃO';
 }else if(token && location.hostname==='127.0.0.1'){
