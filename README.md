@@ -1,8 +1,8 @@
-# AMARILLOU LIVE — v0.1.0
+# AMARILLOU LIVE — v0.2.0
 
-Painel modular de TikTok LIVE em português. HTML, CSS e JavaScript nativos, sem build ou dependências de produção. Hospedagem estática no GitHub Pages; ponte local opcional para compartilhar estado com OBS/Live Studio.
+Painel modular de TikTok LIVE em português. HTML, CSS e JavaScript nativos, sem dependências de produção. Os HTMLs entregues já incluem o código e o estilo; não exigem build para publicar. Hospedagem estática no GitHub Pages; ponte local opcional para compartilhar estado com OBS/Live Studio.
 
-**Comece por [docs/GUIA.html](docs/GUIA.html)**, que pode ser aberto diretamente no navegador, ou pelo guia abaixo.
+**Comece por [ATUALIZAR-v0.2.txt](ATUALIZAR-v0.2.txt) e [GUIA.html](GUIA.html)**, que pode ser aberto diretamente no navegador, ou pelo guia abaixo.
 
 ## Incluído
 
@@ -78,7 +78,7 @@ No macOS/Linux: abra um terminal na pasta e execute `node local/server.mjs`. Nã
 4. Sem `msgId`, não há deduplicação perfeita de mensagens independentes. Sem `groupId`, o fallback distingue combos pela conclusão/reinício e intervalo; finais isolados repetidos ou sequências sem início podem ser ambíguos. A deduplicação mantém uma janela limitada (8–12 mil mensagens) e não elimina replays arbitrariamente antigos.
 5. HTTPS → WebSocket local depende da versão do navegador, permissões e política do servidor. Não se promete compatibilidade universal. Use o modo local se o navegador bloquear; a ponte se conecta ao TikFinity fora do navegador e as páginas locais consultam HTTP na mesma origem.
 6. GitHub Pages sozinho não oferece backend para sincronização entre aplicativos/dispositivos. A versão incluída resolve isso com ponte no próprio computador. Uma evolução totalmente online poderá usar backend autenticado com salas, persistência e sincronização remota.
-7. Há limites práticos de armazenamento do navegador, memória e tamanho de snapshots. Backup aceito até 32 MB; até 100 mil perfis por importação. Esta é uma base modular v0.1, não uma plataforma multiusuário em nuvem já operada em escala.
+7. Há limites práticos de armazenamento do navegador, memória e tamanho de snapshots. Backup aceito até 32 MB; até 100 mil perfis por importação. Esta é uma base modular v0.2, não uma plataforma multiusuário em nuvem já operada em escala.
 
 ## Testes
 
@@ -95,3 +95,11 @@ Veja [docs/VALIDACAO.md](docs/VALIDACAO.md) para os testes realizados e o roteir
 - [GitHub — Criar site Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site): publicação estática.
 
 Projeto independente, sem afiliação com TikTok ou TikFinity.
+
+## Correção v0.2
+
+`index.html`, `overlay.html` e `GUIA.html` são independentes de pastas de recursos. O JavaScript/CSS de cada página foi incorporado no próprio HTML para evitar que um módulo ausente interrompa todos os controles. Avisos de inicialização aparecem na página; bloqueios de BroadcastChannel não impedem a demo. O acesso inicial ao IndexedDB tem limite de 5 segundos.
+
+A causa exata na publicação do usuário não foi confirmada, pois a URL não foi fornecida. A v0.2 elimina a dependência de carregamento que poderia produzir o sintoma relatado.
+
+Os fontes modulares continuam disponíveis. Para desenvolver: edite `src/`, `styles.css` e `ui/*.template.html`, depois execute `npm run build` para atualizar os HTMLs independentes e `npm test`. Node só é necessário para desenvolvimento ou ponte local, nunca para publicar os HTMLs prontos.

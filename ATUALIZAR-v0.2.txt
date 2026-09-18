@@ -1,0 +1,18 @@
+AMARILLOU LIVE v0.2 — CORREÇÃO DOS BOTÕES
+
+1. Extraia este ZIP. Os arquivos já estão na raiz, sem pasta adicional.
+2. No mesmo repositório e pasta onde está seu site, escolha Add file > Upload files.
+3. Envie index.html, overlay.html e GUIA.html deste ZIP. Confirme a substituição dos existentes em Commit changes.
+4. Aguarde o GitHub Pages publicar a atualização.
+5. Abra o site e pressione Ctrl+F5. Confira v0.2 no canto inferior esquerdo (desktop).
+6. Clique Experimentar demo. Os participantes devem aparecer mesmo sem TikFinity e sem live.
+7. Teste abas e Semana/Mês. Saia da demo antes de Conectar TikFinity.
+
+Para a página publicada, esses três HTMLs bastam. O código e o estilo já estão dentro deles.
+Não é necessário instalar Node.js, compilar, apagar o repositório ou mudar CNAME/domínio.
+As pastas extras contêm código-fonte, testes, documentação e a ponte local opcional.
+Se usa a ponte local, substitua também local/, src/ e os demais arquivos do projeto extraído; seu save fica fora dessa pasta e é preservado.
+
+Se ainda não responder, envie o endereço EXATO do site e uma captura da mensagem de erro. A versão 0.2 exibe erros de inicialização na própria página.
+
+TESTADO: 23 testes automatizados de código/integração e ações reais em Chromium (demo, abas, períodos, métricas, herói, overlay e recarga). A live TikFinity e o OBS/Live Studio do usuário ainda precisam do teste no PC.

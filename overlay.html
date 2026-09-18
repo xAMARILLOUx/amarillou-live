@@ -1,1 +1,265 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>AMARILLOU LIVE · Overlay</title><link rel="stylesheet" href="./styles.css"><script type="module" src="./src/overlay.js"></script></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div></body></html>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>AMARILLOU LIVE · Overlay</title><style>:root{color-scheme:dark;--bg:#101113;--panel:#191b1e;--line:#303237;--muted:#a4a8b1;--text:#f3f4f5;--yellow:#e7ff72;--green:#65efb4;--red:#ff6f86;font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}button,input,select{font:inherit}button,a,input,select,summary{outline-offset:4px}button{background:#25272c;color:var(--text);border:1px solid #3c3f46;border-radius:9px;padding:11px 16px;cursor:pointer;font-weight:600;font-size:.875rem;transition:background .15s,transform .15s}button:hover{background:#34373d}button:active{transform:translateY(1px)}button:disabled{opacity:.45;cursor:not-allowed}button.primary,.primary{background:var(--yellow);color:#172000;border-color:var(--yellow)}button.primary:hover{background:#f0ffa3}button.danger{background:#fb6b82;border-color:#fb6b82;color:#310911}.subtle{background:transparent;border-color:transparent}.wide{width:100%;margin-top:14px}a{color:var(--yellow);text-decoration:none}a:hover{text-decoration:underline}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(1.8rem,2.6vw,2.7rem);letter-spacing:-1.5px;line-height:1.15;margin-bottom:12px;font-weight:750}h2{font-size:1.125rem;line-height:1.35;margin-bottom:12px}h3{font-size:1.05rem}p{margin-bottom:16px}small,.small{font-size:.8125rem;color:var(--muted)}.muted{color:var(--muted)}.accent{color:var(--yellow)}.eyebrow{font-size:.75rem;font-weight:700;letter-spacing:1.9px;color:var(--muted);margin-bottom:12px}.sidebar{position:fixed;inset:0 auto 0 0;width:242px;border-right:1px solid var(--line);padding:32px 22px;display:flex;flex-direction:column;background:#141517;z-index:5}.brand{display:flex;align-items:center;gap:12px;color:var(--text);font-size:1rem;font-weight:800;letter-spacing:.5px}.brand:hover{text-decoration:none}.brand-mark{display:grid;place-items:center;width:40px;height:44px;font-size:34px;font-weight:950;color:var(--yellow);line-height:1;transform:skew(-10deg)}.brand-sub{display:block;font-size:.625rem;letter-spacing:3px;color:var(--muted);margin-top:3px}.nav-caption{font-size:.7rem;letter-spacing:1.6px;color:#858a94;margin:56px 12px 17px}.sidebar nav{display:grid;gap:8px}.nav{text-align:left;background:transparent;border:1px solid transparent;padding:14px 12px;color:#b3b6bd;display:flex;gap:13px;align-items:center}.nav span{color:#737984;font-size:.75rem;font-weight:400}.nav.active{background:#252a1d;color:var(--yellow);border-color:#424b2d}.nav.active span{color:var(--yellow)}.sidebar-bottom{margin-top:auto;padding:22px 10px 0}.edition{font-size:.75rem;letter-spacing:1px;font-weight:700}.edition span{border:1px solid #40434a;color:var(--muted);border-radius:4px;padding:1px 5px;margin-left:12px;font-size:.65rem}.sidebar-bottom p{color:#8e929b;font-size:.85rem;margin:12px 0 22px}.sidebar-bottom a{font-size:.8rem}main{margin-left:242px;padding:0 40px;max-width:1900px}.topbar{height:94px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px}.pill,.tag{border:1px solid #383b41;color:#b9bcc3;border-radius:6px;font-size:.7rem;font-weight:600;padding:6px 9px;letter-spacing:.5px;white-space:nowrap}.top-actions{display:flex;align-items:center;gap:16px}.status{font-size:.8125rem;color:var(--muted);display:flex;align-items:center;gap:8px}.status::before{content:'';width:7px;height:7px;border-radius:50%;background:#727680}.status[data-code=connected]::before{background:var(--green)}.status[data-code=error]::before{background:var(--red)}.status[data-code=demo]::before{background:var(--yellow)}.page-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:38px 0 28px}.page-heading .muted{font-size:.9375rem;margin:0}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:26px}.stats article{border:1px solid var(--line);border-radius:12px;padding:22px;background:linear-gradient(120deg,#202226,#191b1d)}.stats article>span{font-size:.85rem;color:#b2b6be}.stats strong{display:block;font-size:2.15rem;letter-spacing:-1px;margin:8px 0 5px;font-weight:700}.stats article:nth-child(2) strong{color:var(--yellow)}.stats small{font-size:.75rem}.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;min-width:0}.workspace{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:24px}.panel-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}.panel-heading h2{margin:0}.panel-heading .tag{font-size:.625rem}.filters{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.segmented{display:flex;background:#111315;padding:4px;border:1px solid var(--line);border-radius:8px}.segmented button{background:transparent;border:0;color:var(--muted);font-size:.8rem;padding:8px 16px}.segmented button.selected{background:#34372d;color:var(--yellow)}input,select{width:100%;background:#111315;color:var(--text);border:1px solid #393d44;border-radius:8px;padding:12px 13px;min-width:0;font-size:.875rem}select{cursor:pointer}.filters select{width:150px}label{display:block;font-size:.875rem;color:#d1d3d9;margin:16px 0 8px}.table-wrap{overflow:auto;max-height:580px}table{width:100%;border-collapse:collapse;text-align:left}th{font-size:.75rem;color:#9298a2;font-weight:500;padding:12px 0;border-bottom:1px solid var(--line)}th:last-child,td:last-child{text-align:right}td{padding:15px 0;border-bottom:1px solid #2b2e33;font-size:.875rem}.place{color:#9298a2;width:40px}.participant{display:flex;align-items:center;gap:12px}.participant strong{font-size:.875rem}.participant small{display:block;font-size:.75rem}.table-score{font-weight:700;font-variant-numeric:tabular-nums}tbody tr:first-child .place,tbody tr:first-child .table-score{color:var(--yellow)}.avatar{position:relative;display:inline-grid;place-items:center;border-radius:50%;background:#383d38;color:#e7eacf;flex:0 0 40px;width:40px;height:40px;font-size:13px;font-weight:700;overflow:hidden}.avatar img{position:absolute;width:100%;height:100%;object-fit:cover}.empty{text-align:center;padding:52px 20px 60px}.empty-mark{display:inline-grid;place-items:center;width:52px;height:52px;border:1px solid #414839;border-radius:12px;color:var(--yellow);font-size:26px;background:#272d21;margin-bottom:22px}.empty h3{margin-bottom:8px}.empty p{font-size:.875rem;color:var(--muted);max-width:310px;margin:0 auto 22px}.panel-foot{font-size:.75rem;color:var(--muted);padding-top:18px}.checker{background-color:#111315;background-image:linear-gradient(45deg,#1b1e21 25%,transparent 25%),linear-gradient(-45deg,#1b1e21 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#1b1e21 75%),linear-gradient(-45deg,transparent 75%,#1b1e21 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0;border-radius:10px}.preview{padding:24px 16px;min-height:260px;display:flex;align-items:center;justify-content:center}.preview>div{width:100%}.text-link{display:block;text-align:center;font-size:.8125rem;margin:14px 0}.preview-panel>label{margin-top:22px}.overlay-help{margin-top:15px;line-height:1.6}.overlay-card{color:#f7f8fa;border-radius:16px;border:1px solid #454940;background:linear-gradient(145deg,rgba(29,33,29,.98),rgba(15,18,18,.96));padding:24px;overflow:hidden;min-width:0}.overlay-kicker{font-weight:750;font-size:.75rem;letter-spacing:1.8px;color:var(--yellow);text-transform:uppercase;margin-bottom:8px}.overlay-card h2{font-size:1.1rem;margin-bottom:18px}.rank-row{display:flex;gap:10px;align-items:center;border-top:1px solid #ffffff14;padding:13px 0}.rank-row:last-child{padding-bottom:0}.position{font-size:.875rem;color:#969e92;width:16px}.rank-row:first-of-type .position{color:var(--yellow)}.person{min-width:0;flex:1}.person strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.85rem}.person small{display:block;font-size:.7rem;color:#a9b0a6;overflow:hidden;text-overflow:ellipsis}.score{font-size:.95rem;color:var(--yellow);text-align:right;font-variant-numeric:tabular-nums}.score small{display:block;font-size:.65rem;color:#a9b0a6;font-weight:400}.overlay-empty{color:#afb5ac;font-size:.85rem;margin:36px 0;text-align:center}.gift-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.gift-preview{padding:25px}.gift-content{display:flex;align-items:center;gap:22px;margin:24px 0}.gift-content h2{margin:0}.gift-placeholder{display:grid;place-items:center;width:64px;height:64px;color:var(--yellow);font-size:44px;background:#313826;border-radius:14px}.gift-image{width:72px;height:72px;object-fit:contain}.gift-count{font-size:2rem;color:var(--yellow);font-weight:750;margin:0}.gift-donor{display:flex;align-items:center;gap:12px;border-top:1px solid #ffffff20;padding-top:18px}.gift-donor small{display:block;font-size:.75rem}.gift-donor strong{font-size:.875rem}.role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.role-heading{display:flex;align-items:center;gap:14px;margin-bottom:24px}.role-heading .eyebrow{font-size:.625rem;margin-bottom:4px}.role-heading h2{font-size:1.4rem;margin:0}.role-symbol{color:var(--green);font-size:40px}.villain-editor .role-symbol{color:var(--red)}details{margin:18px 0;color:var(--muted);font-size:.875rem}summary{cursor:pointer}.role-preview{padding:24px;display:flex;justify-content:center;margin:24px 0 4px}.role-card{width:100%;max-width:360px;text-align:center;border-color:#387e61;background:radial-gradient(ellipse at 50% 0%,#204b3b,#111c19 75%);padding:25px}.role-card.villain{border-color:#934655;background:radial-gradient(ellipse at 50% 0%,#542832,#231419 75%)}.role-topline{display:flex;align-items:center;justify-content:space-between;font-size:.85rem;font-weight:800;color:var(--green);letter-spacing:1.6px;border-bottom:1px solid #ffffff20;padding-bottom:16px}.role-topline span{font-weight:500;font-size:.6rem;letter-spacing:1px;color:#a9b4ac}.villain .role-topline{color:var(--red)}.avatar.large{width:100px;height:100px;font-size:28px;background:#244b3b;color:var(--green);border:3px solid var(--green);margin:26px 0 16px}.villain .avatar.large{background:#522d39;color:var(--red);border-color:var(--red)}.role-card h2{font-size:1.5rem;overflow-wrap:anywhere;margin:0 0 4px}.role-card p{font-size:.875rem;color:#b9c6be;margin:0}.await-photo{display:block;font-size:.7rem;margin-top:16px}.inline-panel{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:24px 0}.inline-panel h2{margin-bottom:6px}.inline-panel p{margin:0;font-size:.875rem}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.settings-grid p{font-size:.875rem}.settings-grid ol{padding-left:23px;color:var(--muted);font-size:.9rem;line-height:2}.file-button{border:1px solid #40444c;border-radius:9px;text-align:center;cursor:pointer;padding:11px;font-weight:600}.notice{background:#272b1f;border:1px solid #525f33;border-radius:9px;padding:15px 18px;margin:20px 0;color:#e0e8cc;font-size:.875rem;line-height:1.6}.notice button{margin-left:12px}dl{font-size:.875rem}dl>div{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}dt{color:var(--muted)}dd{margin:0;font-weight:700}footer{border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;margin-top:36px;padding:22px 0 28px;font-size:.7rem;color:#7e848e;letter-spacing:.5px}#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#edf5d3;color:#1b2311;padding:16px 23px;border-radius:10px;box-shadow:0 8px 60px #0008;max-width:90vw;font-size:.9rem;z-index:50}.overlay-body{background:transparent!important;margin:0;padding:12px;color-scheme:dark;overflow:hidden}.overlay-body #overlay-root{width:100%;max-width:620px}.overlay-body:has(.overlay-duo) #overlay-root{max-width:850px}.overlay-duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.overlay-status{font-size:12px;background:#151515d9;color:#e3d8a9;border-radius:5px;padding:5px 8px;display:inline-block;margin-top:8px}.overlay-body .role-card{max-width:400px}.overlay-body .rank-card h2{font-size:1.5rem}.overlay-body .person strong{font-size:1.1rem}.overlay-body .person small{font-size:.875rem}.overlay-body .score{font-size:1.25rem}.overlay-body .score small{font-size:.75rem}.overlay-body .rank-row{padding:16px 0}.overlay-body .avatar:not(.large){height:48px;width:48px;flex-basis:48px}.overlay-body .position{font-size:1.1rem}.overlay-body .overlay-kicker{font-size:.875rem}[hidden]{display:none!important}
+@media(min-width:1600px){main{padding-left:52px;padding-right:52px}.workspace{grid-template-columns:minmax(0,1.8fr) minmax(360px,1fr)}}
+@media(max-width:1200px){.sidebar{width:206px;padding:26px 14px}.brand{font-size:.85rem}.brand-mark{font-size:30px}main{margin-left:206px;padding:0 24px}.stats{gap:12px}.stats article{padding:17px}.stats strong{font-size:1.75rem}.top-actions{gap:8px}.workspace{grid-template-columns:minmax(0,1.1fr) minmax(290px,1fr);gap:16px}.panel{padding:18px}.filters{align-items:stretch;flex-direction:column}.filters select{width:100%}.segmented button{flex:1}.gift-preview{padding:15px}}
+@media(max-width:940px){.sidebar{position:static;width:100%;padding:18px 20px;border-right:0;border-bottom:1px solid var(--line)}.sidebar nav{display:flex;gap:6px;margin-top:20px;flex-wrap:wrap}.nav{padding:10px 12px;font-size:.8rem}.nav-caption,.sidebar-bottom{display:none}.brand{font-size:1rem}.brand-sub{font-size:.65rem}.nav span{display:none}main{margin:0;padding:0 24px}.topbar{height:auto;min-height:86px;flex-wrap:wrap;padding:18px 0}.top-actions{flex-wrap:wrap}.workspace{grid-template-columns:1.1fr 1fr}.page-heading{margin-top:30px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stats article{padding:20px}.stats strong{font-size:2rem}.settings-grid{grid-template-columns:1fr}}
+@media(max-width:650px){main{padding:0 16px}.sidebar{padding:18px 16px}.sidebar nav{gap:3px}.nav{padding:9px}.topbar>.pill{font-size:.625rem}.top-actions{width:100%;justify-content:space-between}.top-actions>.subtle{padding-left:0;font-size:.75rem}.top-actions .primary{font-size:.75rem;padding:10px}.status{font-size:.75rem}.page-heading{align-items:flex-start;flex-direction:column;gap:10px}.page-heading>.tag{font-size:.65rem}.eyebrow{font-size:.65rem}.stats{gap:10px}.stats article{padding:15px}.stats article>span{font-size:.8rem}.stats strong{font-size:1.8rem}.stats small{font-size:.7rem}.workspace,.gift-grid,.role-grid{grid-template-columns:1fr}.panel{padding:18px}.filters{flex-direction:row}.filters select{width:140px}.segmented button{padding:8px 11px}.inline-panel{align-items:stretch;flex-direction:column}.inline-panel button{width:100%}footer{font-size:.65rem}.overlay-duo{gap:12px}.overlay-duo .role-card{padding:16px}.overlay-duo .role-card h2{font-size:1.1rem}.overlay-duo .role-topline{letter-spacing:0;font-size:.75rem}.overlay-duo .role-topline span{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+#boot-error{position:fixed;z-index:1000;left:16px;right:16px;bottom:16px;padding:18px;border:2px solid #ff899b;border-radius:10px;background:#441721;color:#fff;font:16px/1.6 system-ui,sans-serif}noscript{display:block;padding:20px;background:#441721;color:white}
+</style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
+window.__amarillouFailure=function(error){
+var box=document.getElementById('boot-error');if(!box)return;
+box.hidden=false;box.textContent='Falha ao iniciar o painel v0.2: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+};
+window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
+window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
+})();</script><script>(async function(){
+'use strict';
+try{
+
+// core.js
+// Domain layer: no browser or Node dependencies. One engine, multiple transports.
+const VERSION = 1;
+const clean = (v, max = 120) => String(v ?? '').slice(0, max);
+const handle = v => clean(v).trim().replace(/^@/, '').toLowerCase();
+const number = v => Math.min(1e12, Math.max(0, Math.floor(Number(v) || 0)));
+function imageURL(v) {
+  const s = clean(v, 2000);
+  try { const u = new URL(s); return ['https:', 'http:'].includes(u.protocol) && !u.username && !u.password ? u.href : ''; } catch { return ''; }
+}
+function dayKey(time = Date.now(), zone = 'America/Sao_Paulo') {
+  const parts = new Intl.DateTimeFormat('en-CA', {timeZone: zone, year:'numeric', month:'2-digit', day:'2-digit'}).formatToParts(time);
+  return ['year','month','day'].map(k => parts.find(p => p.type === k).value).join('-');
+}
+function periodRange(period, time, zone) {
+  const today = dayKey(time, zone);
+  if (period === 'month') return [today.slice(0, 7) + '-01', today];
+  if (period === 'week') { const d = new Date(today + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return [d.toISOString().slice(0,10), today]; }
+  return [today, today];
+}
+function freshState() {
+  return {version: VERSION, createdAt: Date.now(), updatedAt: 0,
+    settings: {zone:'America/Sao_Paulo', endpoint:'ws://localhost:21213/'},
+    users: {}, days:{}, roles:{hero:{handle:'',name:'',avatar:''},villain:{handle:'',name:'',avatar:''}},
+    highlights:{day:'',last:null,recentCombo:null,bestCombo:null,expensive:null}, seen:{}, streaks:{},
+    diagnostics:{received:0,accepted:0,duplicates:0,unknown:0,invalid:0,unpriced:0,lastEvent:0,types:{}}};
+}
+function normalize(raw) {
+  const p = typeof raw === 'string' ? JSON.parse(raw) : raw;
+  if (!p || typeof p !== 'object' || !p.data || typeof p.data !== 'object') return null;
+  const d = p.data, u = d.user || d, gd = d.giftDetails || d.extendedGiftInfo || {};
+  const type = clean(p.event || p.type, 40).toLowerCase();
+  const id = clean(u.userId || d.userId || u.id || u.uniqueId || d.uniqueId);
+  const username = handle(u.uniqueId || d.uniqueId);
+  const avatar = imageURL(u.profilePictureUrl || d.profilePictureUrl || u.avatarThumb?.urlList?.[0]);
+  const unitRaw = d.diamondCount ?? gd.diamondCount ?? d.gift?.diamondCount;
+  return {type, id, handle:username, name:clean(u.nickname || d.nickname || username || id), avatar,
+    msgId:clean(d.msgId || d.common?.msgId || p.msgId), groupId:clean(d.groupId || d.gift?.groupId),
+    likes:number(d.likeCount), giftId:clean(d.giftId || gd.id || d.giftName),
+    giftName:clean(d.giftName || gd.name || 'Presente'), giftImage:imageURL(d.giftPictureUrl || gd.image?.urlList?.[0]),
+    unit:unitRaw === undefined ? null : number(unitRaw), count:Math.max(1,number(d.repeatCount ?? 1)),
+    streak:Number(d.giftType ?? gd.giftType ?? d.gift?.giftType) === 1,
+    end:d.repeatEnd === true || d.repeatEnd === 1 || d.repeatEnd === 'true'};
+}
+const supported = new Set(['gift','like','chat','follow','share','subscribe','subscription','member']);
+class Engine {
+  constructor(state = freshState()) { this.state = state; }
+  ingest(raw, now = Date.now()) {
+    const s = this.state; s.diagnostics.received++;
+    let e; try {e = normalize(raw);} catch {s.diagnostics.invalid++; return false;}
+    if (!e) {s.diagnostics.invalid++; return false;}
+    const typeKey = '$'+e.type;
+    s.diagnostics.types[typeKey] = (s.diagnostics.types[typeKey] || 0) + 1;
+    if (!supported.has(e.type)) {s.diagnostics.unknown++; return false;}
+    if (!e.id) {s.diagnostics.invalid++; return false;}
+    // A message id can be shared by streak updates, so count/end form part of its identity.
+    const dedup = e.msgId ? '$'+[e.type,e.id,e.msgId,e.count,e.end].join('|') : '';
+    if (dedup && s.seen[dedup]) {s.diagnostics.duplicates++; return false;}
+    if (dedup) s.seen[dedup] = now;
+    if (Object.keys(s.seen).length > 12000) {
+      s.seen = Object.fromEntries(Object.entries(s.seen).sort((a,b)=>b[1]-a[1]).slice(0,8000));
+    }
+    const uid = '$'+e.id;
+    const old = s.users[uid] || {};
+    s.users[uid] = {id:e.id,handle:e.handle || old.handle || '',name:e.name || old.name || e.id,avatar:e.avatar || old.avatar || '',lastSeen:now};
+    const day = dayKey(now, s.settings.zone);
+    if (s.highlights.day !== day) s.highlights = {...freshState().highlights, day};
+    s.days[day] ||= {};
+    const row = s.days[day][uid] ||= {likes:0,coins:0,gifts:0};
+    if (e.type === 'like') row.likes += e.likes;
+    if (e.type === 'gift') {
+      let delta = e.count;
+      if (e.streak) {
+        const key = '$'+[e.id,e.giftId,e.groupId || 'fallback'].join('|');
+        const prev = s.streaks[key];
+        // Without a groupId, completion followed by a nonfinal packet starts a new streak.
+        const restart = !prev || (!e.groupId && ((prev.end && !e.end) || (now-prev.time > 120000)));
+        const previous = restart ? 0 : prev.count;
+        delta = Math.max(0,e.count-previous);
+        s.streaks[key] = {count:Math.max(previous,e.count),end:e.end || (!restart && prev?.end) || false,time:now};
+        if (Object.keys(s.streaks).length > 5000) s.streaks = Object.fromEntries(Object.entries(s.streaks).filter(([,v])=>now-v.time < 86400000));
+      }
+      row.coins += delta * (e.unit ?? 0); row.gifts += delta;
+      if (delta && e.unit === null) s.diagnostics.unpriced += delta;
+      const item = {userId:uid,name:e.giftName,image:e.giftImage,unit:e.unit,count:e.count,time:now};
+      if (delta) s.highlights.last = item;
+      if (e.count > 1 && delta) s.highlights.recentCombo = item;
+      if (e.count > 1 && (!s.highlights.bestCombo || e.count > s.highlights.bestCombo.count)) s.highlights.bestCombo = item;
+      if (e.unit !== null && (!s.highlights.expensive || e.unit > s.highlights.expensive.unit)) s.highlights.expensive = item;
+    }
+    s.updatedAt = now; s.diagnostics.accepted++; s.diagnostics.lastEvent=now;
+    return true;
+  }
+}
+function ranking(s, period='day', metric='coins', now=Date.now()) {
+  const [start,end] = periodRange(period,now,s.settings.zone); const totals = new Map();
+  for (const [day,users] of Object.entries(s.days)) if (day>=start && day<=end) {
+    for (const [id,row] of Object.entries(users)) totals.set(id,(totals.get(id)||0)+number(row[metric]));
+  }
+  return [...totals].filter(([,value])=>value>0).map(([id,value])=>({...s.users[id],id,value}))
+    .sort((a,b)=>b.value-a.value || a.id.localeCompare(b.id));
+}
+function resolveRole(s, role) {
+  const r=s.roles[role]; const user=Object.values(s.users).find(u=>u.handle && u.handle===r.handle);
+  return {handle:r.handle,name:r.name || user?.name || r.handle,avatar:r.avatar || user?.avatar || ''};
+}
+function setRole(s, role, input) {
+  if (!['hero','villain'].includes(role)) throw Error('Papel inválido');
+  s.roles[role] = {handle:handle(input.handle),name:clean(input.name),avatar:imageURL(input.avatar)};
+  s.updatedAt=Date.now();
+}
+function validateState(input) {
+  // Rebuild dictionaries instead of merging arbitrary imported properties.
+  if (!input || input.version!==VERSION || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
+  const s=freshState();
+  try { new Intl.DateTimeFormat('pt-BR',{timeZone:input.settings?.zone}).format(); } catch {throw Error('Fuso inválido no backup.');}
+  s.settings.zone=input.settings?.zone || s.settings.zone;
+  if (input.settings?.endpoint) s.settings.endpoint=validateEndpoint(input.settings.endpoint);
+  s.createdAt=number(input.createdAt); s.updatedAt=number(input.updatedAt);
+  if (Object.keys(input.users).length>100000) throw Error('Backup excede 100 mil participantes.');
+  for (const [id,u] of Object.entries(input.users)) {
+    if (!id.startsWith('$') || !u || typeof u!=='object') throw Error('Participante inválido.');
+    s.users[id]={id:clean(u.id),handle:handle(u.handle),name:clean(u.name),avatar:imageURL(u.avatar),lastSeen:number(u.lastSeen)};
+  }
+  for (const [day,rows] of Object.entries(input.days)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !rows || typeof rows!=='object') throw Error('Data inválida.');
+    s.days[day]={};
+    for (const [id,row] of Object.entries(rows)) {
+      if (!s.users[id] || !row) throw Error('Ranking sem participante.');
+      for (const k of ['likes','coins','gifts']) if (!Number.isSafeInteger(row[k]) || row[k]<0) throw Error('Contagem inválida.');
+      s.days[day][id]={likes:row.likes,coins:row.coins,gifts:row.gifts};
+    }
+  }
+  for (const role of ['hero','villain']) setRole(s,role,input.roles[role] || {});
+  const h=input.highlights;
+  if (h && /^\d{4}-\d{2}-\d{2}$/.test(h.day)) {
+    s.highlights.day=h.day;
+    for (const k of ['last','recentCombo','bestCombo','expensive']) {
+      const g=h[k]; if(g && s.users[g.userId]) s.highlights[k]={userId:g.userId,name:clean(g.name),image:imageURL(g.image),unit:g.unit===null?null:number(g.unit),count:number(g.count),time:number(g.time)};
+    }
+  }
+  for (const [id,t] of Object.entries(input.seen || {}).slice(-12000)) if(id.startsWith('$')) s.seen[id]=number(t);
+  for (const [id,v] of Object.entries(input.streaks || {}).slice(-5000)) if(id.startsWith('$') && v) s.streaks[id]={count:number(v.count),time:number(v.time),end:v.end===true};
+  for (const k of ['received','accepted','duplicates','unknown','invalid','unpriced','lastEvent']) s.diagnostics[k]=number(input.diagnostics?.[k]);
+  for (const [k,v] of Object.entries(input.diagnostics?.types || {}).slice(0,100)) if(k.startsWith('$')) s.diagnostics.types[k]=number(v);
+  return s;
+}
+function validateEndpoint(value) {
+  const u=new URL(value);
+  if (!['ws:','wss:'].includes(u.protocol) || !['localhost','127.0.0.1','[::1]'].includes(u.hostname) || u.username || u.password) throw Error('Use um WebSocket local: ws://localhost:21213/');
+  return u.href;
+}
+
+// connection.js
+class TikFinityConnection {
+  constructor(onMessage,onStatus) {this.onMessage=onMessage;this.onStatus=onStatus;this.running=false;this.attempt=0;this.generation=0;}
+  start(endpoint) {this.stop();this.endpoint=validateEndpoint(endpoint);this.running=true;this.open(this.generation);}
+  open(generation) {
+    if (!this.running || generation!==this.generation) return;
+    this.onStatus('connecting','Conectando ao TikFinity…');
+    try {this.socket=new WebSocket(this.endpoint);} catch(e) {this.onStatus('error','Conexão bloqueada. Confira o endereço e as permissões locais.');this.retry(generation);return;}
+    const ws=this.socket;
+    const timeout=setTimeout(()=>{if(ws.readyState!==1) ws.close();},10000);
+    ws.onopen=()=>{clearTimeout(timeout);if(generation!==this.generation)return;this.attempt=0;this.onStatus('connected','TikFinity conectado · aguardando eventos da live');};
+    ws.onmessage=e=>{if(generation===this.generation && typeof e.data==='string')this.onMessage(e.data);};
+    ws.onerror=()=>{if(generation===this.generation)this.onStatus('error','Não foi possível acessar o TikFinity. Confira o aplicativo, a API local e as permissões do navegador.');};
+    ws.onclose=()=>{clearTimeout(timeout);if(generation===this.generation && this.running){this.onStatus('reconnecting','Sem conexão · tentando novamente');this.retry(generation);}};
+  }
+  retry(generation) {clearTimeout(this.timer);this.timer=setTimeout(()=>this.open(generation),Math.min(15000,1000*2**Math.min(this.attempt++,4)));}
+  stop() {this.generation++;this.running=false;clearTimeout(this.timer);this.socket?.close();this.onStatus('disconnected','Desconectado');}
+}
+
+// storage.js
+const dbName='amarillou-live:'+new URL('.',location.href).pathname;
+const channelName=dbName;
+let db;
+async function openDB(){
+  if(db)return db;
+  db=await new Promise((resolve,reject)=>{let finished=false;const fail=e=>{if(finished)return;finished=true;clearTimeout(timer);reject(e);};const timer=setTimeout(()=>fail(Error('O navegador não liberou o histórico em 5 segundos. Feche outras abas e recarregue.')),5000);let r;try{r=indexedDB.open(dbName,1);}catch(e){fail(e);return;}r.onupgradeneeded=()=>r.result.createObjectStore('state');r.onsuccess=()=>{if(finished){r.result.close();return;}finished=true;clearTimeout(timer);resolve(r.result);};r.onerror=()=>fail(r.error);r.onblocked=()=>fail(Error('Histórico bloqueado por outra aba. Feche as outras abas do painel.'));});return db;
+}
+async function loadState(){const d=await openDB();return new Promise((resolve,reject)=>{const r=d.transaction('state').objectStore('state').get('main');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+async function saveState(s){const d=await openDB();return new Promise((resolve,reject)=>{const tx=d.transaction('state','readwrite');tx.objectStore('state').put(s,'main');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});}
+
+// views.js
+const fmt=n=>new Intl.NumberFormat('pt-BR').format(n ?? 0);
+const esc=s=>String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const periods={day:'do dia',week:'da semana',month:'do mês'};
+const giftTitles={last:'Último presente',recentCombo:'Combo recente',bestCombo:'Maior combo',expensive:'Presente mais caro'};
+function avatar(user,large=false){return `<span class="avatar ${large?'large':''}"><span>${esc((user?.name || user?.handle || '?').slice(0,2).toUpperCase())}</span>${user?.avatar?`<img alt="" src="${esc(user.avatar)}" loading="lazy">`:''}</span>`;}
+function watchImages(root){for(const i of root.querySelectorAll('img'))i.addEventListener('error',()=>i.remove(),{once:true});}
+function rankView(s,{period='day',metric='coins',limit=5}={}){
+  const rows=ranking(s,period,metric).slice(0,limit);
+  return `<div class="overlay-card rank-card"><div class="overlay-kicker">TOP ${esc(periods[period] || periods.day)}</div><h2>${metric==='likes'?'Quem dá mais likes':'Quem manda mais moedas'}</h2>${rows.length?rows.map((u,i)=>`<div class="rank-row"><b class="position">${i+1}</b>${avatar(u)}<div class="person"><strong>${esc(u.name)}</strong><small>@${esc(u.handle || u.id.slice(1))}</small></div><b class="score">${fmt(u.value)}<small>${metric==='likes'?'likes':'moedas'}</small></b></div>`).join(''):'<p class="overlay-empty">Aguardando os primeiros eventos</p>'}</div>`;
+}
+function giftView(s,key){
+  const item=s.highlights.day===dayKey(Date.now(),s.settings.zone)?s.highlights[key]:null;
+  const user=item?s.users[item.userId]:null;
+  return `<div class="overlay-card gift-card"><div class="overlay-kicker">${esc(giftTitles[key] || 'Presente')}</div>${item?`<div class="gift-content">${item.image?`<img class="gift-image" alt="" src="${esc(item.image)}">`:'<span class="gift-placeholder">✦</span>'}<div><h2>${esc(item.name)}</h2><p class="gift-count">×${fmt(item.count)}</p></div></div><div class="gift-donor">${avatar(user)}<div><strong>${esc(user?.name)}</strong><small>${item.unit===null?'Valor em moedas indisponível':`${fmt(item.unit)} moedas por unidade · ${fmt(item.unit*item.count)} no combo`}</small></div></div>`:'<p class="overlay-empty">Aguardando presente</p>'}</div>`;
+}
+function roleView(s,role){
+  const u=resolveRole(s,role);const hero=role==='hero';
+  return `<div class="overlay-card role-card ${hero?'hero':'villain'}"><div class="role-topline">${hero?'✦ HERÓI':'✧ VILÃO'} <span>DA LIVE</span></div>${avatar(u,true)}<h2>${esc(u.name || 'Quem será?')}</h2><p>${u.handle?'@'+esc(u.handle):'Escolha no painel'}</p>${u.handle&&!u.avatar?'<small class="await-photo">Aguardando foto do participante</small>':''}</div>`;
+}
+function overlayView(s,params){
+  const kind=params.get('kind') || 'ranking';
+  if(kind==='ranking')return rankView(s,{period:['day','week','month'].includes(params.get('period'))?params.get('period'):'day',metric:params.get('metric')==='likes'?'likes':'coins',limit:Math.min(20,Math.max(1,Number(params.get('limit'))||5))});
+  if(kind==='roles')return `<div class="overlay-duo">${roleView(s,'hero')}${roleView(s,'villain')}</div>`;
+  if(['hero','villain'].includes(kind))return roleView(s,kind);
+  return giftView(s,Object.hasOwn(giftTitles,kind)?kind:'last');
+}
+
+// demo.js
+function demoState(){
+  const e=new Engine(freshState());
+  const people=[['luna','Luna Costa',2840,16800],['pedro','Pedro Henrique',1520,12400],['bia','Beatriz',870,9100],['rafa','Rafael',430,6200],['mari','Mariana',210,3800]];
+  for(const [id,name,coins,likes] of people){
+    const u={userId:id,uniqueId:id,nickname:name};
+    e.ingest({event:'gift',data:{...u,giftId:'demo',giftName:'Estrela',diamondCount:coins,repeatCount:1,msgId:'g'+id}});
+    e.ingest({event:'like',data:{...u,likeCount:likes,msgId:'l'+id}});
+  }
+  e.ingest({event:'gift',data:{userId:'luna',uniqueId:'luna',nickname:'Luna Costa',giftId:'rose',giftName:'Rosa',diamondCount:1,repeatCount:50,giftType:1,repeatEnd:true,groupId:'demo-streak',msgId:'combo-demo'}});
+  setRole(e.state,'hero',{handle:'luna'});setRole(e.state,'villain',{handle:'pedro'});return e.state;
+}
+
+// overlay.js
+const params=new URLSearchParams(location.search),token=new URLSearchParams(location.hash.slice(1)).get('key');
+const root=document.querySelector('#overlay-root'),badge=document.querySelector('#overlay-status');
+let lastPacket=0,current=freshState(),lastHTML='';
+function render(){const html=overlayView(current,params);if(html!==lastHTML){root.innerHTML=html;watchImages(root);lastHTML=html;}}
+function receive(packet){current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
+if(params.get('demo')==='1'){
+  current=demoState();render();badge.textContent='DEMONSTRAÇÃO';
+}else if(token && location.hostname==='127.0.0.1'){
+  async function poll(){try{const r=await fetch('./api/state',{headers:{Authorization:'Bearer '+token},cache:'no-store',signal:AbortSignal.timeout(5000)});if(!r.ok)throw Error('Link inválido. Copie novamente no painel.');receive(await r.json());}catch(e){badge.hidden=false;badge.textContent='Sem ponte local · '+e.message;}setTimeout(poll,1000);}void poll();
+}else{
+  try{const cached=await loadState();if(cached)current=cached;}catch{}
+  render();
+  let channel=null;try{if(typeof BroadcastChannel!=='undefined')channel=new BroadcastChannel(channelName);}catch{}
+  if(channel){channel.onmessage=e=>{if(e.data?.type==='snapshot')receive(e.data);};channel.postMessage({type:'request'});}
+  badge.textContent='Abra o painel no mesmo navegador. Para OBS, use o link do modo local.';
+}
+setInterval(()=>{render();if(params.get('demo')!=='1' && lastPacket && Date.now()-lastPacket>7000){badge.hidden=false;badge.textContent='Sem atualização · confira o painel ou a ponte local';}},3000);
+
+window.__amarillouReady=true;
+}catch(error){window.__amarillouFailure(error);}
+})();</script></body></html>
