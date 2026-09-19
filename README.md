@@ -1,16 +1,25 @@
-# AMARILLOU Live Control — v0.5.0
+# AMARILLOU Live Control — v0.6.0
 
-**[Abrir o painel](https://xamarilloux.github.io/amarillou-live/)** · [Guia de uso](GUIA.html) · [Novidades desta versão](RELEASE-v0.5.0.md)
+**[Abrir o painel](https://xamarilloux.github.io/amarillou-live/)** · [Guia de uso](GUIA.html) · [Novidades desta versão](RELEASE-v0.6.0.md)
 
 Painel modular de TikTok LIVE em português, com conexão ao WebSocket local do TikFinity. HTML/CSS/JavaScript nativos, sem dependências de produção. Os HTMLs entregues já incluem o código, os estilos e o avatar do criador; não é necessário compilar para publicar.
 
 ## Atualizar
 
-Leia [ATUALIZAR-v0.5.txt](ATUALIZAR-v0.5.txt). No GitHub Pages, substitua **index.html**, **overlay.html** e **GUIA.html** no mesmo local. Atualize também este README e as notas de release para deixar o repositório organizado. No modo local, substitua o projeto inteiro e reinicie a ponte.
+Leia [ATUALIZAR-v0.6.txt](ATUALIZAR-v0.6.txt). No GitHub Pages, substitua **index.html**, **overlay.html** e **GUIA.html** no mesmo local. Atualize também este README e as notas de release para deixar o repositório organizado. No modo local, substitua o projeto inteiro e reinicie a ponte.
 
 A atualização migra dados das versões anteriores, sem reset automático. Para começar do zero: **Conexão & dados → Resetar toda a plataforma → digite ZERAR**. Isso desconecta a coleta e apaga os dados desta instalação. Não apaga dados de outro navegador, do TikFinity ou backups exportados.
 
-## Novidades da v0.5
+## Novidades da v0.6
+
+- **Macros no Windows local:** um preset ativo por vez, execução por presente, repetições/intervalos/duração, F1–F24 e Ctrl/Alt/Shift. O online continua como editor.
+- **Teste com 5 segundos** para focar o jogo ou Bloco de Notas; botão de parada e atalho global **Ctrl + Alt + Pause/Break**.
+- **Selecionar presente recebido:** pop-up estável com busca por nome/ID, imagens disponíveis e atualização manual da lista. ID manual em seção avançada.
+- **Tamanho do OBS junto ao link:** largura e altura recomendadas por overlay, considerando layout, container, níveis e posições.
+
+No Windows, o Node inicia automaticamente um componente de teclado pelo PowerShell. Não precisa instalar pacotes, Python ou compilar manualmente. Baixe o projeto completo para atualizar a ponte. A execução real no seu Windows/jogo precisa do primeiro teste descrito em ATUALIZAR-v0.6.txt; neste ambiente, a integração foi exercitada com um driver de teclado simulado e o componente C# foi compilado, sem chamadas ao Windows.
+
+## Recursos de pontos e duração (v0.5)
 
 - **Pontos → Ajustar pontos:** adicione ou remova pontos de um participante; o nível acompanha o saldo. Remova do saldo geral ou de uma origem específica, sem saldo negativo.
 - **Conexão & dados → Reset dos Pontos da Comunidade:** zere todos os pontos ou apenas os de moedas/likes, sempre com confirmação. Rankings e contagens recebidas não mudam.
@@ -19,7 +28,7 @@ A atualização migra dados das versões anteriores, sem reset automático. Para
 
 **Pontos antigos:** versões anteriores não registravam a origem do XP. O saldo anterior permanece como “origem não identificada”. Resets por origem preservam esses pontos; “Todos os pontos” também apaga pontos antigos e manuais. A separação entre moedas e likes começa na v0.5, usando o peso vigente em cada evento. Remoções do saldo geral descontam primeiro manuais, depois origem não identificada, likes e moedas.
 
-**Etapa de Presets:** esta entrega prepara e salva configurações. A execução de teclas ainda não foi implementada na ponte local; pertence à próxima etapa local planejada. Não há botão de ativação nem macros executados pelo site. Compartilhe por JSON; não existe servidor de IDs curtos.
+**Presets:** o modo online prepara e salva configurações. A execução ocorre na ponte local Windows com um preset ativado explicitamente. Compartilhe por JSON; não existe servidor de IDs curtos. Online e local são bases separadas.
 
 ## Funcionalidades
 
@@ -60,6 +69,24 @@ Chrome/Edge e OBS têm contextos separados. O modo web sincroniza abas no mesmo 
 
 O save local fica em `%USERPROFILE%\.amarillou-live\state.json`. O modo web usa IndexedDB no mesmo domínio/caminho/perfil. São bases separadas; exporte/importe JSON para transferir. Links locais contêm uma chave somente de leitura: não publique esses links nem backups no GitHub.
 
+## Macros locais
+
+1. Abra INICIAR-LOCAL.bat no Windows e entre no painel local.
+2. Na aba Presets, crie um conjunto e salve suas regras de presente → tecla.
+3. Use **Testar**: confirme e volte ao Bloco de Notas/jogo nos 5 segundos de contagem. O teste funciona sem TikFinity conectado, desativa o preset e cancela a fila anterior.
+4. Para presentes reais, conecte ao TikFinity, clique **Ativar preset selecionado** e volte ao jogo.
+5. Pare pelo botão ou **Ctrl + Alt + Pause/Break**. Se esse atalho estiver ocupado, o executor não habilita até o conflito ser resolvido.
+
+As teclas vão para a janela em primeiro plano. Ctrl/Alt/Shift físicos ou uma tecla-alvo já pressionada podem interromper o executor; solte e reative. O jogo pode recusar entradas simuladas. Aplicativos elevados podem exigir que a ponte também seja iniciada como administrador. O programa não eleva permissões nem altera políticas do Windows automaticamente.
+
+A fila é sequencial. Cada nova unidade do presente aplica as repetições configuradas; combos não repetem unidades já recebidas. Regras para o mesmo presente executam na ordem da lista. O cadastro permite mais de 30 macros, mediante aviso; a fila tem limite operacional separado de 1.000 pressionamentos ou 10 minutos estimados. Ao exceder, cancela e avisa, sem executar uma fila indefinida.
+
+Troca de preset, edição de configurações, desconexão, importação de backup e reset geral param a execução. A ponte inicia sempre desativada e não reativa automaticamente após uma desconexão. **Recarregar/fechar apenas a página não encerra a ponte:** use Parar antes de sair, ou o atalho global. Um monitor nativo cancela as teclas se a ponte ficar sem responder por mais de 3 segundos.
+
+## Dimensões no OBS
+
+As caixas junto aos botões de copiar indicam **Largura × Altura em pixels** para as propriedades da Fonte de navegador. Depois ajuste a escala da fonte na cena. As recomendações reservam espaço para o conteúdo e status; não incluem o fundo quadriculado da prévia. Alterou layout, container, nível ou posições? Copie o novo link e aplique as dimensões exibidas.
+
 ## Dados, resets e migração
 
 - **Diário**: reinicia só a competição diária da métrica escolhida.
@@ -95,7 +122,7 @@ Resets de ranking ou ocultar o nível no overlay não apagam XP. O reset de pont
 
 `npm run build` gera os três HTMLs independentes a partir de `src/`, `ui/`, `styles.css` e `docs/`. `npm test` executa os testes com módulos nativos de Node. Não há npm install necessário para a aplicação.
 
-66 testes automatizados aprovados, além de interface real em Chromium desktop/mobile nos modos web/local, com eventos e respostas de câmbio simulados. Detalhes em [docs/VALIDACAO.md](docs/VALIDACAO.md). TikFinity real, Windows/Edge, OBS e Live Studio ainda precisam de validação no PC do usuário.
+81 testes automatizados aprovados, além de interface real em Chromium desktop/mobile nos modos web/local, com eventos e respostas de câmbio simulados. Detalhes em [docs/VALIDACAO.md](docs/VALIDACAO.md). TikFinity real, Windows/Edge, OBS e Live Studio ainda precisam de validação no PC do usuário.
 
 Identidade roxa/amarela baseada no avatar AMARILLOU fornecido pelo criador. Avatar embutido; ícones TikTok/globo vetoriais e marca Live Pix carregada da fonte oficial, com texto de apoio preservado se a imagem estiver indisponível.
 

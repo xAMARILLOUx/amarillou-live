@@ -36,3 +36,22 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 #macro-rows button{margin:3px}
 .points-table td:last-child{padding-right:24px}
 #points-legacy-note{margin-top:14px}
+
+/* v0.6: stable gift selection and local execution feedback */
+.macro-runtime{margin-bottom:24px}.macro-runtime ol{padding-left:24px;line-height:1.7}
+#gift-picker-options{max-height:45vh;overflow:auto}
+.gift-picker-art{width:52px;height:52px;flex:0 0 52px;display:grid;place-items:center;color:var(--yellow);font-size:30px}
+.gift-picker-art img{width:100%;height:100%;object-fit:contain}
+.selected-gift{display:flex;gap:12px;align-items:center;min-height:65px;padding:12px;border:1px solid var(--line);border-radius:9px;font-size:.9rem;overflow-wrap:anywhere}
+#gift-picker-options .participant-choice>span:last-child{min-width:0;overflow-wrap:anywhere}
+.obs-dimensions{border:1px solid #6c547b;background:#231b32;border-radius:9px;padding:10px 12px;margin:12px 0;font-size:.8rem;line-height:1.6;color:#eadff5}
+.obs-dimensions strong{color:var(--yellow)}
+.overlay-body .person small,.overlay-body .gift-donor strong,.overlay-body .gift-donor small,.overlay-body .portrait-identity strong,.overlay-body .portrait-identity small,.overlay-body .portrait-identity>span,.overlay-body .role-card p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block}
+.overlay-body .role-card h2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.overlay-body .role-identity,.overlay-body .gift-donor>div,.overlay-body .gift-content>div,.overlay-body .portrait-identity{min-width:0;max-width:100%}
+.overlay-body .gift-content h2{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.overlay-body .portrait-count{white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+.overlay-body .role-card.ribbon{margin-top:8px;margin-bottom:8px}
+.overlay-body .gift-card.bare:not(.portrait) .gift-content,.overlay-body .gift-card.bare:not(.portrait) .gift-donor{min-width:0;max-width:100%;flex:1 1 240px}
+.overlay-body .gift-content .gift-image,.overlay-body .gift-content .gift-placeholder{flex-shrink:0}
+.gift-picker-art{position:relative}.gift-picker-art img{position:absolute;inset:0;background:var(--panel)}

@@ -1,0 +1,52 @@
+AMARILLOU LIVE CONTROL v0.6.0
+
+ONLINE / GITHUB PAGES
+1. Extraia o ZIP.
+2. Substitua index.html, overlay.html e GUIA.html na pasta publicada.
+3. Atualize README.md e RELEASE-v0.6.0.md.
+4. Aguarde o Pages, feche abas antigas e use Ctrl+F5. Confira v0.6 na lateral.
+
+LOCAL / WINDOWS
+1. Pare todos os macros, se estiverem ativos, e encerre a janela da ponte.
+2. Extraia TODO este ZIP em uma pasta nova.
+3. Abra INICIAR-LOCAL.bat e depois http://127.0.0.1:8787/.
+4. Seu Node.js 22.15+ continua sendo usado; não precisa reinstalar.
+5. O executor de teclado usa o PowerShell do Windows automaticamente. Não instale Python nem compile nada.
+6. O save continua em %USERPROFILE%\.amarillou-live; seus dados não são zerados pela atualização.
+
+PRIMEIRO TESTE DE MACRO
+1. Abra Presets; crie/importe um preset.
+2. Cadastre um macro simples (tecla A, 1 repetição, 50 ms segurando, 100 ms intervalo).
+3. Escolha um presente em Selecionar presente recebido ou informe seu ID manualmente.
+4. Salve o macro e abra o Bloco de Notas.
+5. Clique Testar no macro, confirme e volte ao Bloco de Notas antes de terminar a contagem de 5 segundos.
+6. Deve aparecer a letra A. O teste não exige uma live nem conexão ao TikFinity.
+7. Para responder a presentes reais, conecte ao TikFinity, ative o preset e volte ao jogo.
+8. Para parar: botão Parar todos os macros ou Ctrl + Alt + Pause/Break.
+
+As teclas vão à janela em primeiro plano. Não deixe campos de texto do painel em foco durante execução.
+F5 não reinicia a ponte: um preset já ativo continua ativo. Reiniciar a ponte começa desativado.
+Ao desconectar ou alterar configuração, reative o preset depois.
+Se o jogo/Live Studio for administrador e o teste comum funcionar, pode ser necessário iniciar a ponte
+com o mesmo nível de permissão. Veja os diagnósticos no painel; não altere políticas de segurança.
+Alguns jogos não aceitam teclas simuladas. Esta é a primeira versão do executor para teste no seu PC.
+
+PRESENTES / PRESETS
+O pop-up mantém uma lista fixa. Atualizar lista inclui os presentes recebidos desde a abertura.
+Nome, ID e imagem dependem dos dados já recebidos pelo TikFinity.
+O online e o local têm bases separadas. Transfira presets pelo JSON ou a base completa pelo backup.
+30 macros continua sendo recomendação. A proteção da fila é independente: 1.000 teclas / 10 minutos.
+
+OVERLAYS / OBS
+Acima de cada botão de copiar há Largura x Altura em pixels.
+Use esses valores nas propriedades da Fonte de navegador no OBS.
+Para aumentar/diminuir na cena, ajuste a escala da fonte.
+Ao mudar o layout, nível ou quantidade de posições, copie o novo link e atualize as dimensões.
+Para OBS/Live Studio, use o link copiado na versão LOCAL.
+
+RELEASE
+Tag: v0.6.0
+Título: AMARILLOU Live Control v0.6.0
+Descrição: conteúdo de RELEASE-v0.6.0.md.
+Anexo: AMARILLOU-LIVE-v0.6.zip.
+A release registra a versão; anexar o ZIP não atualiza os arquivos publicados no Pages.
