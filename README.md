@@ -1,23 +1,31 @@
-# AMARILLOU Live Control — v0.6.0
+# AMARILLOU Live Control — v0.7.0
 
-**[Abrir o painel](https://xamarilloux.github.io/amarillou-live/)** · [Guia de uso](GUIA.html) · [Novidades desta versão](RELEASE-v0.6.0.md)
+**[Abrir o painel](https://xamarilloux.github.io/amarillou-live/)** · [Guia de uso](GUIA.html) · [Novidades desta versão](RELEASE-v0.7.0.md)
 
 Painel modular de TikTok LIVE em português, com conexão ao WebSocket local do TikFinity. HTML/CSS/JavaScript nativos, sem dependências de produção. Os HTMLs entregues já incluem o código, os estilos e o avatar do criador; não é necessário compilar para publicar.
 
 ## Atualizar
 
-Leia [ATUALIZAR-v0.6.txt](ATUALIZAR-v0.6.txt). No GitHub Pages, substitua **index.html**, **overlay.html** e **GUIA.html** no mesmo local. Atualize também este README e as notas de release para deixar o repositório organizado. No modo local, substitua o projeto inteiro e reinicie a ponte.
+Leia [ATUALIZAR-v0.7.txt](ATUALIZAR-v0.7.txt). No GitHub Pages, substitua **index.html**, **overlay.html** e **GUIA.html** no mesmo local. Atualize também este README e as notas de release para deixar o repositório organizado. No modo local, substitua o projeto inteiro e reinicie a ponte.
 
 A atualização migra dados das versões anteriores, sem reset automático. Para começar do zero: **Conexão & dados → Resetar toda a plataforma → digite ZERAR**. Isso desconecta a coleta e apaga os dados desta instalação. Não apaga dados de outro navegador, do TikFinity ou backups exportados.
 
-## Novidades da v0.6
+## Novidades da v0.7
+
+- Gatilhos por curtidas individuais, curtidas totais, novo seguidor e faixa de moedas, além de presentes específicos.
+- Proteção opcional de follow por 24 horas, persistente por canal e participante.
+- Campos específicos para cada gatilho e importação dos presets antigos.
+- Curtidas dos macros começam ao ativar o preset; reativar zera esse progresso, sem alterar rankings. F5 mantém a ponte funcionando.
+- [Regras, exemplos e detalhes da atualização](RELEASE-v0.7.0.md).
+
+## Recursos mantidos da v0.6
 
 - **Macros no Windows local:** um preset ativo por vez, execução por presente, repetições/intervalos/duração, F1–F24 e Ctrl/Alt/Shift. O online continua como editor.
 - **Teste com 5 segundos** para focar o jogo ou Bloco de Notas; botão de parada e atalho global **Ctrl + Alt + Pause/Break**.
 - **Selecionar presente recebido:** pop-up estável com busca por nome/ID, imagens disponíveis e atualização manual da lista. ID manual em seção avançada.
 - **Tamanho do OBS junto ao link:** largura e altura recomendadas por overlay, considerando layout, container, níveis e posições.
 
-No Windows, o Node inicia automaticamente um componente de teclado pelo PowerShell. Não precisa instalar pacotes, Python ou compilar manualmente. Baixe o projeto completo para atualizar a ponte. A execução real no seu Windows/jogo precisa do primeiro teste descrito em ATUALIZAR-v0.6.txt; neste ambiente, a integração foi exercitada com um driver de teclado simulado e o componente C# foi compilado, sem chamadas ao Windows.
+No Windows, o Node inicia automaticamente um componente de teclado pelo PowerShell. Não precisa instalar pacotes, Python ou compilar manualmente. Baixe o projeto completo para atualizar a ponte. A execução real no seu Windows/jogo precisa do primeiro teste descrito em ATUALIZAR-v0.7.txt; neste ambiente, a integração foi exercitada com um driver de teclado simulado e o componente C# foi compilado, sem chamadas ao Windows.
 
 ## Recursos de pontos e duração (v0.5)
 

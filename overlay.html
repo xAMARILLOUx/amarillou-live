@@ -58,7 +58,7 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v0.6: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v0.7: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
@@ -119,7 +119,12 @@ function presetNumber(value,min,max,label){const n=Number(value);if(!Number.isIn
 function presetId(value){const id=String(value??'');if(!/^[a-zA-Z0-9_-]{1,100}$/.test(id))throw Error('Identificador de preset/macro inválido.');return id;}
 function cleanMacro(p){
  const key=String(p.key??'').toUpperCase();if(!MACRO_KEYS.includes(key))throw Error('Tecla não suportada.');
- return {id:presetId(p.id),giftId:presetText(p.giftId,120,'ID do presente'),name:presetText(p.name||'Macro',100,'Nome do macro'),key,ctrl:p.ctrl===true,alt:p.alt===true,shift:p.shift===true,repetitions:presetNumber(p.repetitions,1,1000,'Repetições'),intervalMs:presetNumber(p.intervalMs,0,60000,'Intervalo'),holdMs:presetNumber(p.holdMs,10,60000,'Duração da tecla')};
+ const trigger=p.trigger??'gift';if(!['gift','likes-user','likes-total','follow','coins'].includes(trigger))throw Error('Gatilho inválido.');
+ const fields={trigger,giftId:trigger==='gift'?presetText(p.giftId,120,'ID do presente'):''};
+ if(trigger.startsWith('likes-'))fields.threshold=presetNumber(p.threshold,1,1e12,'Quantidade de curtidas');
+ if(trigger==='follow')fields.protectFollow=p.protectFollow!==false;
+ if(trigger==='coins'){fields.minCoins=presetNumber(p.minCoins,1,1e9,'Mínimo de moedas');fields.maxCoins=presetNumber(p.maxCoins,fields.minCoins,1e9,'Máximo de moedas');}
+ return {...fields,id:presetId(p.id),name:presetText(p.name||'Macro',100,'Nome do macro'),key,ctrl:p.ctrl===true,alt:p.alt===true,shift:p.shift===true,repetitions:presetNumber(p.repetitions,1,1000,'Repetições'),intervalMs:presetNumber(p.intervalMs,0,60000,'Intervalo'),holdMs:presetNumber(p.holdMs,10,60000,'Duração da tecla')};
 }
 function cleanPreset(p){
  if(!p||!Array.isArray(p.macros))throw Error('Preset inválido.');
@@ -140,8 +145,16 @@ function changePreset(s,command,p){
  }else if(command==='macro-delete')item.macros=item.macros.filter(m=>m.id!==p.macroId);
  else throw Error('Comando de preset desconhecido.');
 }
-function presetPackage(p){return {format:'amarillou-preset',version:1,preset:cleanPreset(p)};}
-function readPresetPackage(p){if(p?.format!=='amarillou-preset'||p.version!==1)throw Error('Arquivo de preset incompatível.');return cleanPreset(p.preset);}
+function presetPackage(p){return {format:'amarillou-preset',version:2,preset:cleanPreset(p)};}
+function readPresetPackage(p){if(p?.format!=='amarillou-preset'||![1,2].includes(p.version))throw Error('Arquivo de preset incompatível.');return cleanPreset(p.preset);}
+
+function macroTriggerLabel(m){
+ if(m.trigger==='likes-user')return 'A cada '+m.threshold+' curtidas por pessoa';
+ if(m.trigger==='likes-total')return 'A cada '+m.threshold+' curtidas totais';
+ if(m.trigger==='follow')return 'Seguir'+(m.protectFollow!==false?' · proteção de 24 h':' · sem proteção');
+ if(m.trigger==='coins')return 'Presente de '+m.minCoins+' a '+m.maxCoins+' moedas (unitário)';
+ return 'Presente: '+m.giftId;
+}
 
 // features.js
 // State and domain rules, plus an optional fixed-endpoint FX fetch helper.
@@ -154,7 +167,7 @@ function calendarRange(period,t,zone){const d=dateAt(t,zone);if(period==='month'
 function levelThreshold(level){return Math.floor(50*1.03*(Math.pow(1.03,Math.max(0,Math.min(1000,level)-1))-1)/.03+1e-8);}
 function levelProgress(points){points=nonneg(points);let lo=1,hi=1000;while(lo<hi){const m=Math.ceil((lo+hi)/2);if(levelThreshold(m)<=points)lo=m;else hi=m-1;}const start=levelThreshold(lo),next=lo<1000?levelThreshold(lo+1):null;return {level:lo,points,start,next,remaining:next===null?0:Math.max(0,next-points),percent:next===null?100:Math.min(100,100*(points-start)/(next-start))};}
 function defaultVisual(){return {container:true,color:'#191b1e',showLevel:true,style:'classic'};}
-function newExtras(){return {channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['rankLikes','rankCoins','gifts','roles','goal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
+function newExtras(){return {channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],macroFollows:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['rankLikes','rankCoins','gifts','roles','goal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
 function timerRemaining(timer,now=Date.now()){return Math.max(0,timer.running?timer.endAt-now:timer.remainingMs);}
 function addTimer(timer,seconds,now){const rem=Math.min(31536000000,timerRemaining(timer,now)+seconds*1000);timer.remainingMs=rem;if(timer.running)timer.endAt=now+rem;}
 function sessionHeartbeat(s,now=Date.now(),connected=false){const a=s.extra.activeSession;if(!a)return false;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
@@ -235,6 +248,8 @@ function validateExtras(s,input,oldVersion){
  for(const [id,v] of Object.entries(input.points||{}))if(known(id))x.points[id]=count(v);
  restorePointSources({...s,extra:x},input.pointSources,oldVersion);
  x.presets=restorePresets(input.presets);
+ for(const [key,value] of Object.entries(input.macroFollows||{})){if(!key.startsWith('$')||key.length>400)throw Error('Proteção de seguidores inválida.');x.macroFollows[key]=count(value);}
+
  if(input.weights)x.weights={coins:boundedInput(input.weights.coins,0,100000,'Pontos'),likes:boundedInput(input.weights.likes,0,100000,'Pontos')};
  for(const k of Object.keys(x.visuals)){const v=input.visuals?.[k];if(v)x.visuals[k]={container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:['ribbon','portrait'].includes(v.style)?v.style:'classic'};}
  for(const [k,r] of Object.entries(input.resets||{}))if(/^(coins|likes):(day|week|month)$/.test(k)){const baseline={};for(const [id,v] of Object.entries(r.baseline||{}))if(known(id))baseline[id]=count(v);if(!/^\d{4}-\d{2}-\d{2}$/.test(r.calendar))throw Error('Reset inválido.');x.resets[k]={calendar:r.calendar,startedAt:count(r.startedAt),baseline};}
@@ -283,7 +298,7 @@ function catalogImage(value){try{const u=new URL(String(value||'').slice(0,2000)
 
 // core.js
 // Domain layer: no browser or Node dependencies. One engine, multiple transports.
-const VERSION = 5;
+const VERSION = 6;
 const clean = (v, max = 120) => String(v ?? '').slice(0, max);
 const handle = v => clean(v).trim().replace(/^@/, '').toLowerCase();
 const number = v => Math.min(1e12, Math.max(0, Math.floor(Number(v) || 0)));
@@ -403,7 +418,7 @@ function setRole(s, role, input) {
 }
 function validateState(input) {
   // Rebuild dictionaries instead of merging arbitrary imported properties.
-  if (!input || ![1,2,3,4,VERSION].includes(input.version) || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
+  if (!input || ![1,2,3,4,5,VERSION].includes(input.version) || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
   const s=freshState();
   try { new Intl.DateTimeFormat('pt-BR',{timeZone:input.settings?.zone}).format(); } catch {throw Error('Fuso inválido no backup.');}
   s.settings.zone=input.settings?.zone || s.settings.zone;
@@ -547,7 +562,7 @@ const params=new URLSearchParams(location.search),token=new URLSearchParams(loca
 const root=document.querySelector('#overlay-root'),badge=document.querySelector('#overlay-status');
 let lastPacket=0,current=freshState(),lastHTML='';
 function render(){const html=overlayView(current,params);if(html!==lastHTML){root.innerHTML=html;watchImages(root);lastHTML=html;}}
-function receive(packet){if(packet.state?.version!==5||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.6.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
+function receive(packet){if(packet.state?.version!==6||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.7.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
 if(params.get('demo')==='1'){
   current=demoState();render();badge.textContent='DEMONSTRAÇÃO';
 }else if(token && location.hostname==='127.0.0.1'){

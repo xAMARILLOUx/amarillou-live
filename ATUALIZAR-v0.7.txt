@@ -1,0 +1,30 @@
+AMARILLOU LIVE CONTROL — v0.7
+
+ONLINE / GITHUB PAGES
+Substitua index.html, overlay.html e GUIA.html na raiz do seu repositório.
+Atualize também README.md e adicione RELEASE-v0.7.0.md.
+Feche as abas antigas. Atualize o painel e as fontes de navegador do OBS.
+
+LOCAL / WINDOWS
+1. Pare os macros e feche a janela da ponte local.
+2. Extraia TODO este ZIP em uma pasta. Não copie só os HTMLs para a versão local.
+3. Abra INICIAR-LOCAL.bat. Não precisa reinstalar o Node.
+4. Seus dados continuam no save da instalação, fora da pasta do projeto.
+5. Em Presets, escolha o tipo de gatilho e preencha seus campos.
+6. Testar executa somente a tecla após 5 segundos: foque o Bloco de Notas.
+7. Para testar o gatilho real, conecte ao TikFinity e ative o preset.
+
+EXEMPLOS
+Curtidas por pessoa: 50. Cada pessoa tem sua própria contagem.
+Curtidas totais: 1000. Soma das curtidas recebidas com o preset ativo.
+Seguir: mantenha a proteção de 24 horas ativada para evitar repetição.
+Faixa de moedas: mínimo 1 e máximo 10. Valor unitário, não soma do combo.
+
+Ao reativar, o progresso das curtidas dos macros começa do zero.
+F5 não interrompe a ponte. A proteção de seguidores permanece após reinício.
+Parar todos os macros ou Ctrl + Alt + Pause/Break interrompe a execução.
+
+RELEASE NO GITHUB
+Crie uma release com tag v0.7.0 e título AMARILLOU Live Control v0.7.0.
+Use RELEASE-v0.7.0.md como descrição e anexe este ZIP.
+Este pacote não publica a release ou o site automaticamente.
