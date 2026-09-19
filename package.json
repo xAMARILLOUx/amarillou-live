@@ -1,6 +1,6 @@
 {
   "name": "amarillou-live",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "type": "module",
   "description": "Painel modular de TikTok LIVE com adaptador TikFinity",

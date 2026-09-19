@@ -1,14 +1,23 @@
-# AMARILLOU Live Control — v0.7.0
+# AMARILLOU Live Control — v0.7.1
 
-**[Abrir o painel](https://xamarilloux.github.io/amarillou-live/)** · [Guia de uso](GUIA.html) · [Novidades desta versão](RELEASE-v0.7.0.md)
+**[Abrir o painel](https://xamarilloux.github.io/amarillou-live/)** · [Guia de uso](GUIA.html) · [Novidades desta versão](RELEASE-v0.7.1.md)
 
 Painel modular de TikTok LIVE em português, com conexão ao WebSocket local do TikFinity. HTML/CSS/JavaScript nativos, sem dependências de produção. Os HTMLs entregues já incluem o código, os estilos e o avatar do criador; não é necessário compilar para publicar.
 
 ## Atualizar
 
-Leia [ATUALIZAR-v0.7.txt](ATUALIZAR-v0.7.txt). No GitHub Pages, substitua **index.html**, **overlay.html** e **GUIA.html** no mesmo local. Atualize também este README e as notas de release para deixar o repositório organizado. No modo local, substitua o projeto inteiro e reinicie a ponte.
+Leia [ATUALIZAR-v0.7.1.txt](ATUALIZAR-v0.7.1.txt). No GitHub Pages, substitua **index.html**, **overlay.html** e **GUIA.html** no mesmo local. Atualize também este README e as notas de release para deixar o repositório organizado. No modo local, substitua o projeto inteiro e reinicie a ponte.
 
 A atualização migra dados das versões anteriores, sem reset automático. Para começar do zero: **Conexão & dados → Resetar toda a plataforma → digite ZERAR**. Isso desconecta a coleta e apaga os dados desta instalação. Não apaga dados de outro navegador, do TikFinity ou backups exportados.
+
+## Novidades da v0.7.1
+
+Links de download no menu lateral, nas instruções de Presets, em Conexão & dados e no guia:
+
+- [Baixar modo local — releases do GitHub](https://github.com/xAMARILLOUx/amarillou-live/releases)
+- [Baixar Node.js](https://nodejs.org/en/download)
+
+Nas releases, abra **Assets** e baixe o ZIP da ferramenta. Extraia tudo e execute **INICIAR-LOCAL.bat**. Esta atualização adiciona atalhos e instruções; não altera macros, contagens nem dados salvos.
 
 ## Novidades da v0.7
 
@@ -16,7 +25,7 @@ A atualização migra dados das versões anteriores, sem reset automático. Para
 - Proteção opcional de follow por 24 horas, persistente por canal e participante.
 - Campos específicos para cada gatilho e importação dos presets antigos.
 - Curtidas dos macros começam ao ativar o preset; reativar zera esse progresso, sem alterar rankings. F5 mantém a ponte funcionando.
-- [Regras, exemplos e detalhes da atualização](RELEASE-v0.7.0.md).
+- [Regras, exemplos e detalhes da atualização](RELEASE-v0.7.1.md).
 
 ## Recursos mantidos da v0.6
 
@@ -25,7 +34,7 @@ A atualização migra dados das versões anteriores, sem reset automático. Para
 - **Selecionar presente recebido:** pop-up estável com busca por nome/ID, imagens disponíveis e atualização manual da lista. ID manual em seção avançada.
 - **Tamanho do OBS junto ao link:** largura e altura recomendadas por overlay, considerando layout, container, níveis e posições.
 
-No Windows, o Node inicia automaticamente um componente de teclado pelo PowerShell. Não precisa instalar pacotes, Python ou compilar manualmente. Baixe o projeto completo para atualizar a ponte. A execução real no seu Windows/jogo precisa do primeiro teste descrito em ATUALIZAR-v0.7.txt; neste ambiente, a integração foi exercitada com um driver de teclado simulado e o componente C# foi compilado, sem chamadas ao Windows.
+No Windows, o Node inicia automaticamente um componente de teclado pelo PowerShell. Não precisa instalar pacotes, Python ou compilar manualmente. Baixe o projeto completo para atualizar a ponte. A execução real no seu Windows/jogo precisa do primeiro teste descrito em ATUALIZAR-v0.7.1.txt; neste ambiente, a integração foi exercitada com um driver de teclado simulado e o componente C# foi compilado, sem chamadas ao Windows.
 
 ## Recursos de pontos e duração (v0.5)
 

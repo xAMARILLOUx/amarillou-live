@@ -58,7 +58,7 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v0.7: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v0.7.1: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});

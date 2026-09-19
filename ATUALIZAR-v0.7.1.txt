@@ -1,0 +1,16 @@
+AMARILLOU LIVE CONTROL — v0.7.1
+
+Esta atualização adiciona links de download e instruções. Mantém o funcionamento e os dados da v0.7.
+
+ONLINE: substitua index.html, overlay.html e GUIA.html no GitHub Pages. Atualize também README.md e adicione RELEASE-v0.7.1.md.
+LOCAL: pare os macros, feche a ponte, extraia o pacote completo e execute INICIAR-LOCAL.bat. Não precisa reinstalar o Node que já está funcionando.
+
+Baixar modo local / releases:
+https://github.com/xAMARILLOUx/amarillou-live/releases
+Abra Assets e baixe o ZIP da ferramenta.
+
+Download oficial do Node.js:
+https://nodejs.org/en/download
+
+Release: tag v0.7.1, título AMARILLOU Live Control v0.7.1.
+Use RELEASE-v0.7.1.md como descrição e anexe este ZIP.
