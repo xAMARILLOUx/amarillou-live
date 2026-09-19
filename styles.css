@@ -24,3 +24,15 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 .gift-card.portrait,.gift-card.portrait.bare{display:block;text-align:center}.gift-portrait{display:flex;flex-direction:column;align-items:center;gap:16px;padding:14px 0}.portrait-cluster{position:relative;width:195px;height:175px}.portrait-cluster .avatar.large{position:absolute;left:5px;top:0;width:148px;height:148px;margin:0;border:3px solid #ffd045;font-size:38px;background:#352442;color:#ffd045}.portrait-accessory{position:absolute;right:0;bottom:0;display:flex;align-items:center;flex-direction:column;filter:drop-shadow(0 3px 5px #0008)}.portrait-accessory .gift-image,.portrait-accessory .gift-placeholder{width:74px;height:74px}.portrait-count{font-size:1.4rem;color:#ffdf6d;line-height:1.1;text-shadow:0 2px 3px #000;max-width:180px;overflow-wrap:anywhere}.portrait-identity strong{display:block;font-size:1.15rem;overflow-wrap:anywhere}.portrait-identity small{display:block}.portrait-identity>span{display:block;color:#ffd045;font-size:.8rem;margin-top:5px}.gift-card.portrait.bare{padding:8px}.gift-card.portrait.bare .gift-portrait{padding:8px 0}.visual-bar .visual-form{grid-template-columns:2fr 1fr 1.5fr 1fr}
 @media(max-width:1250px){.topbar>.pill{display:none}.visual-bar .visual-form{grid-template-columns:1fr 1fr}.top-actions{gap:6px}.top-actions button{padding:9px}}
 @media(max-width:650px){.channel-form{max-width:none;width:100%;flex-basis:100%}.topbar{gap:14px}.visual-bar .visual-form{grid-template-columns:1fr}.table-wrap{padding-right:12px}.creator-avatar{width:120px;height:120px}.ranking-panel .table-wrap{max-height:450px}.creator-links{gap:8px}.creator-links a{padding:10px}.portrait-cluster{transform:scale(.95);transform-origin:center}.stats strong{overflow-wrap:anywhere}}
+
+/* v0.5 point maintenance and preset editor */
+.button-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.macro-modifiers{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0}
+.macro-modifiers label{display:flex;align-items:center;gap:6px}
+.macro-modifiers input{width:auto;margin:0}
+#points-edit-dialog,#macro-warning-dialog{width:min(560px,calc(100vw - 32px));max-height:90vh;overflow-y:auto;border:1px solid var(--line);border-radius:18px;background:#1b1529;color:#f5f1ff;padding:28px}
+#points-edit-balance p{margin:5px 0}
+#preset-editor h2{margin-top:20px}
+#macro-rows button{margin:3px}
+.points-table td:last-child{padding-right:24px}
+#points-legacy-note{margin-top:14px}

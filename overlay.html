@@ -24,16 +24,105 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 .gift-card.portrait,.gift-card.portrait.bare{display:block;text-align:center}.gift-portrait{display:flex;flex-direction:column;align-items:center;gap:16px;padding:14px 0}.portrait-cluster{position:relative;width:195px;height:175px}.portrait-cluster .avatar.large{position:absolute;left:5px;top:0;width:148px;height:148px;margin:0;border:3px solid #ffd045;font-size:38px;background:#352442;color:#ffd045}.portrait-accessory{position:absolute;right:0;bottom:0;display:flex;align-items:center;flex-direction:column;filter:drop-shadow(0 3px 5px #0008)}.portrait-accessory .gift-image,.portrait-accessory .gift-placeholder{width:74px;height:74px}.portrait-count{font-size:1.4rem;color:#ffdf6d;line-height:1.1;text-shadow:0 2px 3px #000;max-width:180px;overflow-wrap:anywhere}.portrait-identity strong{display:block;font-size:1.15rem;overflow-wrap:anywhere}.portrait-identity small{display:block}.portrait-identity>span{display:block;color:#ffd045;font-size:.8rem;margin-top:5px}.gift-card.portrait.bare{padding:8px}.gift-card.portrait.bare .gift-portrait{padding:8px 0}.visual-bar .visual-form{grid-template-columns:2fr 1fr 1.5fr 1fr}
 @media(max-width:1250px){.topbar>.pill{display:none}.visual-bar .visual-form{grid-template-columns:1fr 1fr}.top-actions{gap:6px}.top-actions button{padding:9px}}
 @media(max-width:650px){.channel-form{max-width:none;width:100%;flex-basis:100%}.topbar{gap:14px}.visual-bar .visual-form{grid-template-columns:1fr}.table-wrap{padding-right:12px}.creator-avatar{width:120px;height:120px}.ranking-panel .table-wrap{max-height:450px}.creator-links{gap:8px}.creator-links a{padding:10px}.portrait-cluster{transform:scale(.95);transform-origin:center}.stats strong{overflow-wrap:anywhere}}
+
+/* v0.5 point maintenance and preset editor */
+.button-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.macro-modifiers{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0}
+.macro-modifiers label{display:flex;align-items:center;gap:6px}
+.macro-modifiers input{width:auto;margin:0}
+#points-edit-dialog,#macro-warning-dialog{width:min(560px,calc(100vw - 32px));max-height:90vh;overflow-y:auto;border:1px solid var(--line);border-radius:18px;background:#1b1529;color:#f5f1ff;padding:28px}
+#points-edit-balance p{margin:5px 0}
+#preset-editor h2{margin-top:20px}
+#macro-rows button{margin:3px}
+.points-table td:last-child{padding-right:24px}
+#points-legacy-note{margin-top:14px}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v0.4: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v0.5: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
 })();</script><script>(async function(){
 'use strict';
 try{
+
+// points.js
+// XP provenance is independent of raw rankings and current event weights.
+const POINT_SOURCES=['coins','likes','manual','legacy'];
+function emptyPoints(){return {coins:0,likes:0,manual:0,legacy:0};}
+function pointsTotal(b){return POINT_SOURCES.reduce((sum,k)=>sum+b[k],0);}
+function pointSources(s,id){return s.extra.pointSources[id]||{...emptyPoints(),legacy:s.extra.points[id]||0};}
+function commitPoints(s,id,b){const total=pointsTotal(b);if(!Number.isFinite(total)||total>Number.MAX_SAFE_INTEGER||POINT_SOURCES.some(k=>!Number.isFinite(b[k])||b[k]<0))throw Error('Pontuação fora do intervalo permitido.');s.extra.pointSources[id]=b;s.extra.points[id]=total;}
+function earnPoints(s,id,coins,likes){const b={...pointSources(s,id)};b.coins+=coins;b.likes+=likes;commitPoints(s,id,b);}
+function adjustPoints(s,p){
+ if(!Object.hasOwn(s.users,p.userId))throw Error('Participante não encontrado. Busque uma pessoa já registrada.');
+ const amount=Number(p.amount);if(p.amount===''||!Number.isFinite(amount)||amount<=0||amount>Number.MAX_SAFE_INTEGER)throw Error('Informe uma quantidade de pontos maior que zero.');
+ const b={...pointSources(s,p.userId)};
+ if(p.operation==='add')b.manual+=amount;
+ else if(p.operation==='remove'){
+  if(!['all',...POINT_SOURCES].includes(p.source))throw Error('Origem de pontos inválida.');
+  const keys=p.source==='all'?['manual','legacy','likes','coins']:[p.source],available=keys.reduce((sum,k)=>sum+b[k],0);
+  if(amount>available)throw Error('A quantidade supera o saldo disponível nessa origem.');
+  let remaining=amount;for(const k of keys){const take=Math.min(b[k],remaining);b[k]-=take;remaining-=take;}
+ }else throw Error('Operação de pontos inválida.');
+ commitPoints(s,p.userId,b);
+}
+function resetCommunityPoints(s,p){
+ if(p.confirmed!==true)throw Error('Confirme o reset dos pontos antes de continuar.');
+ if(!['all','coins','likes'].includes(p.source))throw Error('Origem de pontos inválida.');
+ for(const id of Object.keys(s.users)){const b={...pointSources(s,id)};if(p.source==='all')commitPoints(s,id,emptyPoints());else{b[p.source]=0;commitPoints(s,id,b);}}
+}
+function restorePointSources(s,input,oldVersion){
+ const x=s.extra;
+ for(const id of Object.keys(x.points)){
+  if(oldVersion<4){x.pointSources[id]={...emptyPoints(),legacy:x.points[id]};continue;}
+  const b=input?.[id];if(!b)throw Error('Backup sem a origem dos pontos.');
+  const clean=emptyPoints();for(const k of POINT_SOURCES){if(typeof b[k]!=='number'||!Number.isFinite(b[k])||b[k]<0)throw Error('Origem dos pontos inválida.');clean[k]=b[k];}
+  const total=pointsTotal(clean);if(Math.abs(total-x.points[id])>Math.max(1,total)*Number.EPSILON*4)throw Error('Total de pontos diferente da soma das origens.');commitPoints(s,id,clean);
+ }
+ if(oldVersion>=4)for(const id of Object.keys(input||{}))if(Object.hasOwn(s.users,id)&&!Object.hasOwn(x.points,id))throw Error('Origem de pontos sem total no backup.');
+}
+function parseLiveDuration(value){
+ const m=/^(\d{2,4}):([0-5]\d):([0-5]\d)$/.exec(String(value).trim());
+ if(!m)throw Error('Use HH:MM:SS, por exemplo 04:00:00 ou 24:00:00.');
+ const seconds=Number(m[1])*3600+Number(m[2])*60+Number(m[3]);
+ if(seconds<1||seconds>31536000)throw Error('A duração deve ficar entre 00:00:01 e 8760:00:00.');
+ return seconds;
+}
+
+// presets.js
+// Presets are portable configuration; keyboard execution belongs to a local adapter.
+const RECOMMENDED_MACROS=30;
+const MACRO_KEYS=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ',...'0123456789',...Array.from({length:12},(_,i)=>'F'+(i+1)),'SPACE','ENTER','TAB','ESC','UP','DOWN','LEFT','RIGHT','BACKSPACE','DELETE','HOME','END','PAGEUP','PAGEDOWN'];
+function presetText(value,max,label){const text=String(value??'').trim();if(!text||text.length>max)throw Error(label+' inválido.');return text;}
+function presetNumber(value,min,max,label){const n=Number(value);if(!Number.isInteger(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
+function presetId(value){const id=String(value??'');if(!/^[a-zA-Z0-9_-]{1,100}$/.test(id))throw Error('Identificador de preset/macro inválido.');return id;}
+function cleanMacro(p){
+ const key=String(p.key??'').toUpperCase();if(!MACRO_KEYS.includes(key))throw Error('Tecla não suportada.');
+ return {id:presetId(p.id),giftId:presetText(p.giftId,120,'ID do presente'),name:presetText(p.name||'Macro',100,'Nome do macro'),key,ctrl:p.ctrl===true,alt:p.alt===true,shift:p.shift===true,repetitions:presetNumber(p.repetitions,1,1000,'Repetições'),intervalMs:presetNumber(p.intervalMs,0,60000,'Intervalo'),holdMs:presetNumber(p.holdMs,10,60000,'Duração da tecla')};
+}
+function cleanPreset(p){
+ if(!p||!Array.isArray(p.macros))throw Error('Preset inválido.');
+ const ids=new Set(),macros=p.macros.map(m=>{const row=cleanMacro(m);if(ids.has(row.id))throw Error('Macro duplicado.');ids.add(row.id);return row;});
+ return {id:presetId(p.id),name:presetText(p.name,100,'Nome do preset'),macros};
+}
+function restorePresets(input=[]){if(!Array.isArray(input))throw Error('Lista de presets inválida.');const ids=new Set();return input.map(p=>{const row=cleanPreset(p);if(ids.has(row.id))throw Error('Preset duplicado.');ids.add(row.id);return row;});}
+function recommendMacros(count,confirmedCount){if(count>RECOMMENDED_MACROS&&confirmedCount!==count)throw Error('Este preset ultrapassa 30 macros. Confirme o aviso antes de continuar.');}
+function changePreset(s,command,p){
+ const presets=s.extra.presets;
+ if(command==='preset-create'){const item=cleanPreset(p);if(presets.some(x=>x.id===item.id))throw Error('Este preset já existe.');recommendMacros(item.macros.length,p.confirmedCount);presets.push(item);return;}
+ const item=presets.find(x=>x.id===p.presetId);if(!item)throw Error('Preset não encontrado.');
+ if(command==='preset-rename')item.name=presetText(p.name,100,'Nome do preset');
+ else if(command==='preset-delete')s.extra.presets=presets.filter(x=>x.id!==item.id);
+ else if(command==='macro-save'){
+  const row=cleanMacro(p.macro),index=item.macros.findIndex(x=>x.id===row.id);
+  if(index<0){recommendMacros(item.macros.length+1,p.confirmedCount);item.macros.push(row);}else item.macros[index]=row;
+ }else if(command==='macro-delete')item.macros=item.macros.filter(m=>m.id!==p.macroId);
+ else throw Error('Comando de preset desconhecido.');
+}
+function presetPackage(p){return {format:'amarillou-preset',version:1,preset:cleanPreset(p)};}
+function readPresetPackage(p){if(p?.format!=='amarillou-preset'||p.version!==1)throw Error('Arquivo de preset incompatível.');return cleanPreset(p.preset);}
 
 // features.js
 // State and domain rules, plus an optional fixed-endpoint FX fetch helper.
@@ -46,11 +135,11 @@ function calendarRange(period,t,zone){const d=dateAt(t,zone);if(period==='month'
 function levelThreshold(level){return Math.floor(50*1.03*(Math.pow(1.03,Math.max(0,Math.min(1000,level)-1))-1)/.03+1e-8);}
 function levelProgress(points){points=nonneg(points);let lo=1,hi=1000;while(lo<hi){const m=Math.ceil((lo+hi)/2);if(levelThreshold(m)<=points)lo=m;else hi=m-1;}const start=levelThreshold(lo),next=lo<1000?levelThreshold(lo+1):null;return {level:lo,points,start,next,remaining:next===null?0:Math.max(0,next-points),percent:next===null?100:Math.min(100,100*(points-start)/(next-start))};}
 function defaultVisual(){return {container:true,color:'#191b1e',showLevel:true,style:'classic'};}
-function newExtras(){return {channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['rankLikes','rankCoins','gifts','roles','goal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
+function newExtras(){return {channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['rankLikes','rankCoins','gifts','roles','goal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
 function timerRemaining(timer,now=Date.now()){return Math.max(0,timer.running?timer.endAt-now:timer.remainingMs);}
 function addTimer(timer,seconds,now){const rem=Math.min(31536000000,timerRemaining(timer,now)+seconds*1000);timer.remainingMs=rem;if(timer.running)timer.endAt=now+rem;}
 function sessionHeartbeat(s,now=Date.now(),connected=false){const a=s.extra.activeSession;if(!a)return false;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
-function recordExtras(s,e,uid,delta,now){const x=s.extra;const coins=e.type==='gift'?delta*(e.unit??0):0,likes=e.type==='like'?e.likes:0;x.points[uid]=(x.points[uid]||0)+coins*x.weights.coins+likes*x.weights.likes;x.goal.current+=likes;
+function recordExtras(s,e,uid,delta,now){const x=s.extra;const coins=e.type==='gift'?delta*(e.unit??0):0,likes=e.type==='like'?e.likes:0;earnPoints(s,uid,coins*x.weights.coins,likes*x.weights.likes);x.goal.current+=likes;
  if(e.type==='follow'){x.followers=x.followers.filter(f=>f.userId!==uid);x.followers.unshift({userId:uid,time:now});x.followers=x.followers.slice(0,50);}
  if(e.type==='gift'){
   x.catalog['$'+e.giftId]={id:e.giftId,name:e.giftName};
@@ -67,15 +156,18 @@ function resetRanking(s,period,metric,now=Date.now()){
 function boundedInput(v,min,max,label){const n=Number(v);if(!Number.isFinite(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
 function applyCommand(s,command,p={},now=Date.now()){
  const x=s.extra;
- if(command==='channel'){const name=String(p.handle??'').trim().replace(/^@/,'').toLowerCase();if(name&&!/^[a-z0-9_.]{1,24}$/.test(name))throw Error('Use apenas o @ do canal, sem link ou espaços.');x.channel=name;}
+ if(command==='points-adjust')adjustPoints(s,p);
+ else if(command==='points-reset')resetCommunityPoints(s,p);
+ else if(command.startsWith('preset-')||command.startsWith('macro-'))changePreset(s,command,p);
+ else if(command==='channel'){const name=String(p.handle??'').trim().replace(/^@/,'').toLowerCase();if(name&&!/^[a-z0-9_.]{1,24}$/.test(name))throw Error('Use apenas o @ do canal, sem link ou espaços.');x.channel=name;}
  else if(command==='reset-gifts'){x.highlightBaselines=Object.fromEntries(Object.entries(s.streaks||{}).map(([key,v])=>[key,v.count]));s.highlights={day:dateAt(now,s.settings.zone),last:null,recentCombo:null,bestCombo:null,expensive:null};for(const row of Object.values(s.days[dateAt(now,s.settings.zone)]||{}))row.gifts=0;}
  else if(command==='live-add'){
-  const start=boundedInput(p.start,0,now,'Data da transmissão'),duration=boundedInput(p.durationMinutes,1,10080,'Duração em minutos'),coins=boundedInput(p.coins,0,1e12,'Moedas');
+  const start=boundedInput(p.start,0,now,'Data da transmissão'),duration=p.durationHms!==undefined?parseLiveDuration(p.durationHms):boundedInput(p.durationMinutes,1,10080,'Duração em minutos')*60,coins=boundedInput(p.coins,0,1e12,'Moedas');
   if(!Number.isInteger(coins))throw Error('Informe um número inteiro de moedas.');
   const actualUsd=p.actualUsd===null||p.actualUsd===undefined||p.actualUsd===''?null:boundedInput(p.actualUsd,0,1e9,'Recebimento USD');
-  const end=start+duration*60000;if(end>now+60000)throw Error('A transmissão deve ter terminado. Confira data, horário e duração.');
+  const end=start+duration*1000;if(end>now+60000)throw Error('A transmissão deve ter terminado. Confira data, horário e duração.');
   let id='m'+now;while(x.manualLives.some(l=>l.id===id))id+='x';
-  x.manualLives.unshift({id,name:textValue(p.name||'Transmissão'),channel:x.channel,start,end,durationMs:duration*60000,coins,actualUsd,source:'manual'});
+  x.manualLives.unshift({id,name:textValue(p.name||'Transmissão'),channel:x.channel,start,end,durationMs:duration*1000,coins,actualUsd,source:'manual'});
  }
  else if(command==='live-delete'){if(!x.manualLives.some(l=>l.id===p.id))throw Error('Transmissão não encontrada.');x.manualLives=x.manualLives.filter(l=>l.id!==p.id);}
  else if(command==='fx-mode'){if(!['auto','manual'].includes(p.mode))throw Error('Modo de câmbio inválido.');x.fx.mode=p.mode;}
@@ -118,10 +210,12 @@ function analysisSummary(s,period='24h',month='',now=Date.now()){
 // Strict JSON rebuilding: only known fields, finite counts and known participants survive import.
 function validateExtras(s,input,oldVersion){
  const x=newExtras();
- if(oldVersion===1||!input){for(const [day,rows] of Object.entries(s.days)){for(const [id,r] of Object.entries(rows)){x.points[id]=(x.points[id]||0)+r.coins+r.likes;x.legacyCoins[day]=(x.legacyCoins[day]||0)+r.coins;}}return x;}
+ if(oldVersion===1||!input){for(const [day,rows] of Object.entries(s.days)){for(const [id,r] of Object.entries(rows)){x.points[id]=(x.points[id]||0)+r.coins+r.likes;x.legacyCoins[day]=(x.legacyCoins[day]||0)+r.coins;}}restorePointSources({...s,extra:x},null,oldVersion);return x;}
  const count=v=>{if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>Number.MAX_SAFE_INTEGER)throw Error('Contagem inválida no backup v0.3.');return v;};
  const known=id=>Object.hasOwn(s.users,id);for(const [key,n] of Object.entries(input.highlightBaselines||{}))if(key.startsWith('$'))x.highlightBaselines[key]=count(n);
  for(const [id,v] of Object.entries(input.points||{}))if(known(id))x.points[id]=count(v);
+ restorePointSources({...s,extra:x},input.pointSources,oldVersion);
+ x.presets=restorePresets(input.presets);
  if(input.weights)x.weights={coins:boundedInput(input.weights.coins,0,100000,'Pontos'),likes:boundedInput(input.weights.likes,0,100000,'Pontos')};
  for(const k of Object.keys(x.visuals)){const v=input.visuals?.[k];if(v)x.visuals[k]={container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:['ribbon','portrait'].includes(v.style)?v.style:'classic'};}
  for(const [k,r] of Object.entries(input.resets||{}))if(/^(coins|likes):(day|week|month)$/.test(k)){const baseline={};for(const [id,v] of Object.entries(r.baseline||{}))if(known(id))baseline[id]=count(v);if(!/^\d{4}-\d{2}-\d{2}$/.test(r.calendar))throw Error('Reset inválido.');x.resets[k]={calendar:r.calendar,startedAt:count(r.startedAt),baseline};}
@@ -138,7 +232,7 @@ function validateExtras(s,input,oldVersion){
  x.trackingSince=count(input.trackingSince);
  x.channel=textValue(input.channel,24).replace(/^@/,'').toLowerCase();if(x.channel&&!/^[a-z0-9_.]{1,24}$/.test(x.channel))throw Error('Canal inválido.');
  if(input.fx)x.fx={mode:input.fx.mode==='manual'?'manual':'auto',date:textValue(input.fx.date,10),fetchedAt:count(input.fx.fetchedAt),source:textValue(input.fx.source)};
- const ids=new Set();x.manualLives=(input.manualLives||[]).map(a=>{const id=textValue(a.id);if(!id||ids.has(id))throw Error('Transmissão duplicada.');ids.add(id);const start=count(a.start),durationMs=boundedInput(a.durationMs,0,604800000,'Duração'),coins=count(a.coins);if(!Number.isInteger(coins))throw Error('Moedas inválidas.');return {id,name:textValue(a.name),channel:textValue(a.channel,24),start,end:start+durationMs,durationMs,coins,actualUsd:a.actualUsd==null?null:boundedInput(a.actualUsd,0,1e9,'USD'),source:a.source==='v0.3'?'v0.3':'manual'};});
+ const ids=new Set();x.manualLives=(input.manualLives||[]).map(a=>{const id=textValue(a.id);if(!id||ids.has(id))throw Error('Transmissão duplicada.');ids.add(id);const start=count(a.start),durationMs=boundedInput(a.durationMs,0,31536000000,'Duração'),coins=count(a.coins);if(!Number.isInteger(coins))throw Error('Moedas inválidas.');return {id,name:textValue(a.name),channel:textValue(a.channel,24),start,end:start+durationMs,durationMs,coins,actualUsd:a.actualUsd==null?null:boundedInput(a.actualUsd,0,1e9,'USD'),source:a.source==='v0.3'?'v0.3':'manual'};});
  if(oldVersion<3){for(const a of [...x.sessions,...(x.activeSession?[x.activeSession]:[])]){const durationMs=a.segments.reduce((sum,[b,e])=>sum+e-b,0);x.manualLives.push({id:a.id,name:a.name,channel:x.channel,start:a.start,end:a.end||a.lastTick,durationMs,coins:x.ledger.filter(t=>t.sessionId===a.id).reduce((sum,t)=>sum+t.coins,0),actualUsd:a.actualUsd,source:'v0.3'});}x.activeSession=null;}
  return x;
 }
@@ -168,7 +262,7 @@ async function fetchFxQuote(fetcher=globalThis.fetch,now=Date.now()){
 
 // core.js
 // Domain layer: no browser or Node dependencies. One engine, multiple transports.
-const VERSION = 3;
+const VERSION = 4;
 const clean = (v, max = 120) => String(v ?? '').slice(0, max);
 const handle = v => clean(v).trim().replace(/^@/, '').toLowerCase();
 const number = v => Math.min(1e12, Math.max(0, Math.floor(Number(v) || 0)));
@@ -287,7 +381,7 @@ function setRole(s, role, input) {
 }
 function validateState(input) {
   // Rebuild dictionaries instead of merging arbitrary imported properties.
-  if (!input || ![1,2,VERSION].includes(input.version) || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
+  if (!input || ![1,2,3,VERSION].includes(input.version) || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
   const s=freshState();
   try { new Intl.DateTimeFormat('pt-BR',{timeZone:input.settings?.zone}).format(); } catch {throw Error('Fuso inválido no backup.');}
   s.settings.zone=input.settings?.zone || s.settings.zone;
@@ -414,7 +508,7 @@ const params=new URLSearchParams(location.search),token=new URLSearchParams(loca
 const root=document.querySelector('#overlay-root'),badge=document.querySelector('#overlay-status');
 let lastPacket=0,current=freshState(),lastHTML='';
 function render(){const html=overlayView(current,params);if(html!==lastHTML){root.innerHTML=html;watchImages(root);lastHTML=html;}}
-function receive(packet){if(packet.state?.version!==3||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.4.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
+function receive(packet){if(packet.state?.version!==4||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.5.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
 if(params.get('demo')==='1'){
   current=demoState();render();badge.textContent='DEMONSTRAÇÃO';
 }else if(token && location.hostname==='127.0.0.1'){

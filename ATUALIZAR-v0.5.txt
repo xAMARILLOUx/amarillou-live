@@ -1,0 +1,37 @@
+AMARILLOU LIVE CONTROL v0.5.0
+
+GITHUB PAGES
+1. Extraia este ZIP.
+2. No mesmo repositório/pasta publicado, substitua index.html, overlay.html e GUIA.html.
+3. Atualize também README.md e RELEASE-v0.5.0.md.
+4. Aguarde a publicação, feche abas antigas e abra o MESMO endereço/perfil com Ctrl+F5.
+5. Confira v0.5 na lateral.
+
+ONDE ESTÃO AS NOVIDADES
+Pontos → busque a pessoa → Ajustar pontos → adicionar/remover.
+Conexão & dados → Reset dos Pontos da Comunidade → escolha a origem → confirme.
+Análises → duração HH:MM:SS (04:00:00, 24:00:00, 48:30:00).
+Presets → criar preset → adicionar macros; acima de 30, Continuar ou Cancelar.
+
+PONTOS ANTIGOS
+A v0.4 não guardava a origem do XP. O saldo antigo é preservado como origem não identificada.
+Reset de moedas/likes só apaga pontos com origem identificada. Todos os pontos apaga também antigos/manuais.
+Rankings e totais históricos de moedas/likes não são apagados ao resetar pontos.
+
+PRESETS
+Editor e importação/exportação JSON disponíveis. A execução de teclas ainda não está implementada,
+nem online nem na ponte; será integrada na etapa local. Nenhum preset é ativado ao importar.
+30 é uma recomendação, não um bloqueio. O aviso aparece em cada nova adição acima de 30.
+
+MODO LOCAL
+Substitua todo o projeto e reinicie INICIAR-LOCAL.bat. Não basta trocar só index.html.
+O save continua em %USERPROFILE%\.amarillou-live. Não publique saves ou chaves.
+
+RELEASE NO GITHUB
+Tag: v0.5.0
+Título: AMARILLOU Live Control v0.5.0
+Descrição: copie RELEASE-v0.5.0.md.
+Anexe AMARILLOU-LIVE-v0.5.zip. O anexo da release não substitui os arquivos publicados no Pages.
+
+Atualizar não apaga dados. Para começar do zero: Conexão & dados → Resetar toda a plataforma → ZERAR.
+Não volte a usar versões antigas sobre a base migrada.
