@@ -1,4 +1,33 @@
-# AMARILLOU Live Control — v0.8.0
+# AMARILLOU Live Control — v0.9
+
+[Abrir ferramenta online](https://xamarilloux.github.io/amarillou-live/) · [Baixar modo local](https://github.com/xAMARILLOUx/amarillou-live/releases)
+
+## Novidades da v0.9
+
+- Botão destacado para ativar/desativar a captura automática em Análises.
+- Seleção de vários macros ou presets para excluir com uma confirmação.
+- Histórico de presentes com coleta automática, reset independente e controles
+  manuais recolhidos para quando os sinais da origem forem insuficientes.
+- Reset de recentes preserva recordes, rankings, pontos, Análises e combos em curso.
+- Executável Windows x64 sem instalador e Node incluído.
+- Pacote separado em EXECUTAVEL-WINDOWS, SITE-GITHUB-PAGES e CODIGO-FONTE.
+
+A identificação automática depende dos sinais recebidos: primeiro evento,
+roomId diferente e streamEnd quando disponíveis. Conectar, ficar em silêncio
+ou desconectar não comprova o início/fim real de uma live. As Análises medem
+atividade observada. O gatilho de entrada no clube de fãs não foi incluído:
+não foi possível confirmar um evento específico confiável do TikFinity.
+
+## Atualizar
+
+Para GitHub Pages, envie o CONTEÚDO de SITE-GITHUB-PAGES à raiz publicada do
+repositório. Para Releases, anexe o .exe de EXECUTAVEL-WINDOWS. CODIGO-FONTE
+contém o projeto completo para manutenção; não é necessário para executar o .exe.
+Feche a ponte antiga antes de abrir o novo executável.
+
+## Documentação das versões anteriores
+
+# AMARILLOU Live Control — v0.9.0
 
 **[Abrir o painel](https://xamarilloux.github.io/amarillou-live/)** · [Guia de uso](GUIA.html) · [Novidades desta versão](RELEASE-v0.8.0.md)
 

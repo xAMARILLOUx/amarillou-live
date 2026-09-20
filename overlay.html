@@ -57,10 +57,13 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 .gift-picker-art{position:relative}.gift-picker-art img{position:absolute;inset:0;background:var(--panel)}
 
 .gift-history-scroll{max-height:540px;overflow:auto;overflow-anchor:none}.gift-history-scroll .gift-image{width:42px;height:42px;object-fit:contain;vertical-align:middle}.gift-history-scroll td{vertical-align:middle}
+
+/* v0.9 explicit controls and batch selection */
+.capture-control,.bulk-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:18px 0}.capture-control{padding:20px;border:1px solid #9068ba;border-radius:12px;background:#281b38}.capture-control p{margin:8px 0 0}.capture-control button{min-height:48px}.capture-control button[aria-pressed="true"]{background:#65efb4;color:#12291f;border-color:#65efb4}.bulk-toolbar label,.bulk-check{display:flex;align-items:center;gap:12px;margin:0}.bulk-checkbox,.bulk-check input,.bulk-toolbar input{width:22px;height:22px;flex:0 0 22px;accent-color:#b788ef}.bulk-check{padding:12px;border-bottom:1px solid #ffffff18;cursor:pointer}#presets-bulk-list{max-height:50vh;overflow:auto}.live-manual{margin:14px 0}.live-manual summary{cursor:pointer;color:#bca5d8;padding:12px 0}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v0.8.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v0.9.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
@@ -137,8 +140,12 @@ function restorePresets(input=[]){if(!Array.isArray(input))throw Error('Lista de
 function recommendMacros(count,confirmedCount){if(count>RECOMMENDED_MACROS&&confirmedCount!==count)throw Error('Este preset ultrapassa 30 macros. Confirme o aviso antes de continuar.');}
 function changePreset(s,command,p){
  const presets=s.extra.presets;
+ const selection=(ids,known)=>{if(p.confirmed!==true)throw Error('Confirme a exclusão em lote.');if(!Array.isArray(ids)||!ids.length)throw Error('Selecione pelo menos um item.');const set=new Set(ids.map(presetId));if([...set].some(id=>!known.some(x=>x.id===id)))throw Error('A seleção mudou. Atualize e tente novamente.');return set;};
+ if(command==='preset-delete-many'){const ids=selection(p.presetIds,presets);s.extra.presets=presets.filter(x=>!ids.has(x.id));return;}
+
  if(command==='preset-create'){const item=cleanPreset(p);if(presets.some(x=>x.id===item.id))throw Error('Este preset já existe.');recommendMacros(item.macros.length,p.confirmedCount);presets.push(item);return;}
  const item=presets.find(x=>x.id===p.presetId);if(!item)throw Error('Preset não encontrado.');
+ if(command==='macro-delete-many'){const ids=selection(p.macroIds,item.macros);item.macros=item.macros.filter(m=>!ids.has(m.id));return;}
  if(command==='preset-rename')item.name=presetText(p.name,100,'Nome do preset');
  else if(command==='preset-delete')s.extra.presets=presets.filter(x=>x.id!==item.id);
  else if(command==='macro-save'){
@@ -193,7 +200,8 @@ function recordLiveGift(s,e,uid,delta,now){
  let row=l.recent.find(r=>r.key===key);
  if(!row){row={key,userId:uid,giftId:e.giftId,name:e.giftName,image:e.giftImage,unit:e.unit,count:0,coins:0,time:now,lastTime:now};l.recent.push(row);}
  row.count+=delta;row.coins+=delta*(e.unit??0);row.lastTime=now;if(row.unit===null&&e.unit!==null)row.unit=e.unit;
- if(row.count>1&&row.count>(l.bestCombos[uid]?.count||0))l.bestCombos[uid]={...row};
+ const recordCount=e.streak?Math.max(row.count,e.count):row.count;
+ if(recordCount>1&&recordCount>(l.bestCombos[uid]?.count||0))l.bestCombos[uid]={...row,count:recordCount,coins:recordCount*(e.unit??0)};
  if(e.unit!==null&&e.unit>(l.bestGifts[uid]?.unit??-1))l.bestGifts[uid]={...row,count:1,coins:e.unit,unit:e.unit};
  if(l.autoCapture){const record=s.extra.manualLives.find(r=>r.id===a.recordId);if(record)record.coins+=delta*(e.unit??0);}
 }
@@ -242,8 +250,9 @@ function resetRanking(s,period,metric,now=Date.now()){
 function boundedInput(v,min,max,label){const n=Number(v);if(!Number.isFinite(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
 function applyCommand(s,command,p={},now=Date.now()){
  const x=s.extra;
- if(command==='capture-auto'){if(typeof p.enabled!=='boolean')throw Error('Opção inválida.');x.live.autoCapture=p.enabled;pauseLive(s);if(x.live.current)x.live.current.recordId='';}
+ if(command==='capture-auto'){if(typeof p.enabled!=='boolean')throw Error('Opção inválida.');if(x.live.autoCapture!==p.enabled){x.live.autoCapture=p.enabled;pauseLive(s);if(x.live.current)x.live.current.recordId='';}}
  else if(command==='live-new'){if(p.confirmed!==true)throw Error('Confirme a nova transmissão.');beginLive(s,now);}
+ else if(command==='live-history-reset'){if(p.confirmed!==true)throw Error('Confirme o reset do histórico.');x.live.recent=[];}
  else if(command==='live-finish')finishLive(s,now,'manual');
  else if(command==='gift-goal-target')x.giftGoal.target=boundedInput(p.target,1,1e12,'Meta de moedas');
  else if(command==='gift-goal-reset'){if(p.confirmed!==true)throw Error('Confirme o reset.');x.giftGoal.current=0;}
@@ -386,7 +395,7 @@ function freshState() {
 }
 function normalize(raw) {
   const p = typeof raw === 'string' ? JSON.parse(raw) : raw;
-  if(p&&typeof p==='object'&&String(p.event||p.type||'').toLowerCase()==='streamend'&&!p.data)return {type:'streamend'};
+  if(p&&typeof p==='object'&&String(p.event||p.type||'').toLowerCase()==='streamend'&&!p.data)return {type:'streamend',roomId:clean(p.roomId)};
   if (!p || typeof p !== 'object' || !p.data || typeof p.data !== 'object') return null;
   const d = p.data, u = d.user || d, gd = d.giftDetails || d.extendedGiftInfo || {};
   const type = clean(p.event || p.type, 40).toLowerCase();
@@ -411,7 +420,7 @@ class Engine {
     if (!e) {s.diagnostics.invalid++; return false;}
     const typeKey = '$'+e.type;
     s.diagnostics.types[typeKey] = (s.diagnostics.types[typeKey] || 0) + 1;
-    if(e.type==='streamend'){finishLive(s,now,'sinal streamEnd');s.updatedAt=now;return true;}
+    if(e.type==='streamend'){if(e.roomId&&s.extra.live.current?.roomId&&e.roomId!==s.extra.live.current.roomId)return false;finishLive(s,now,'sinal streamEnd');s.updatedAt=now;return true;}
     if (!supported.has(e.type)) {s.diagnostics.unknown++; return false;}
     if (!e.id) {s.diagnostics.invalid++; return false;}
     // A message id can be shared by streak updates, so count/end form part of its identity.
