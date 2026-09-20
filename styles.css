@@ -55,3 +55,5 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 .overlay-body .gift-card.bare:not(.portrait) .gift-content,.overlay-body .gift-card.bare:not(.portrait) .gift-donor{min-width:0;max-width:100%;flex:1 1 240px}
 .overlay-body .gift-content .gift-image,.overlay-body .gift-content .gift-placeholder{flex-shrink:0}
 .gift-picker-art{position:relative}.gift-picker-art img{position:absolute;inset:0;background:var(--panel)}
+
+.gift-history-scroll{max-height:540px;overflow:auto;overflow-anchor:none}.gift-history-scroll .gift-image{width:42px;height:42px;object-fit:contain;vertical-align:middle}.gift-history-scroll td{vertical-align:middle}

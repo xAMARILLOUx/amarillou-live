@@ -55,10 +55,12 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 .overlay-body .gift-card.bare:not(.portrait) .gift-content,.overlay-body .gift-card.bare:not(.portrait) .gift-donor{min-width:0;max-width:100%;flex:1 1 240px}
 .overlay-body .gift-content .gift-image,.overlay-body .gift-content .gift-placeholder{flex-shrink:0}
 .gift-picker-art{position:relative}.gift-picker-art img{position:absolute;inset:0;background:var(--panel)}
+
+.gift-history-scroll{max-height:540px;overflow:auto;overflow-anchor:none}.gift-history-scroll .gift-image{width:42px;height:42px;object-fit:contain;vertical-align:middle}.gift-history-scroll td{vertical-align:middle}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v0.7.1: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v0.8.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
@@ -123,7 +125,7 @@ function cleanMacro(p){
  const fields={trigger,giftId:trigger==='gift'?presetText(p.giftId,120,'ID do presente'):''};
  if(trigger.startsWith('likes-'))fields.threshold=presetNumber(p.threshold,1,1e12,'Quantidade de curtidas');
  if(trigger==='follow')fields.protectFollow=p.protectFollow!==false;
- if(trigger==='coins'){fields.minCoins=presetNumber(p.minCoins,1,1e9,'Mínimo de moedas');fields.maxCoins=presetNumber(p.maxCoins,fields.minCoins,1e9,'Máximo de moedas');}
+ if(trigger==='coins'){fields.minCoins=presetNumber(p.minCoins,1,1e9,'Mínimo de moedas');fields.maxCoins=presetNumber(p.maxCoins,fields.minCoins,1e9,'Máximo de moedas');if(p.ignoredGiftIds!==undefined&&!Array.isArray(p.ignoredGiftIds))throw Error('Lista de presentes ignorados inválida.');fields.ignoredGiftIds=[...new Set((p.ignoredGiftIds||[]).map(id=>presetText(id,120,'ID ignorado')))];}
  return {...fields,id:presetId(p.id),name:presetText(p.name||'Macro',100,'Nome do macro'),key,ctrl:p.ctrl===true,alt:p.alt===true,shift:p.shift===true,repetitions:presetNumber(p.repetitions,1,1000,'Repetições'),intervalMs:presetNumber(p.intervalMs,0,60000,'Intervalo'),holdMs:presetNumber(p.holdMs,10,60000,'Duração da tecla')};
 }
 function cleanPreset(p){
@@ -145,15 +147,67 @@ function changePreset(s,command,p){
  }else if(command==='macro-delete')item.macros=item.macros.filter(m=>m.id!==p.macroId);
  else throw Error('Comando de preset desconhecido.');
 }
-function presetPackage(p){return {format:'amarillou-preset',version:2,preset:cleanPreset(p)};}
-function readPresetPackage(p){if(p?.format!=='amarillou-preset'||![1,2].includes(p.version))throw Error('Arquivo de preset incompatível.');return cleanPreset(p.preset);}
+function presetPackage(p){return {format:'amarillou-preset',version:3,preset:cleanPreset(p)};}
+function readPresetPackage(p){if(p?.format!=='amarillou-preset'||![1,2,3].includes(p.version))throw Error('Arquivo de preset incompatível.');return cleanPreset(p.preset);}
 
 function macroTriggerLabel(m){
  if(m.trigger==='likes-user')return 'A cada '+m.threshold+' curtidas por pessoa';
  if(m.trigger==='likes-total')return 'A cada '+m.threshold+' curtidas totais';
  if(m.trigger==='follow')return 'Seguir'+(m.protectFollow!==false?' · proteção de 24 h':' · sem proteção');
- if(m.trigger==='coins')return 'Presente de '+m.minCoins+' a '+m.maxCoins+' moedas (unitário)';
+ if(m.trigger==='coins')return 'Presente de '+m.minCoins+' a '+m.maxCoins+' moedas (unitário)'+(m.ignoredGiftIds?.length?' · '+m.ignoredGiftIds.length+' ignorado(s)':'');
  return 'Presente: '+m.giftId;
+}
+
+// live.js
+// Observation-based sessions. A socket connection alone is never evidence of a live.
+function newLiveData(){return {autoCapture:false,current:null,archives:[],recent:[],bestCombos:{},bestGifts:{},serial:0};}
+function beginLive(s,now=Date.now(),roomId='',reason='manual'){
+ const l=s.extra.live;if(l.current)finishLive(s,now,'nova transmissão');
+ l.serial++;l.current={id:'live-'+now+'-'+l.serial,start:now,lastEvent:now,end:0,roomId:String(roomId||''),reason,channel:s.extra.channel,recordId:'',lastCapture:0};l.recent=[];s.streaks={};
+ return l.current;
+}
+function finishLive(s,now=Date.now(),reason='encerrada'){
+ const l=s.extra.live,a=l.current;if(!a)return;
+ a.end=now;a.endReason=reason;
+ const row=s.extra.manualLives.find(r=>r.id===a.recordId);if(row)row.end=Math.max(row.start,a.lastEvent);
+ l.archives.unshift({...a,gifts:l.recent});l.current=null;
+}
+function observeLive(s,e,now){
+ const l=s.extra.live;let a=l.current;
+ if(a&&e.roomId&&a.roomId&&e.roomId!==a.roomId){finishLive(s,now,'nova sala');a=null;}
+ if(!a)a=beginLive(s,now,e.roomId,'evento');
+ if(e.roomId&&!a.roomId)a.roomId=e.roomId;
+ a.lastEvent=now;
+ if(!l.autoCapture)return;
+ if(!a.recordId){let id='auto-'+a.id;while(s.extra.manualLives.some(r=>r.id===id))id+='x';a.recordId=id;a.lastCapture=0;s.extra.manualLives.unshift({id,name:'Transmissão automática (observada)',channel:s.extra.channel,start:now,end:now,durationMs:0,coins:0,actualUsd:null,source:'auto'});}
+ const row=s.extra.manualLives.find(r=>r.id===a.recordId);if(!row)return;
+ const gap=now-a.lastCapture;
+ // Silence, reconnection and app closure never add unobserved wall-clock time.
+ if(a.lastCapture&&gap>0&&gap<=60000)row.durationMs+=gap;
+ row.end=now;a.lastCapture=now;
+}
+function pauseLive(s){if(s.extra.live.current)s.extra.live.current.lastCapture=0;}
+function recordLiveGift(s,e,uid,delta,now){
+ if(delta<=0)return;const l=s.extra.live,a=l.current;if(!a)return;
+ const key=e.sequence||('gift-'+now+'-'+l.recent.length);
+ let row=l.recent.find(r=>r.key===key);
+ if(!row){row={key,userId:uid,giftId:e.giftId,name:e.giftName,image:e.giftImage,unit:e.unit,count:0,coins:0,time:now,lastTime:now};l.recent.push(row);}
+ row.count+=delta;row.coins+=delta*(e.unit??0);row.lastTime=now;if(row.unit===null&&e.unit!==null)row.unit=e.unit;
+ if(row.count>1&&row.count>(l.bestCombos[uid]?.count||0))l.bestCombos[uid]={...row};
+ if(e.unit!==null&&e.unit>(l.bestGifts[uid]?.unit??-1))l.bestGifts[uid]={...row,count:1,coins:e.unit,unit:e.unit};
+ if(l.autoCapture){const record=s.extra.manualLives.find(r=>r.id===a.recordId);if(record)record.coins+=delta*(e.unit??0);}
+}
+function giftRecords(s,kind){return Object.values(kind==='combos'?s.extra.live.bestCombos:s.extra.live.bestGifts).sort((a,b)=>(kind==='combos'?b.count-a.count:b.unit-a.unit)||a.time-b.time||a.userId.localeCompare(b.userId)).slice(0,10);}
+function restoreLiveData(input,known,image){
+ const out=newLiveData();if(!input)return out;
+ const n=v=>{if(!Number.isSafeInteger(v)||v<0)throw Error('Registro de transmissão inválido.');return v;};
+ const t=v=>String(v??'').slice(0,240);
+ const gift=r=>{if(!known(r.userId))throw Error('Participante desconhecido no histórico de presentes.');return {key:t(r.key),userId:r.userId,giftId:t(r.giftId),name:t(r.name),image:image(r.image),unit:r.unit===null?null:n(r.unit),count:n(r.count),coins:n(r.coins),time:n(r.time),lastTime:n(r.lastTime)};};
+ const session=a=>({id:t(a.id),start:n(a.start),lastEvent:n(a.lastEvent),end:n(a.end),roomId:t(a.roomId),reason:t(a.reason),channel:t(a.channel),recordId:t(a.recordId),lastCapture:0,endReason:t(a.endReason)});
+ out.autoCapture=input.autoCapture===true;out.serial=n(input.serial||0);out.current=input.current?session(input.current):null;
+ out.recent=(input.recent||[]).map(gift);out.archives=(input.archives||[]).map(a=>({...session(a),gifts:(a.gifts||[]).map(gift)}));
+ for(const key of ['bestCombos','bestGifts'])for(const [id,r] of Object.entries(input[key]||{})){if(id!==r.userId)throw Error('Recorde inválido.');out[key][id]=gift(r);}
+ return out;
 }
 
 // features.js
@@ -167,13 +221,13 @@ function calendarRange(period,t,zone){const d=dateAt(t,zone);if(period==='month'
 function levelThreshold(level){return Math.floor(50*1.03*(Math.pow(1.03,Math.max(0,Math.min(1000,level)-1))-1)/.03+1e-8);}
 function levelProgress(points){points=nonneg(points);let lo=1,hi=1000;while(lo<hi){const m=Math.ceil((lo+hi)/2);if(levelThreshold(m)<=points)lo=m;else hi=m-1;}const start=levelThreshold(lo),next=lo<1000?levelThreshold(lo+1):null;return {level:lo,points,start,next,remaining:next===null?0:Math.max(0,next-points),percent:next===null?100:Math.min(100,100*(points-start)/(next-start))};}
 function defaultVisual(){return {container:true,color:'#191b1e',showLevel:true,style:'classic'};}
-function newExtras(){return {channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],macroFollows:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['rankLikes','rankCoins','gifts','roles','goal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
+function newExtras(){return {live:newLiveData(),giftGoal:{target:1000,current:0},channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],macroFollows:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['rankLikes','rankCoins','gifts','roles','goal','giftGoal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
 function timerRemaining(timer,now=Date.now()){return Math.max(0,timer.running?timer.endAt-now:timer.remainingMs);}
 function addTimer(timer,seconds,now){const rem=Math.min(31536000000,timerRemaining(timer,now)+seconds*1000);timer.remainingMs=rem;if(timer.running)timer.endAt=now+rem;}
 function sessionHeartbeat(s,now=Date.now(),connected=false){const a=s.extra.activeSession;if(!a)return false;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
 function recordExtras(s,e,uid,delta,now){const x=s.extra;const coins=e.type==='gift'?delta*(e.unit??0):0,likes=e.type==='like'?e.likes:0;earnPoints(s,uid,coins*x.weights.coins,likes*x.weights.likes);x.goal.current+=likes;
  if(e.type==='follow'){x.followers=x.followers.filter(f=>f.userId!==uid);x.followers.unshift({userId:uid,time:now});x.followers=x.followers.slice(0,50);}
- if(e.type==='gift'){
+ if(e.type==='gift'){x.giftGoal.current+=coins;recordLiveGift(s,e,uid,delta,now);
   if(e.giftId){const old=x.catalog['$'+e.giftId];x.catalog['$'+e.giftId]={id:e.giftId,name:e.giftName,image:e.giftImage||old?.image||'',unit:e.unit??old?.unit??null};}
   if(coins>0)x.ledger.push({time:now,coins,userId:uid,sessionId:x.activeSession?.id||''});
   if(delta>0){const rule=x.timer.rules.find(r=>r.giftId===e.giftId);if(rule)addTimer(x.timer,rule.seconds*delta,now);}
@@ -188,10 +242,15 @@ function resetRanking(s,period,metric,now=Date.now()){
 function boundedInput(v,min,max,label){const n=Number(v);if(!Number.isFinite(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
 function applyCommand(s,command,p={},now=Date.now()){
  const x=s.extra;
- if(command==='points-adjust')adjustPoints(s,p);
+ if(command==='capture-auto'){if(typeof p.enabled!=='boolean')throw Error('Opção inválida.');x.live.autoCapture=p.enabled;pauseLive(s);if(x.live.current)x.live.current.recordId='';}
+ else if(command==='live-new'){if(p.confirmed!==true)throw Error('Confirme a nova transmissão.');beginLive(s,now);}
+ else if(command==='live-finish')finishLive(s,now,'manual');
+ else if(command==='gift-goal-target')x.giftGoal.target=boundedInput(p.target,1,1e12,'Meta de moedas');
+ else if(command==='gift-goal-reset'){if(p.confirmed!==true)throw Error('Confirme o reset.');x.giftGoal.current=0;}
+ else if(command==='points-adjust')adjustPoints(s,p);
  else if(command==='points-reset')resetCommunityPoints(s,p);
  else if(command.startsWith('preset-')||command.startsWith('macro-'))changePreset(s,command,p);
- else if(command==='channel'){const name=String(p.handle??'').trim().replace(/^@/,'').toLowerCase();if(name&&!/^[a-z0-9_.]{1,24}$/.test(name))throw Error('Use apenas o @ do canal, sem link ou espaços.');x.channel=name;}
+ else if(command==='channel'){const name=String(p.handle??'').trim().replace(/^@/,'').toLowerCase();if(name&&!/^[a-z0-9_.]{1,24}$/.test(name))throw Error('Use apenas o @ do canal, sem link ou espaços.');if(name!==x.channel)finishLive(s,now,'canal alterado');x.channel=name;}
  else if(command==='reset-gifts'){x.highlightBaselines=Object.fromEntries(Object.entries(s.streaks||{}).map(([key,v])=>[key,v.count]));s.highlights={day:dateAt(now,s.settings.zone),last:null,recentCombo:null,bestCombo:null,expensive:null};for(const row of Object.values(s.days[dateAt(now,s.settings.zone)]||{}))row.gifts=0;}
  else if(command==='live-add'){
   const start=boundedInput(p.start,0,now,'Data da transmissão'),duration=p.durationHms!==undefined?parseLiveDuration(p.durationHms):boundedInput(p.durationMinutes,1,10080,'Duração em minutos')*60,coins=boundedInput(p.coins,0,1e12,'Moedas');
@@ -201,7 +260,7 @@ function applyCommand(s,command,p={},now=Date.now()){
   let id='m'+now;while(x.manualLives.some(l=>l.id===id))id+='x';
   x.manualLives.unshift({id,name:textValue(p.name||'Transmissão'),channel:x.channel,start,end,durationMs:duration*1000,coins,actualUsd,source:'manual'});
  }
- else if(command==='live-delete'){if(!x.manualLives.some(l=>l.id===p.id))throw Error('Transmissão não encontrada.');x.manualLives=x.manualLives.filter(l=>l.id!==p.id);}
+ else if(command==='live-delete'){if(x.live.current?.recordId===p.id)throw Error('Finalize a transmissão antes de excluir seu registro automático.');if(!x.manualLives.some(l=>l.id===p.id))throw Error('Transmissão não encontrada.');x.manualLives=x.manualLives.filter(l=>l.id!==p.id);}
  else if(command==='fx-mode'){if(!['auto','manual'].includes(p.mode))throw Error('Modo de câmbio inválido.');x.fx.mode=p.mode;}
  else if(command==='fx-rate'){const quote=parseFxQuote(p.quote,now);x.conversion.brlPerUsd=quote.rate;x.fx={mode:x.fx.mode,date:quote.date,fetchedAt:now,source:'Frankfurter / referência diária'};}
  else if(command==='live-calibrate'){const live=x.manualLives.find(l=>l.id===p.id);if(!live||live.coins<=0)throw Error('Selecione uma transmissão com moedas.');const usd=boundedInput(p.usd,0,1e9,'Recebido em USD');const rate=boundedInput(usd/live.coins,0,100,'USD por moeda calculado');live.actualUsd=usd;x.conversion={...x.conversion,usdPerCoin:rate,updatedAt:now,source:'calibração: '+live.name};}
@@ -247,6 +306,7 @@ function validateExtras(s,input,oldVersion){
  const known=id=>Object.hasOwn(s.users,id);for(const [key,n] of Object.entries(input.highlightBaselines||{}))if(key.startsWith('$'))x.highlightBaselines[key]=count(n);
  for(const [id,v] of Object.entries(input.points||{}))if(known(id))x.points[id]=count(v);
  restorePointSources({...s,extra:x},input.pointSources,oldVersion);
+ x.live=restoreLiveData(input.live,known,catalogImage);if(input.giftGoal)x.giftGoal={target:boundedInput(input.giftGoal.target,1,1e12,'Meta'),current:count(input.giftGoal.current)};
  x.presets=restorePresets(input.presets);
  for(const [key,value] of Object.entries(input.macroFollows||{})){if(!key.startsWith('$')||key.length>400)throw Error('Proteção de seguidores inválida.');x.macroFollows[key]=count(value);}
 
@@ -266,7 +326,7 @@ function validateExtras(s,input,oldVersion){
  x.trackingSince=count(input.trackingSince);
  x.channel=textValue(input.channel,24).replace(/^@/,'').toLowerCase();if(x.channel&&!/^[a-z0-9_.]{1,24}$/.test(x.channel))throw Error('Canal inválido.');
  if(input.fx)x.fx={mode:input.fx.mode==='manual'?'manual':'auto',date:textValue(input.fx.date,10),fetchedAt:count(input.fx.fetchedAt),source:textValue(input.fx.source)};
- const ids=new Set();x.manualLives=(input.manualLives||[]).map(a=>{const id=textValue(a.id);if(!id||ids.has(id))throw Error('Transmissão duplicada.');ids.add(id);const start=count(a.start),durationMs=boundedInput(a.durationMs,0,31536000000,'Duração'),coins=count(a.coins);if(!Number.isInteger(coins))throw Error('Moedas inválidas.');return {id,name:textValue(a.name),channel:textValue(a.channel,24),start,end:start+durationMs,durationMs,coins,actualUsd:a.actualUsd==null?null:boundedInput(a.actualUsd,0,1e9,'USD'),source:a.source==='v0.3'?'v0.3':'manual'};});
+ const ids=new Set();x.manualLives=(input.manualLives||[]).map(a=>{const id=textValue(a.id);if(!id||ids.has(id))throw Error('Transmissão duplicada.');ids.add(id);const start=count(a.start),durationMs=boundedInput(a.durationMs,0,31536000000,'Duração'),coins=count(a.coins);if(!Number.isInteger(coins))throw Error('Moedas inválidas.');return {id,name:textValue(a.name),channel:textValue(a.channel,24),start,end:start+durationMs,durationMs,coins,actualUsd:a.actualUsd==null?null:boundedInput(a.actualUsd,0,1e9,'USD'),source:a.source==='auto'?'auto':a.source==='v0.3'?'v0.3':'manual'};});
  if(oldVersion<3){for(const a of [...x.sessions,...(x.activeSession?[x.activeSession]:[])]){const durationMs=a.segments.reduce((sum,[b,e])=>sum+e-b,0);x.manualLives.push({id:a.id,name:a.name,channel:x.channel,start:a.start,end:a.end||a.lastTick,durationMs,coins:x.ledger.filter(t=>t.sessionId===a.id).reduce((sum,t)=>sum+t.coins,0),actualUsd:a.actualUsd,source:'v0.3'});}x.activeSession=null;}
  return x;
 }
@@ -298,7 +358,7 @@ function catalogImage(value){try{const u=new URL(String(value||'').slice(0,2000)
 
 // core.js
 // Domain layer: no browser or Node dependencies. One engine, multiple transports.
-const VERSION = 6;
+const VERSION = 7;
 const clean = (v, max = 120) => String(v ?? '').slice(0, max);
 const handle = v => clean(v).trim().replace(/^@/, '').toLowerCase();
 const number = v => Math.min(1e12, Math.max(0, Math.floor(Number(v) || 0)));
@@ -326,6 +386,7 @@ function freshState() {
 }
 function normalize(raw) {
   const p = typeof raw === 'string' ? JSON.parse(raw) : raw;
+  if(p&&typeof p==='object'&&String(p.event||p.type||'').toLowerCase()==='streamend'&&!p.data)return {type:'streamend'};
   if (!p || typeof p !== 'object' || !p.data || typeof p.data !== 'object') return null;
   const d = p.data, u = d.user || d, gd = d.giftDetails || d.extendedGiftInfo || {};
   const type = clean(p.event || p.type, 40).toLowerCase();
@@ -333,7 +394,7 @@ function normalize(raw) {
   const username = handle(u.uniqueId || d.uniqueId);
   const avatar = imageURL(u.profilePictureUrl || d.profilePictureUrl || u.avatarThumb?.urlList?.[0]);
   const unitRaw = d.diamondCount ?? gd.diamondCount ?? d.gift?.diamondCount;
-  return {type, id, handle:username, name:clean(u.nickname || d.nickname), avatar,
+  return {type,roomId:clean(d.roomId || d.common?.roomId || p.roomId), id, handle:username, name:clean(u.nickname || d.nickname), avatar,
     msgId:clean(d.msgId || d.common?.msgId || p.msgId), groupId:clean(d.groupId || d.gift?.groupId),
     likes:number(d.likeCount), giftId:clean(d.giftId || gd.id || d.giftName),
     giftName:clean(d.giftName || gd.name || 'Presente'), giftImage:imageURL(d.giftPictureUrl || gd.image?.urlList?.[0]),
@@ -350,6 +411,7 @@ class Engine {
     if (!e) {s.diagnostics.invalid++; return false;}
     const typeKey = '$'+e.type;
     s.diagnostics.types[typeKey] = (s.diagnostics.types[typeKey] || 0) + 1;
+    if(e.type==='streamend'){finishLive(s,now,'sinal streamEnd');s.updatedAt=now;return true;}
     if (!supported.has(e.type)) {s.diagnostics.unknown++; return false;}
     if (!e.id) {s.diagnostics.invalid++; return false;}
     // A message id can be shared by streak updates, so count/end form part of its identity.
@@ -362,6 +424,7 @@ class Engine {
     const uid = '$'+e.id;
     const old = s.users[uid] || {};
     s.users[uid] = {id:e.id,handle:e.handle || old.handle || '',name:e.name || old.name || e.handle || e.id,avatar:e.avatar || old.avatar || '',lastSeen:now};
+    observeLive(s,e,now);
     const day = dayKey(now, s.settings.zone);
     if (s.highlights.day !== day) s.highlights = {...freshState().highlights, day};
     s.days[day] ||= {};
@@ -379,7 +442,8 @@ class Engine {
         if(restart)delete s.extra.highlightBaselines[key];
         displayCount=Math.max(0,e.count-(s.extra.highlightBaselines[key]||0));
         delta = Math.max(0,e.count-previous);
-        s.streaks[key] = {count:Math.max(previous,e.count),end:e.end || (!restart && prev?.end) || false,time:now};
+        e.sequence=restart?'combo-'+now+'-'+s.diagnostics.accepted:(prev.sequence||key+'-'+prev.time);
+        s.streaks[key] = {sequence:e.sequence,count:Math.max(previous,e.count),end:e.end || (!restart && prev?.end) || false,time:now};
         if (Object.keys(s.streaks).length > 5000) s.streaks = Object.fromEntries(Object.entries(s.streaks).filter(([,v])=>now-v.time < 86400000));
       }
       giftDelta=delta;
@@ -418,7 +482,7 @@ function setRole(s, role, input) {
 }
 function validateState(input) {
   // Rebuild dictionaries instead of merging arbitrary imported properties.
-  if (!input || ![1,2,3,4,5,VERSION].includes(input.version) || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
+  if (!input || ![1,2,3,4,5,6,VERSION].includes(input.version) || !input.users || !input.days || !input.roles) throw Error('Backup incompatível ou inválido.');
   const s=freshState();
   try { new Intl.DateTimeFormat('pt-BR',{timeZone:input.settings?.zone}).format(); } catch {throw Error('Fuso inválido no backup.');}
   s.settings.zone=input.settings?.zone || s.settings.zone;
@@ -447,7 +511,7 @@ function validateState(input) {
     }
   }
   for (const [id,t] of Object.entries(input.seen || {}).slice(-12000)) if(id.startsWith('$')) s.seen[id]=timestamp(t);
-  for (const [id,v] of Object.entries(input.streaks || {}).slice(-5000)) if(id.startsWith('$') && v) s.streaks[id]={count:number(v.count),time:timestamp(v.time),end:v.end===true};
+  for (const [id,v] of Object.entries(input.streaks || {}).slice(-5000)) if(id.startsWith('$') && v) s.streaks[id]={sequence:clean(v.sequence,240),count:number(v.count),time:timestamp(v.time),end:v.end===true};
   for (const k of ['received','accepted','duplicates','unknown','invalid','unpriced','lastEvent']) s.diagnostics[k]=number(input.diagnostics?.[k]);
   s.diagnostics.lastEvent=timestamp(input.diagnostics?.lastEvent);
   for (const [k,v] of Object.entries(input.diagnostics?.types || {}).slice(0,100)) if(k.startsWith('$')) s.diagnostics.types[k]=number(v);
@@ -502,7 +566,7 @@ function overlayDimensions(kind,{container=true,showLevel=true,style='classic',l
   return {width:kind==='roles'?850:400,height:boxed?440:340};
  }
  if(['last','recentCombo','bestCombo','expensive'].includes(kind))return style==='portrait'?{width:360,height:boxed?460:400}:{width:640,height:boxed?360:240};
- if(kind==='goal')return {width:640,height:boxed?260:220};
+ if(kind==='goal'||kind==='giftGoal')return {width:640,height:boxed?260:220};
  if(kind==='timer')return {width:480,height:boxed?240:200};
  if(kind==='followers'||kind==='lastFollower')return {width:640,height:(boxed?160:100)+(kind==='followers'?5:1)*84};
  return {width:640,height:480};
@@ -528,7 +592,7 @@ function giftView(s,key,overrides={}){const v=visualOf(s,'gifts',overrides),item
 function roleView(s,role,overrides={}){const v=visualOf(s,'roles',overrides),u=resolveRole(s,role),hero=role==='hero';return `<div ${cardAttrs(v,'role-card '+(hero?'hero':'villain'))}><div class="role-topline">${hero?'✦ HERÓI':'✧ VILÃO'} <span>DA LIVE</span></div>${avatar(u,true)}<div class="role-identity"><h2>${esc(u.name||'Quem será?')}</h2><p>${u.handle?'@'+esc(u.handle):'Escolha no painel'}</p>${u.handle&&!u.avatar?'<small class="await-photo">Aguardando foto do participante</small>':''}</div></div>`;}
 function clock(ms){const secs=Math.max(0,Math.ceil(ms/1000));return [Math.floor(secs/3600),Math.floor(secs%3600/60),secs%60].map(n=>String(n).padStart(2,'0')).join(':');}
 function widgetView(s,kind,overrides={}){const key=['lastFollower','followers'].includes(kind)?'followers':kind,v=visualOf(s,key,overrides);const x=s.extra;let content='';
- if(kind==='goal'){const p=Math.min(100,x.goal.current/x.goal.target*100);content=`<h2>Meta de curtidas</h2><strong class="goal-count">${fmt(x.goal.current)} <small>/ ${fmt(x.goal.target)}</small></strong><progress max="100" value="${p}" aria-label="Progresso da meta"></progress><p>${fmt(p)}% · ${p>=100?'Meta alcançada!':'Cada tap conta'}</p>`;}
+ if(kind==='goal'||kind==='giftGoal'){const goal=kind==='giftGoal'?x.giftGoal:x.goal;const p=Math.min(100,goal.current/goal.target*100);content=`<h2>${kind==='giftGoal'?'Meta de Presentes':'Meta de curtidas'}</h2><strong class="goal-count">${fmt(goal.current)} <small>/ ${fmt(goal.target)}</small></strong><progress max="100" value="${p}" aria-label="Progresso da meta"></progress><p>${fmt(p)}% · ${p>=100?'Meta alcançada!':kind==='giftGoal'?'moedas recebidas':'Cada tap conta'}</p>`;}
  else if(kind==='timer')content=`<div class="overlay-kicker">TEMPORIZADOR</div><strong class="timer-clock">${clock(timerRemaining(x.timer))}</strong><small>${x.timer.running?(timerRemaining(x.timer)>0?'Em andamento':'Tempo esgotado'):'Pausado'}</small>`;
  else content=`<div class="overlay-kicker">${kind==='lastFollower'?'ÚLTIMO SEGUIDOR':'ÚLTIMOS SEGUIDORES'}</div>${x.followers.slice(0,kind==='lastFollower'?1:5).map(f=>{const u=s.users[f.userId];return `<div class="rank-row">${avatar(u)}<div class="person"><strong>${esc(u?.name)}</strong><small>@${esc(u?.handle)}</small></div></div>`;}).join('')||'<p class="overlay-empty">Aguardando novos seguidores</p>'}`;
  return `<div ${cardAttrs(v,'widget-card')}>${content}</div>`;
@@ -537,7 +601,7 @@ function overlayView(s,params){const kind=params.get('kind')||'ranking',v={};if(
  if(kind==='ranking')return rankView(s,{period:['day','week','month'].includes(params.get('period'))?params.get('period'):'day',metric:params.get('metric')==='likes'?'likes':'coins',limit:Math.min(20,Math.max(1,Number(params.get('limit'))||5)),start:params.get('start')||'',end:params.get('end')||'',...v});
  if(kind==='roles')return `<div class="overlay-duo">${roleView(s,'hero',v)}${roleView(s,'villain',v)}</div>`;
  if(['hero','villain'].includes(kind))return roleView(s,kind,v);
- if(['goal','followers','lastFollower','timer'].includes(kind))return widgetView(s,kind,v);
+ if(['goal','giftGoal','followers','lastFollower','timer'].includes(kind))return widgetView(s,kind,v);
  return giftView(s,Object.hasOwn(giftTitles,kind)?kind:'last',v);
 }
 
@@ -562,7 +626,7 @@ const params=new URLSearchParams(location.search),token=new URLSearchParams(loca
 const root=document.querySelector('#overlay-root'),badge=document.querySelector('#overlay-status');
 let lastPacket=0,current=freshState(),lastHTML='';
 function render(){const html=overlayView(current,params);if(html!==lastHTML){root.innerHTML=html;watchImages(root);lastHTML=html;}}
-function receive(packet){if(packet.state?.version!==6||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.7.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
+function receive(packet){if(packet.state?.version!==7||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.8.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
 if(params.get('demo')==='1'){
   current=demoState();render();badge.textContent='DEMONSTRAÇÃO';
 }else if(token && location.hostname==='127.0.0.1'){

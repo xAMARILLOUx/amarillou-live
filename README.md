@@ -1,14 +1,24 @@
-# AMARILLOU Live Control — v0.7.1
+# AMARILLOU Live Control — v0.8.0
 
-**[Abrir o painel](https://xamarilloux.github.io/amarillou-live/)** · [Guia de uso](GUIA.html) · [Novidades desta versão](RELEASE-v0.7.1.md)
+**[Abrir o painel](https://xamarilloux.github.io/amarillou-live/)** · [Guia de uso](GUIA.html) · [Novidades desta versão](RELEASE-v0.8.0.md)
 
 Painel modular de TikTok LIVE em português, com conexão ao WebSocket local do TikFinity. HTML/CSS/JavaScript nativos, sem dependências de produção. Os HTMLs entregues já incluem o código, os estilos e o avatar do criador; não é necessário compilar para publicar.
 
 ## Atualizar
 
-Leia [ATUALIZAR-v0.7.1.txt](ATUALIZAR-v0.7.1.txt). No GitHub Pages, substitua **index.html**, **overlay.html** e **GUIA.html** no mesmo local. Atualize também este README e as notas de release para deixar o repositório organizado. No modo local, substitua o projeto inteiro e reinicie a ponte.
+Leia [ATUALIZAR-v0.8.txt](ATUALIZAR-v0.8.txt). No GitHub Pages, substitua **index.html**, **overlay.html** e **GUIA.html** no mesmo local. Atualize também este README e as notas de release para deixar o repositório organizado. No modo local, substitua o projeto inteiro e reinicie a ponte.
 
 A atualização migra dados das versões anteriores, sem reset automático. Para começar do zero: **Conexão & dados → Resetar toda a plataforma → digite ZERAR**. Isso desconecta a coleta e apaga os dados desta instalação. Não apaga dados de outro navegador, do TikFinity ou backups exportados.
+
+## Novidades da v0.8
+
+- Faixa de moedas com vários presentes ignorados por regra.
+- Meta de Presentes em moedas, com reset e overlay próprio.
+- Presentes recentes por transmissão e Top 10 permanentes de combos e presentes mais caros, uma posição por pessoa.
+- Captura opcional de **atividade observada**, desativada por padrão. Não garante a duração real: silêncio não conta, e separar lives depende dos sinais recebidos ou dos controles manuais em Presentes.
+- INICIAR-LOCAL.bat abre a ponte e o navegador. ABRIR-PAINEL.url reabre apenas o painel. Atalho para o BAT permite iniciar pela área de trabalho.
+
+Leia as [regras e limitações da v0.8](RELEASE-v0.8.0.md) antes de ativar a captura automática.
 
 ## Novidades da v0.7.1
 
@@ -25,7 +35,7 @@ Nas releases, abra **Assets** e baixe o ZIP da ferramenta. Extraia tudo e execut
 - Proteção opcional de follow por 24 horas, persistente por canal e participante.
 - Campos específicos para cada gatilho e importação dos presets antigos.
 - Curtidas dos macros começam ao ativar o preset; reativar zera esse progresso, sem alterar rankings. F5 mantém a ponte funcionando.
-- [Regras, exemplos e detalhes da atualização](RELEASE-v0.7.1.md).
+- [Regras, exemplos e detalhes da atualização](RELEASE-v0.8.0.md).
 
 ## Recursos mantidos da v0.6
 
@@ -34,7 +44,7 @@ Nas releases, abra **Assets** e baixe o ZIP da ferramenta. Extraia tudo e execut
 - **Selecionar presente recebido:** pop-up estável com busca por nome/ID, imagens disponíveis e atualização manual da lista. ID manual em seção avançada.
 - **Tamanho do OBS junto ao link:** largura e altura recomendadas por overlay, considerando layout, container, níveis e posições.
 
-No Windows, o Node inicia automaticamente um componente de teclado pelo PowerShell. Não precisa instalar pacotes, Python ou compilar manualmente. Baixe o projeto completo para atualizar a ponte. A execução real no seu Windows/jogo precisa do primeiro teste descrito em ATUALIZAR-v0.7.1.txt; neste ambiente, a integração foi exercitada com um driver de teclado simulado e o componente C# foi compilado, sem chamadas ao Windows.
+No Windows, o Node inicia automaticamente um componente de teclado pelo PowerShell. Não precisa instalar pacotes, Python ou compilar manualmente. Baixe o projeto completo para atualizar a ponte. A execução real no seu Windows/jogo precisa do primeiro teste descrito em ATUALIZAR-v0.8.txt; neste ambiente, a integração foi exercitada com um driver de teclado simulado e o componente C# foi compilado, sem chamadas ao Windows.
 
 ## Recursos de pontos e duração (v0.5)
 

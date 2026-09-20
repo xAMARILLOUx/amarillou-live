@@ -1,0 +1,37 @@
+AMARILLOU LIVE CONTROL — v0.8.0
+
+ONLINE
+Substitua index.html, overlay.html e GUIA.html na raiz do GitHub Pages.
+Atualize README.md e adicione RELEASE-v0.8.0.md.
+Feche abas antigas e atualize as fontes de navegador do OBS.
+
+LOCAL
+1. Pare os macros e feche a janela da ponte antiga.
+2. Extraia TODO o ZIP numa pasta.
+3. Abra INICIAR-LOCAL.bat: a ponte inicia e o navegador abre automaticamente.
+4. Mantenha o terminal aberto durante o uso.
+5. ABRIR-PAINEL.url serve para reabrir o navegador quando a ponte já estiver rodando.
+6. Crie um atalho de INICIAR-LOCAL.bat na área de trabalho; não mova apenas o BAT para fora da pasta.
+
+Se já existe uma ponte v0.8 na porta 8787, outro clique apenas abre seu painel.
+Se a porta estiver ocupada por uma ponte antiga ou outro programa, feche a ponte antiga e tente novamente.
+Não precisa reinstalar o Node que já está funcionando.
+
+NOVOS RECURSOS
+Presets: selecione a faixa de moedas e configure Ignorar presentes.
+Overlays: Meta de Presentes conta moedas, com link próprio para OBS.
+Presentes: histórico por transmissão, Top 10 combos e Top 10 presentes mais caros.
+Análises: captura opcional, DESATIVADA por padrão.
+
+CAPTURA AUTOMÁTICA É ATIVIDADE OBSERVADA, NÃO DURAÇÃO REAL GARANTIDA.
+Só conta intervalos curtos entre eventos, nunca conexão ociosa. Se não receber indicação de fim/nova sala, use os controles Nova transmissão / Encerrar transmissão em Presentes. O cadastro manual continua disponível.
+
+Os históricos detalhados e recordes começam com os eventos recebidos na v0.8.
+Dados e presets antigos são migrados automaticamente. Não use backups novos em versões antigas.
+
+RELEASE GITHUB
+Tag: v0.8.0
+Título: AMARILLOU Live Control v0.8.0
+Descrição: RELEASE-v0.8.0.md
+Anexe AMARILLOU-LIVE-v0.8.zip.
+Este arquivo não publica automaticamente o site ou a release.

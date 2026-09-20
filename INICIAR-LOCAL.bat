@@ -2,10 +2,10 @@
 cd /d "%~dp0"
 where node >nul 2>nul
 if errorlevel 1 (
-  echo Instale o Node.js LTS 22.15 ou superior em https://nodejs.org e tente novamente.
+  echo Instale Node.js 22.15 ou superior: https://nodejs.org/en/download
   pause
   exit /b 1
 )
-echo Abra http://127.0.0.1:8787 no navegador quando aparecer Painel abaixo.
-node local/server.mjs
-pause
+echo Iniciando AMARILLOU Live Control. O painel abrira automaticamente.
+node local/launch.mjs
+if errorlevel 1 pause
