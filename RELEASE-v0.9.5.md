@@ -47,11 +47,3 @@ O executável foi compilado e seu conteúdo conferido. Execução nativa Windows
 precisam do teste no PC. Arquivo sem assinatura digital. Publicar como pré-release.
 
 Criado por xAMARILLOUx — https://amarillou.com.br/
-
-## Acessar
-
-[Site](https://xamarilloux.github.io/amarillou-live/) · [Downloads](https://github.com/xAMARILLOUx/amarillou-live/releases)
-
-## Documentação
-
-Consulte GUIA.html, docs/ARQUITETURA.md e docs/VALIDACAO.md. Para atualizar pelo GitHub, envie o conteúdo de CODIGO-FONTE à raiz publicada, substituindo os arquivos correspondentes.

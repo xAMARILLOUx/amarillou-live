@@ -60,10 +60,17 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 
 /* v0.9 explicit controls and batch selection */
 .capture-control,.bulk-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:18px 0}.capture-control{padding:20px;border:1px solid #9068ba;border-radius:12px;background:#281b38}.capture-control p{margin:8px 0 0}.capture-control button{min-height:48px}.capture-control button[aria-pressed="true"]{background:#65efb4;color:#12291f;border-color:#65efb4}.bulk-toolbar label,.bulk-check{display:flex;align-items:center;gap:12px;margin:0}.bulk-checkbox,.bulk-check input,.bulk-toolbar input{width:22px;height:22px;flex:0 0 22px;accent-color:#b788ef}.bulk-check{padding:12px;border-bottom:1px solid #ffffff18;cursor:pointer}#presets-bulk-list{max-height:50vh;overflow:auto}.live-manual{margin:14px 0}.live-manual summary{cursor:pointer;color:#bca5d8;padding:12px 0}
+
+/* Compact overlays: score follows natural name width, never pushed to right edge. */
+.rank-card .rank-row{justify-content:flex-start;gap:10px}.rank-card .person{flex:0 1 auto;min-width:0;max-width:260px}.rank-card .person strong,.rank-card .person small{white-space:normal;overflow-wrap:anywhere}.rank-card .score{flex:0 0 auto;text-align:left;margin-left:2px;max-width:150px;overflow-wrap:anywhere}.rank-card .position{flex:0 0 22px}.rank-card .avatar{width:48px;height:48px;flex-basis:48px}.rank-card .record-gift{width:34px;height:34px;object-fit:contain;flex:0 0 34px}.rank-card .person strong{font-size:18px}.rank-card .score{font-size:21px}.rank-card .person small{font-size:12px}.gift-rank-card .person{max-width:220px}#gift-history-on-connect{width:22px;height:22px;flex:0 0 22px}
+/* Bound long labels so recommended OBS heights remain predictable. */
+.rank-card .person strong{line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.rank-card .person small{line-height:1.25;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.overlay-body .rank-card .rank-row{padding:12px 0}html:has(body.overlay-body){background:transparent;color-scheme:normal}
+
+.macro-global-state{font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#65efb4}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v0.9.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v0.9.5: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
@@ -165,9 +172,26 @@ function macroTriggerLabel(m){
  return 'Presente: '+m.giftId;
 }
 
+function macroWarnings(candidate,macros,catalog={}){
+ const m=cleanMacro(candidate),warnings=[];
+ const giftRange=(gift,range)=>{if(range.ignoredGiftIds.includes(gift.giftId))return false;const unit=catalog['$'+gift.giftId]?.unit;return unit==null||unit>=range.minCoins&&unit<=range.maxCoins;};
+ for(const raw of macros){if(raw.id===m.id)continue;const other=cleanMacro(raw);
+  if(m.key===other.key&&m.ctrl===other.ctrl&&m.alt===other.alt&&m.shift===other.shift)warnings.push('Mesma combinação de teclas: '+other.name);
+  let overlap=false;
+  if(m.trigger==='gift'&&other.trigger==='gift')overlap=m.giftId===other.giftId;
+  else if(m.trigger==='coins'&&other.trigger==='coins')overlap=m.minCoins<=other.maxCoins&&other.minCoins<=m.maxCoins;
+  else if(m.trigger==='gift'&&other.trigger==='coins')overlap=giftRange(m,other);
+  else if(m.trigger==='coins'&&other.trigger==='gift')overlap=giftRange(other,m);
+  else if(m.trigger==='follow'&&other.trigger==='follow')overlap=true;
+  else if(m.trigger.startsWith('likes-')&&other.trigger.startsWith('likes-'))overlap=true;
+  if(overlap)warnings.push('Gatilhos podem coincidir: '+other.name);
+ }
+ return warnings;
+}
+
 // live.js
 // Observation-based sessions. A socket connection alone is never evidence of a live.
-function newLiveData(){return {autoCapture:false,current:null,archives:[],recent:[],bestCombos:{},bestGifts:{},serial:0};}
+function newLiveData(){return {autoCapture:false,historyOnConnect:false,current:null,archives:[],recent:[],bestCombos:{},bestGifts:{},serial:0};}
 function beginLive(s,now=Date.now(),roomId='',reason='manual'){
  const l=s.extra.live;if(l.current)finishLive(s,now,'nova transmissão');
  l.serial++;l.current={id:'live-'+now+'-'+l.serial,start:now,lastEvent:now,end:0,roomId:String(roomId||''),reason,channel:s.extra.channel,recordId:'',lastCapture:0};l.recent=[];s.streaks={};
@@ -212,7 +236,7 @@ function restoreLiveData(input,known,image){
  const t=v=>String(v??'').slice(0,240);
  const gift=r=>{if(!known(r.userId))throw Error('Participante desconhecido no histórico de presentes.');return {key:t(r.key),userId:r.userId,giftId:t(r.giftId),name:t(r.name),image:image(r.image),unit:r.unit===null?null:n(r.unit),count:n(r.count),coins:n(r.coins),time:n(r.time),lastTime:n(r.lastTime)};};
  const session=a=>({id:t(a.id),start:n(a.start),lastEvent:n(a.lastEvent),end:n(a.end),roomId:t(a.roomId),reason:t(a.reason),channel:t(a.channel),recordId:t(a.recordId),lastCapture:0,endReason:t(a.endReason)});
- out.autoCapture=input.autoCapture===true;out.serial=n(input.serial||0);out.current=input.current?session(input.current):null;
+ out.historyOnConnect=input.historyOnConnect===true;out.autoCapture=input.autoCapture===true;out.serial=n(input.serial||0);out.current=input.current?session(input.current):null;
  out.recent=(input.recent||[]).map(gift);out.archives=(input.archives||[]).map(a=>({...session(a),gifts:(a.gifts||[]).map(gift)}));
  for(const key of ['bestCombos','bestGifts'])for(const [id,r] of Object.entries(input[key]||{})){if(id!==r.userId)throw Error('Recorde inválido.');out[key][id]=gift(r);}
  return out;
@@ -252,6 +276,8 @@ function applyCommand(s,command,p={},now=Date.now()){
  const x=s.extra;
  if(command==='capture-auto'){if(typeof p.enabled!=='boolean')throw Error('Opção inválida.');if(x.live.autoCapture!==p.enabled){x.live.autoCapture=p.enabled;pauseLive(s);if(x.live.current)x.live.current.recordId='';}}
  else if(command==='live-new'){if(p.confirmed!==true)throw Error('Confirme a nova transmissão.');beginLive(s,now);}
+ else if(command==='gift-history-on-connect'){if(typeof p.enabled!=='boolean')throw Error('Opção inválida.');x.live.historyOnConnect=p.enabled;}
+ else if(command==='gift-history-new'){const l=x.live;if(l.current&&l.recent.length){l.serial++;l.archives.unshift({...l.current,id:'gift-history-'+now+'-'+l.serial,end:now,endReason:'novo histórico manual',gifts:l.recent});}l.recent=[];}
  else if(command==='live-history-reset'){if(p.confirmed!==true)throw Error('Confirme o reset do histórico.');x.live.recent=[];}
  else if(command==='live-finish')finishLive(s,now,'manual');
  else if(command==='gift-goal-target')x.giftGoal.target=boundedInput(p.target,1,1e12,'Meta de moedas');
@@ -569,7 +595,8 @@ async function saveState(s){const d=await openDB();return new Promise((resolve,r
 // These dimensions describe the source; resize its transform in the OBS scene afterwards.
 function overlayDimensions(kind,{container=true,showLevel=true,style='classic',limit=5}={}){
  const boxed=container!==false,n=Math.max(1,Math.min(20,Number(limit)||5));
- if(kind==='ranking')return {width:640,height:Math.ceil(((boxed?200:100)+n*(showLevel!==false?104:84))/20)*20};
+ if(['topCombos','topGifts'].includes(kind))return {width:520,height:boxed?1200:1100};
+ if(kind==='ranking')return {width:520,height:Math.ceil(((boxed?200:100)+n*(showLevel!==false?104:84))/20)*20};
  if(['hero','villain','roles'].includes(kind)){
   if(style==='ribbon')return {width:640,height:kind==='roles'?(boxed?580:420):(boxed?280:200)};
   return {width:kind==='roles'?850:400,height:boxed?440:340};
@@ -606,8 +633,13 @@ function widgetView(s,kind,overrides={}){const key=['lastFollower','followers'].
  else content=`<div class="overlay-kicker">${kind==='lastFollower'?'ÚLTIMO SEGUIDOR':'ÚLTIMOS SEGUIDORES'}</div>${x.followers.slice(0,kind==='lastFollower'?1:5).map(f=>{const u=s.users[f.userId];return `<div class="rank-row">${avatar(u)}<div class="person"><strong>${esc(u?.name)}</strong><small>@${esc(u?.handle)}</small></div></div>`;}).join('')||'<p class="overlay-empty">Aguardando novos seguidores</p>'}`;
  return `<div ${cardAttrs(v,'widget-card')}>${content}</div>`;
 }
+function giftRankingView(s,kind,overrides={}){
+ const combos=kind==='topCombos',v=visualOf(s,'gifts',overrides),rows=giftRecords(s,combos?'combos':'expensive');
+ return `<div ${cardAttrs(v,'rank-card gift-rank-card')}><div class="overlay-kicker">TOP 10 HISTÓRICO</div><h2>${combos?'Maiores combos':'Presentes mais caros'}</h2>${rows.map((r,i)=>{const u=s.users[r.userId];return `<div class="rank-row"><b class="position">${i+1}</b>${avatar(u)}<div class="person"><strong>${esc(u?.name)}</strong><small>@${esc(u?.handle||r.userId.slice(1))}</small><small>${esc(r.name)}</small></div>${r.image?`<img class="record-gift" src="${esc(r.image)}" alt="">`:''}<b class="score">${combos?'×':''}${fmt(combos?r.count:r.unit)}<small>${combos?'combo':'moedas'}</small></b></div>`;}).join('')||'<p class="overlay-empty">Aguardando presentes</p>'}</div>`;
+}
 function overlayView(s,params){const kind=params.get('kind')||'ranking',v={};if(params.has('container'))v.container=params.get('container')!=='0';if(params.has('color'))v.color=validColor(params.get('color'));if(params.has('level'))v.showLevel=params.get('level')!=='0';if(params.has('style'))v.style=params.get('style');
  if(kind==='ranking')return rankView(s,{period:['day','week','month'].includes(params.get('period'))?params.get('period'):'day',metric:params.get('metric')==='likes'?'likes':'coins',limit:Math.min(20,Math.max(1,Number(params.get('limit'))||5)),start:params.get('start')||'',end:params.get('end')||'',...v});
+ if(['topCombos','topGifts'].includes(kind))return giftRankingView(s,kind,v);
  if(kind==='roles')return `<div class="overlay-duo">${roleView(s,'hero',v)}${roleView(s,'villain',v)}</div>`;
  if(['hero','villain'].includes(kind))return roleView(s,kind,v);
  if(['goal','giftGoal','followers','lastFollower','timer'].includes(kind))return widgetView(s,kind,v);
