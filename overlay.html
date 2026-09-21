@@ -67,10 +67,27 @@ body:not(.overlay-body){background:radial-gradient(ellipse at 85% 0,#40205955,tr
 .rank-card .person strong{line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.rank-card .person small{line-height:1.25;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.overlay-body .rank-card .rank-row{padding:12px 0}html:has(body.overlay-body){background:transparent;color-scheme:normal}
 
 .macro-global-state{font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#65efb4}
+
+/* Every OBS source uses one centered 800 × 600 composition. */
+.overlay-body{width:800px;height:600px;padding:0;position:relative;overflow:hidden}
+.overlay-body #overlay-root,.overlay-body:has(.overlay-duo) #overlay-root{position:absolute;left:400px;top:300px;width:620px;max-width:none;transform-origin:center center}
+.overlay-body:has(.rank-card) #overlay-root{width:520px}
+.overlay-body:has(.overlay-duo) #overlay-root{width:760px}
+.overlay-body:has(.gift-card.portrait) #overlay-root{width:360px}
+.overlay-body:has(.role-card):not(:has(.overlay-duo)) #overlay-root{width:400px}
+.overlay-body:has(.role-card.ribbon) #overlay-root{width:620px}
+.overlay-body .overlay-status{position:absolute;left:16px;right:16px;bottom:6px;text-align:center;margin:0;max-height:24px;overflow:hidden;font-size:12px}
+
+.overlay-body:has(.rank-card) #overlay-root.wide-ranking{width:1040px}
+.overlay-rank-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:column;column-gap:28px}
+.overlay-rank-columns .rank-row{min-width:0}
+
+.overlay-body .rank-card.bare .rank-row{justify-content:center}
+.overlay-body .rank-card.bare>.overlay-kicker,.overlay-body .rank-card.bare>h2{text-align:center}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v0.9.5: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v1.0.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
@@ -591,22 +608,8 @@ async function loadState(){const d=await openDB();return new Promise((resolve,re
 async function saveState(s){const d=await openDB();return new Promise((resolve,reject)=>{const tx=d.transaction('state','readwrite');tx.objectStore('state').put(s,'main');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});}
 
 // overlay-size.js
-// Recommended OBS Browser Source viewport in CSS pixels, with space for status.
-// These dimensions describe the source; resize its transform in the OBS scene afterwards.
-function overlayDimensions(kind,{container=true,showLevel=true,style='classic',limit=5}={}){
- const boxed=container!==false,n=Math.max(1,Math.min(20,Number(limit)||5));
- if(['topCombos','topGifts'].includes(kind))return {width:520,height:boxed?1200:1100};
- if(kind==='ranking')return {width:520,height:Math.ceil(((boxed?200:100)+n*(showLevel!==false?104:84))/20)*20};
- if(['hero','villain','roles'].includes(kind)){
-  if(style==='ribbon')return {width:640,height:kind==='roles'?(boxed?580:420):(boxed?280:200)};
-  return {width:kind==='roles'?850:400,height:boxed?440:340};
- }
- if(['last','recentCombo','bestCombo','expensive'].includes(kind))return style==='portrait'?{width:360,height:boxed?460:400}:{width:640,height:boxed?360:240};
- if(kind==='goal'||kind==='giftGoal')return {width:640,height:boxed?260:220};
- if(kind==='timer')return {width:480,height:boxed?240:200};
- if(kind==='followers'||kind==='lastFollower')return {width:640,height:(boxed?160:100)+(kind==='followers'?5:1)*84};
- return {width:640,height:480};
-}
+// Standard OBS Browser Source canvas. Resize the source in the OBS scene.
+function overlayDimensions(){return {width:800,height:600};}
 
 // views.js
 const fmt=n=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:2}).format(n??0);
@@ -665,8 +668,27 @@ function demoState(){
 // overlay.js
 const params=new URLSearchParams(location.search),token=new URLSearchParams(location.hash.slice(1)).get('key');
 const root=document.querySelector('#overlay-root'),badge=document.querySelector('#overlay-status');
+// Scale the complete composition, keeping names and scores together.
+function composeOverlay(){
+ const card=root.querySelector('.rank-card'),rows=card?[...card.querySelectorAll(':scope > .rank-row')]:[];
+ root.classList.toggle('wide-ranking',rows.length>5);
+ if(rows.length>5){
+  const grid=document.createElement('div');grid.className='overlay-rank-columns';
+  grid.style.gridTemplateRows='repeat('+Math.ceil(rows.length/2)+', auto)';
+  rows[0].before(grid);grid.append(...rows);
+ }
+}
+function fitOverlay(){
+ const content=root.firstElementChild;if(!content)return;
+ const width=root.offsetWidth,height=root.offsetHeight;
+ const scale=Math.min(768/Math.max(width,1),552/Math.max(height,1));
+ root.style.transform='translate(-50%, -50%) scale('+scale+')';
+}
+new ResizeObserver(fitOverlay).observe(root);
+root.addEventListener('load',fitOverlay,true);
+window.addEventListener('resize',fitOverlay);
 let lastPacket=0,current=freshState(),lastHTML='';
-function render(){const html=overlayView(current,params);if(html!==lastHTML){root.innerHTML=html;watchImages(root);lastHTML=html;}}
+function render(){const html=overlayView(current,params);if(html!==lastHTML){root.innerHTML=html;composeOverlay();watchImages(root);lastHTML=html;fitOverlay();}}
 function receive(packet){if(packet.state?.version!==7||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.8.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
 if(params.get('demo')==='1'){
   current=demoState();render();badge.textContent='DEMONSTRAÇÃO';

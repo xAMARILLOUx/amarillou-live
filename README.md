@@ -1,8 +1,10 @@
-# AMARILLOU Live Control v0.9.5 — Overlays e Presets
+# AMARILLOU Live Control v1.0.0 — Overlays e Presets
 
-Edição de testes antes do lançamento 1.0.
+Atualização baseada na v0.9.5, com retomada em 5 segundos e overlays padronizados em 800 × 600.
 
 ## Overlays
+- Área padrão 800 × 600, composição centralizada e ajuste automático de escala.
+- Rankings com mais de cinco participantes usam duas colunas para aproveitar a área.
 - Rankings de moedas e likes/taps com nome e valor próximos, sem o espaço excessivo.
 - Nomes longos limitados a duas linhas, sem sobreposição com os valores.
 - Novos overlays: Top 10 de Combos históricos e Top 10 de Presentes Mais Caros.
@@ -11,7 +13,7 @@ Edição de testes antes do lançamento 1.0.
 
 ## Presets e macros
 - Uso do teclado físico deixa de desativar o preset.
-- Pausar mantém a coleta de gatilhos e a fila; Retomar executa em ordem.
+- Pausar mantém a coleta de gatilhos e a fila; Retomar aguarda 5 segundos e executa em ordem.
 - A tecla em andamento termina antes da pausa; Parar interrompe e limpa a fila.
 - Limite: 1.000 pressionamentos ou 10 minutos estimados de ações pendentes.
   Ao exceder, somente o novo lote é descartado, com aviso; o preset e a fila anterior permanecem.
@@ -41,10 +43,10 @@ Feche a ponte anterior antes de abrir a nova. Dados preservados no mesmo formato
 O executável ainda usa terminal. Ícone perto do relógio fica planejado para a v1.1.
 
 ## Validação
-119 testes automatizados passaram. Interface web/local, fila, duplicação, avisos, busca,
+126 testes automatizados passaram. Interface web/local, fila, duplicação, avisos, busca,
 isolamento do histórico e geometria dos overlays conferidos em Chromium com eventos simulados.
 O executável foi compilado e seu conteúdo conferido. Execução nativa Windows e teclas reais
-precisam do teste no PC. Arquivo sem assinatura digital. Publicar como pré-release.
+precisam do teste no PC. Arquivo sem assinatura digital.
 
 Criado por xAMARILLOUx — https://amarillou.com.br/
 
@@ -53,5 +55,7 @@ Criado por xAMARILLOUx — https://amarillou.com.br/
 [Site](https://xamarilloux.github.io/amarillou-live/) · [Downloads](https://github.com/xAMARILLOUx/amarillou-live/releases)
 
 ## Documentação
+
+Detalhes das regras preservadas em [Combos e fila](docs/COMBOS-E-FILA.md). Novidades em [Release v1.0.0](RELEASE-v1.0.0.md).
 
 Consulte GUIA.html, docs/ARQUITETURA.md e docs/VALIDACAO.md. Para atualizar pelo GitHub, envie o conteúdo de CODIGO-FONTE à raiz publicada, substituindo os arquivos correspondentes.
