@@ -24,15 +24,3 @@ Feche o serviço antigo antes de abrir a nova versão. Atualize as fontes do OBS
 127 testes automatizados. Interface online/local conferida em Chromium em 1440, 768, 390 e 360 px, incluindo controles globais e indicadores. Windows nativo, teclas reais e OBS precisam do teste no PC.
 
 Criado por xAMARILLOUx · https://amarillou.com.br/
-
-## Acesso
-[Web app](https://xamarilloux.github.io/amarillou-live/) · [Downloads](https://github.com/xAMARILLOUx/amarillou-live/releases)
-
-## Modo local
-Baixe e abra o .EXE. Windows 10/11 x64; Node.js incluído. Mantenha o serviço aberto enquanto usa a ferramenta.
-
-## Código-fonte (alternativa)
-Instale Node.js 22.15 ou superior e use INICIAR-LOCAL.bat no Windows ou `npm start`. Build: `npm run build`. Testes: `npm test`. Compilação do .EXE: portable/BUILD.md.
-
-## Fontes
-Bebas Neue e Montserrat: licenças SIL OFL incluídas em assets/fonts.
