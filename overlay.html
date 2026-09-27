@@ -131,10 +131,34 @@ dialog,#points-edit-dialog,#macro-warning-dialog{background:#151517;border-color
 .x1-card{padding:26px;text-align:center;overflow-wrap:anywhere}.x1-card>h1{font-size:32px}.x1-card>h2{font-size:25px}.x1-fighters{display:grid;grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);align-items:center;gap:10px;margin:22px 0}.x1-fighters section{min-width:0;display:flex;align-items:center;flex-direction:column;gap:8px}.x1-fighters .avatar{width:100px;height:100px}.x1-fighters .identity-name{font-size:26px;max-width:100%}.x1-fighters .identity-handle{font-size:16px;max-width:100%}.x1-coins{font-size:30px}.x1-clock{display:block;font-size:44px;font-variant-numeric:tabular-nums;margin:12px}.x1-vs{font-size:28px;color:var(--accent)}.x1-card progress{width:100%;height:12px;accent-color:#ffd100}.x1-win{color:#7ceaa1;font-weight:800}.x1-queue-item{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:12px;border-bottom:1px solid #ffffff19}.x1-scroll{max-height:300px;overflow:auto}.x1-tutorial{--accent:#bb86ff;background:linear-gradient(135deg,#211332,#121018);border:1px solid #a865d988}.x1-tutorial.bare{background:transparent;border:0}.x1-tutorial h1,.x1-tutorial h2{color:#d3a9ff}.x1-steps{text-align:left;font-size:20px;line-height:1.5}.x1-formats{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:17px}.x1-recommended{color:#dfc6ff;border-left:3px solid #b275ff;padding:10px}.overlay-body:has(.x1-card) #overlay-root{width:740px}.x1-card .rank-row{text-align:left}.x1-card.custom-text :is(h1,h2,p,small,strong,b,code,li){color:var(--overlay-text)}
 @media(max-width:600px){#x1-preview .x1-card{padding:12px}#x1-preview .x1-fighters{grid-template-columns:minmax(0,1fr) 25px minmax(0,1fr)}#x1-preview .avatar{width:60px;height:60px}#x1-preview .identity-name{font-size:18px}#x1-preview .x1-coins{font-size:18px}}
 .x1-fighters .avatar.large{flex:none;width:100px;height:100px;aspect-ratio:1;margin:6px 0 12px;border-color:#ffd100;background:#302b16;color:#ffd100}.x1-coin-icon{color:#ffd100;font-size:.7em;text-shadow:0 0 1px #000}.x1-formats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.x1-formats code{display:block;min-width:0;padding:10px 6px;font-size:16px;background:#8d57c51a;border:1px solid #ac7add44;border-radius:8px}.x1-countdown{animation:x1-pulse .6s ease-out}.x1-win{animation:x1-pulse .8s ease-out}@keyframes x1-pulse{from{opacity:.45;transform:scale(.9)}to{opacity:1;transform:scale(1)}}@media(prefers-reduced-motion:reduce){.x1-countdown,.x1-win{animation:none}}@media(max-width:600px){#x1-preview .x1-fighters .avatar.large{width:60px;height:60px}}
+/* v1.3: directional composition is visual, never mirror text. */
+.overlay-silent #overlay-status{display:none!important}
+.overlay-card[data-side="right"] .rank-row{flex-direction:row-reverse;justify-content:flex-start}
+.overlay-card[data-side="right"] .rank-row .person{text-align:right}
+.overlay-card[data-side="right"] .rank-row .score{text-align:left;margin-left:0;margin-right:0}
+.overlay-card[data-side="right"] .rank-row .position{order:-1}
+.community-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.community-battle-card{text-align:center}
+.community-battle-card .rank-row{gap:8px;text-align:left}
+.community-battle-card .person{min-width:0;flex:1}
+.community-battle-card .identity-name,.community-battle-card .identity-handle{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.community-battle-card .score{font-size:21px}
+.community-battle-card .avatar{width:44px;height:44px;flex-basis:44px}
+.round-winner,.sniper-flash{color:var(--accent,#ffd52c);font-weight:800}
+.x1-next{margin-top:20px;border-top:1px solid #ffffff25;padding-top:12px;font-size:17px}
+.x1-next p{margin:6px 0}.x1-next h3{font-size:15px}
+.battle-tabs{margin-bottom:24px}.role-auto-form{margin-top:24px;padding-top:18px;border-top:1px solid #ffffff25}
+#community-preview .community-columns{gap:10px}#community-preview .avatar{width:30px;height:30px;flex-basis:30px}
+#auto-role-gift-picker{max-width:640px;width:90vw}#macro-test-quantity{max-width:160px}
+@media(max-width:600px){#community-preview .community-columns{grid-template-columns:1fr}}
+.overlay-body:has(.community-battle-card) #overlay-root{width:1040px}
+.x1-tutorial .x1-formats{grid-template-columns:1fr}
+.community-battle-card .person{flex:0 1 auto}
+.community-battle-card .score{flex:0 0 auto;white-space:nowrap}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v1.2.5: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v1.3.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
@@ -142,23 +166,60 @@ window.addEventListener('unhandledrejection',function(e){window.__amarillouFailu
 'use strict';
 try{
 
+// community-battle.js
+// Independent round counters. Never mutate community points, X1 statistics or live totals.
+function newCommunityBattle(){return {config:{duration:300,limit:5,sniper:true,window:10,extension:60},status:'idle',rows:{},serial:0,startedAt:0,endAt:0,remaining:0,savedAt:0,extensions:0,lastSniper:null,winners:{coins:null,likes:null}};}
+function communityConfig(p){const c={sniper:p.sniper!==false};for(const [k,min,max] of [['duration',1,86400],['window',1,300],['extension',1,600]]){const n=Number(p[k]);if(!Number.isSafeInteger(n)||n<min||n>max)throw Error('Configuração de batalha inválida: '+k);c[k]=n;}c.limit=Number(p.limit)===3?3:5;return c;}
+function communityOrder(b,metric){return Object.entries(b.rows).filter(([,r])=>r[metric]>0).map(([id,r])=>({id,...r})).sort((a,c)=>c[metric]-a[metric]||a.order-c.order);}
+function communityLeader(b,metric){const a=communityOrder(b,metric);return a[0]&&(!a[1]||a[0][metric]>a[1][metric])?a[0].id:null;}
+function communityFinish(b,now){if(!['running','paused'].includes(b.status))return;b.status='finished';b.remaining=0;b.endAt=now;b.winners={coins:communityLeader(b,'coins'),likes:communityLeader(b,'likes')};}
+function tickCommunity(b,now=Date.now()){b.savedAt=now;if(b.status==='running'&&now>=b.endAt){communityFinish(b,now);return true;}return b.status==='running';}
+function pauseCommunity(b,now=Date.now()){if(b.status!=='running')return;tickCommunity(b,now);if(b.status==='running'){b.remaining=Math.max(0,b.endAt-now);b.status='paused';}}
+function receiveCommunity(b,e,id,coins,now){tickCommunity(b,now);if(b.status!=='running')return;const likes=e.type==='like'?e.likes:0;if(!(coins>0||likes>0))return;
+ const previous=communityLeader(b,'coins');b.rows[id]||={coins:0,likes:0,order:++b.serial};b.rows[id].coins+=coins;b.rows[id].likes+=likes;
+ const leader=communityLeader(b,'coins'),c=b.rules||b.config;
+ if(coins>0&&c.sniper&&previous&&leader&&previous!==leader&&b.endAt-now<=c.window*1000){b.endAt=now+c.extension*1000;b.extensions++;b.lastSniper={userId:leader,time:now};}
+}
+function commandCommunity(s,command,p,now=Date.now()){const b=s.extra.communityBattle;
+ if(command==='community-config')b.config=communityConfig(p);
+ else if(command==='community-start'){if(['running','paused'].includes(b.status))throw Error('Finalize a rodada atual primeiro.');Object.assign(b,newCommunityBattle(),{config:b.config,rules:{...b.config},status:'running',startedAt:now,endAt:now+b.config.duration*1000,savedAt:now});}
+ else if(command==='community-pause')pauseCommunity(b,now);
+ else if(command==='community-resume'){if(b.status!=='paused')throw Error('A rodada não está pausada.');b.status='running';b.endAt=now+b.remaining;}
+ else if(command==='community-finish'){if(!p.confirmed)throw Error('Confirme a finalização.');communityFinish(b,now);}
+ else if(command==='community-reset'){if(!p.confirmed)throw Error('Confirme o reset.');s.extra.communityBattle={...newCommunityBattle(),config:b.config};}
+ else throw Error('Comando de batalha desconhecido.');
+}
+function restoreCommunity(v,known){const b=newCommunityBattle();if(!v)return b;const n=v=>{if(!Number.isSafeInteger(v)||v<0)throw Error('Estado de batalha inválido.');return v;};b.config=communityConfig(v.config);if(v.rules)b.rules=communityConfig(v.rules);if(!['idle','running','paused','finished'].includes(v.status))throw Error('Estado de batalha inválido.');b.status=v.status;for(const k of ['serial','startedAt','endAt','remaining','savedAt','extensions'])b[k]=n(v[k]||0);for(const [id,r] of Object.entries(v.rows||{})){if(!known(id))throw Error('Participante da batalha desconhecido.');b.rows[id]={coins:n(r.coins),likes:n(r.likes),order:n(r.order)};}if(b.status==='running'){b.status='paused';b.remaining=Math.max(0,b.endAt-b.savedAt);}b.winners={coins:communityLeader(b,'coins'),likes:communityLeader(b,'likes')};if(v.lastSniper&&known(v.lastSniper.userId))b.lastSniper={userId:v.lastSniper.userId,time:n(v.lastSniper.time)};return b;}
+
+// roles-auto.js
+function newRoleAutomation(){return {hero:{enabled:false,include:[],exclude:[]},villain:{enabled:false,include:[],exclude:[]}};}
+function cleanRoleAutomation(v){const out=newRoleAutomation();for(const role of ['hero','villain']){const r=v?.[role]||{};out[role].enabled=r.enabled===true;for(const k of ['include','exclude']){if(r[k]!==undefined&&!Array.isArray(r[k]))throw Error('Lista de presentes inválida.');out[role][k]=[...new Set((r[k]||[]).map(x=>{const id=String(x).trim();if(!id||id.length>120)throw Error('ID de presente inválido.');return id;}))];}}return out;}
+function receiveRoleAutomation(s,e,id,delta){if(e.type!=='gift'||delta<=0)return;const settings=s.extra.roleAutomation;const matches=r=>r.enabled&&!r.exclude.includes(e.giftId)&&(!r.include.length||r.include.includes(e.giftId));
+ // Villain wins overlaps: one gift never unexpectedly sets both cards.
+ const role=matches(settings.villain)?'villain':matches(settings.hero)?'hero':null;if(role){const u=s.users[id];s.roles[role]={handle:u.handle,name:u.name,avatar:u.avatar};}}
+
+// community-view.js
+function communityView(s,overrides={},now=Date.now()){const b=s.extra.communityBattle,v=visualOf(s,'communityBattle',overrides),c=b.rules||b.config;if(b.status==='idle')return '';
+ return `<div ${cardAttrs(v,'community-battle-card')}><p class="overlay-kicker">BATALHA DA COMUNIDADE · ${{running:'EM ANDAMENTO',paused:'PAUSADA',finished:'FINALIZADA'}[b.status]}</p><strong class="x1-clock">${clock(b.status==='running'?b.endAt-now:b.remaining)}</strong>${b.lastSniper&&now-b.lastSniper.time<4000?'<p class="sniper-flash">VIRADA NAS MOEDAS! + TEMPO</p>':''}<div class="community-columns">${['coins','likes'].map(metric=>`<section><h2>${metric==='coins'?'<span class="x1-coin-icon" aria-label="moedas">●</span> Moedas':'♥ Likes / taps'}</h2>${communityOrder(b,metric).slice(0,c.limit).map((r,i)=>`<div class="rank-row" data-rank-key="round:${metric}:${esc(r.id)}"><b class="position">${i+1}</b>${rankAvatar(s.users[r.id],i===0,v)}<div class="person">${identityView(s.users[r.id],v,r.id)}</div><b class="score">${fmt(r[metric])}</b></div>`).join('')||'<p>Aguardando participantes</p>'}${b.status==='finished'?`<p class="round-winner">${b.winners[metric]?'Vencedor: '+esc(s.users[b.winners[metric]]?.name):communityOrder(b,metric).length?'Empate':'Sem pontuação'}</p>`:''}</section>`).join('')}</div></div>`;
+}
+
 // x1-parser.js
 // Deliberately anchored: free sentences never become commands.
 function parseX1(message){
  const text=String(message??'').trim().replace(/\s+/g,' ').toLowerCase();
- const m=text.match(/^(?:!?desafiar @([a-z0-9_.]{1,24})|@([a-z0-9_.]{1,24}) !?desafiar)$/);
+ const m=text.match(/^!desafiar @([a-z0-9_.]{1,24})$/);
  if(m)return {type:'challenge',handle:m[1]||m[2]};
  return ({'!aceitar':{type:'accept'},'!recusar':{type:'decline'},'!cancelardesafio':{type:'cancel'}})[text]||null;
 }
 
 // x1-state.js
-function newX1(){return {config:{enabled:false,mode:'coins',duration:60,acceptSeconds:30,interval:5,cooldown:10,tie:'sudden',extraSeconds:30,queueLimit:3,rankLimit:5},serial:0,queuePaused:false,players:{},pending:[],queue:[],active:null,history:[],logs:[],cooldowns:{},nextAt:0,notice:null,tutorial:{visible:true,until:0}};}
+function newX1(){return {config:{enabled:false,mode:'coins',duration:60,acceptSeconds:30,interval:5,cooldown:10,tie:'sudden',extraSeconds:30,queueLimit:3,rankLimit:5,rankingBattleOnly:false},diagnostics:{chatCount:0,lastChatAt:0,commands:[]},serial:0,queuePaused:false,players:{},pending:[],queue:[],active:null,history:[],logs:[],cooldowns:{},nextAt:0,notice:null,tutorial:{visible:true,until:0}};}
 function x1ID(x,prefix,now){return prefix+'_'+now+'_'+ ++x.serial;}
 function x1Log(x,type,message,now,detail={}){x.logs.unshift({type,message,time:now,...detail});x.logs=x.logs.slice(0,500);}
 function x1Notice(x,message,now,type='info'){x.notice={message,time:now,type};}
 function x1Player(s,id,now){const x=s.extra.x1;if(!s.users[id])throw Error('Participante não identificado.');x.players[id]||={points:0,wins:0,losses:0,matches:0,firstPlayedAt:0,lastPlayedAt:0,reachedAt:now};return x.players[id];}
 function x1Order(x){return Object.entries(x.players).map(([id,p])=>({id,...p})).sort((a,b)=>b.points-a.points||b.wins-a.wins||a.losses-b.losses||a.reachedAt-b.reachedAt||a.id.localeCompare(b.id));}
-function x1Config(p){const c={};for(const [k,min,max] of [['duration',1,86400],['acceptSeconds',5,600],['interval',0,300],['cooldown',0,600],['extraSeconds',1,600]]){const n=Number(p[k]);if(!Number.isSafeInteger(n)||n<min||n>max)throw Error('Configuração X1 inválida: '+k);c[k]=n;}if(!['coins','manual','hybrid'].includes(p.mode)||!['sudden','extra','manual'].includes(p.tie))throw Error('Modo X1 inválido.');c.mode=p.mode;c.tie=p.tie;c.enabled=p.enabled===true;c.queueLimit=[0,1,3,5].includes(+p.queueLimit)?+p.queueLimit:3;c.rankLimit=[3,5,10].includes(+p.rankLimit)?+p.rankLimit:5;return c;}
+function x1Config(p){const c={};for(const [k,min,max] of [['duration',1,86400],['acceptSeconds',5,600],['interval',0,300],['cooldown',0,600],['extraSeconds',1,600]]){const n=Number(p[k]);if(!Number.isSafeInteger(n)||n<min||n>max)throw Error('Configuração X1 inválida: '+k);c[k]=n;}if(!['coins','manual','hybrid'].includes(p.mode)||!['sudden','extra','manual'].includes(p.tie))throw Error('Modo X1 inválido.');c.rankingBattleOnly=p.rankingBattleOnly===true;c.mode=p.mode;c.tie=p.tie;c.enabled=p.enabled===true;c.queueLimit=[0,1,3,5].includes(+p.queueLimit)?+p.queueLimit:3;c.rankLimit=[3,5,10].includes(+p.rankLimit)?+p.rankLimit:5;return c;}
 
 // x1-ranking.js
 function finishX1(s,winnerId,now){
@@ -202,11 +263,17 @@ function tickX1(s,now=Date.now(),connected=true){
 }
 function receiveX1(s,e,uid,coins,now){const x=s.extra.x1;
  if(e.type==='gift')giftX1(s,uid,coins,now);
- if(e.type!=='chat'||!x.config.enabled)return;
- const cmd=parseX1(e.comment);if(!cmd)return;
- // Known identities are the existing central user cache, never fabricated from mentions.
- try{if(cmd.type==='challenge'){x1Player(s,uid,now);const matches=Object.entries(s.users).filter(([,u])=>u.handle.toLowerCase()===cmd.handle);if(matches.length!==1)throw Error('Usuário ainda não identificado de forma única na live. Peça para ele mandar uma mensagem no chat.');challengeX1(s,uid,matches[0][0],now);}else answerX1(s,uid,cmd.type,now);}
- catch(error){x1Notice(x,error.message,now,'error');}
+ if(e.type!=='chat')return;
+ const d=x.diagnostics;d.chatCount++;d.lastChatAt=now;
+ const text=String(e.comment||'').slice(0,1000),cmd=parseX1(text);
+ if(!cmd&&!/(?:desafiar|!aceitar|!recusar|!cancelardesafio)/i.test(text))return;
+ const record=outcome=>{d.commands.unshift({time:now,userId:uid,text,outcome});d.commands=d.commands.slice(0,100);};
+ if(!x.config.enabled){record('Módulo desativado');return;}
+ if(!cmd){record('Formato inválido. Use !desafiar @usuario');return;}
+ try{if(cmd.type==='challenge'){x1Player(s,uid,now);const matches=Object.entries(s.users).filter(([,u])=>u.handle.toLowerCase()===cmd.handle);if(matches.length!==1)throw Error('Usuário ainda não identificado de forma única na live. Peça para ele mandar uma mensagem no chat.');challengeX1(s,uid,matches[0][0],now);}else answerX1(s,uid,cmd.type,now);
+ record({challenge:'Desafio criado',accept:'Desafio aceito / fila',decline:'Convite recusado',cancel:'Convite cancelado'}[cmd.type]);}
+ catch(error){record(error.message);x1Notice(x,error.message,now,'error');}
+
 }
 function commandX1(s,command,p,now){const x=s.extra.x1,m=x.active;
  const confirmed=()=>{if(p.confirmed!==true)throw Error('Confirme esta ação.');};
@@ -249,21 +316,27 @@ function restoreX1(v,known,now=Date.now()){
  for(const [key,value] of Object.entries(v.cooldowns||{}))if(known(key))x.cooldowns[key]=n(value);
  x.logs=(v.logs||[]).slice(0,500).map(l=>({type:t(l.type),message:t(l.message),time:n(l.time),matchId:t(l.matchId),challengeId:t(l.challengeId),userId:known(l.userId)?l.userId:'',delta:[-1,1].includes(l.delta)?l.delta:0}));
  if(v.notice)x.notice={message:t(v.notice.message),time:n(v.notice.time),type:t(v.notice.type)};
+ if(v.diagnostics){const d=v.diagnostics;x.diagnostics={chatCount:n(d.chatCount||0),lastChatAt:n(d.lastChatAt||0),commands:(d.commands||[]).slice(0,100).map(c=>({time:n(c.time),userId:known(c.userId)?c.userId:'',text:String(c.text||'').slice(0,1000),outcome:t(c.outcome)}))};}
  x.tutorial={visible:v.tutorial?.visible===true,until:n(v.tutorial?.until||0)};return x;
 }
 
 // x1-view.js
 function x1OverlayView(s,kind='x1',overrides={},now=Date.now()){
  const x=s.extra.x1,v=visualOf(s,kind,overrides),m=x.active,person=id=>identityView(s.users[id],v,id),label=id=>[v.showName!==false?(s.users[id]?.name||s.users[id]?.handle||'Participante'):'',v.showHandle!==false&&s.users[id]?.handle?'@'+s.users[id].handle:''].filter(Boolean).join(' · ');
- const wrap=body=>`<div ${cardAttrs(v,'x1-card '+(kind==='x1-tutorial'?'x1-tutorial':''))}>${body}</div>`;
- if(kind==='x1-tutorial')return !x.tutorial.visible||x.tutorial.until&&now>=x.tutorial.until?'':wrap(`<h1>⚔️ COMO DESAFIAR NO X1</h1><p>Toque no nome da pessoa no chat e complete o comando</p><ol class="x1-steps"><li>Toque no nome da pessoa no chat</li><li>O @ dela aparece na caixa de mensagem</li><li>Digite 'desafiar' ou '!desafiar'</li></ol><h2>FORMATOS ACEITOS</h2><div class="x1-formats"><code>@ricardo desafiar</code><code>@ricardo !desafiar</code><code>!desafiar @ricardo</code><code>desafiar @ricardo</code></div><p class="x1-recommended">Mais fácil no celular: toque no nome da pessoa e escreva 'desafiar'.</p><p><strong>IMPORTANTE</strong><br>Só a pessoa marcada pode aceitar usando: <b>!aceitar</b></p>`);
+ const next=()=>x.config.queueLimit&&x.queue.length?`<div class="x1-next"><h3>PRÓXIMAS BATALHAS</h3>${x.queue.slice(0,x.config.queueLimit).map((q,i)=>`<p>${i+1}. ${q.players.map(id=>esc(label(id))).join(' × ')}</p>`).join('')}</div>`:'';
+ const wrap=body=>`<div ${cardAttrs(v,'x1-card '+(kind==='x1-tutorial'?'x1-tutorial':''))}>${body}${kind==='x1'?next():''}</div>`;
+ if(kind==='x1-tutorial')return !x.tutorial.visible||x.tutorial.until&&now>=x.tutorial.until?'':wrap(`<h1>⚔️ COMO DESAFIAR NO X1</h1><p>Envie no chat:</p><div class="x1-formats"><code>!desafiar @ricardo</code></div><p>Troque @ricardo pelo @ da pessoa que deseja desafiar.</p><p><strong>Só a pessoa marcada pode aceitar:</strong><br><b>!aceitar</b></p><p>Recusar: !recusar · Cancelar seu convite: !cancelardesafio</p>`);
+ if(kind==='x1-ranking'&&x.config.rankingBattleOnly&&!x1BattleVisible(x,now))return '';
  if(kind==='x1-ranking')return wrap(`<h2>🏆 CLASSIFICAÇÃO X1</h2>${x1Order(x).slice(0,x.config.rankLimit).map((p,i)=>`<div class="rank-row" data-rank-key="x1:${esc(p.id)}"><b class="position">${i+1}</b>${rankAvatar(s.users[p.id],i===0,v)}<div class="person">${person(p.id)}</div><b class="score">${fmt(p.points)} pts</b></div>`).join('')||'<p>Aguardando desafios</p>'}`);
  if(kind==='x1-queue')return wrap(`<h2>⚔️ AGORA</h2><p>${m?m.players.map(id=>esc(label(id))).join(' × '):'Aguardando batalha'}</p>${x.config.queueLimit?`<h2>A SEGUIR</h2>${x.queue.slice(0,x.config.queueLimit).map((q,i)=>`<p>${i+1}. ${q.players.map(id=>esc(label(id))).join(' × ')}</p>`).join('')||'<p>Fila vazia</p>'}`:''}`);
- if(!m){const last=x.history[0];if(last&&now-last.endedAt<Math.max(5,x.config.interval)*1000){if(last.status==='finished'&&!last.reverted)return wrap(`<p class="overlay-kicker">BATALHA FINALIZADA</p>${avatar(s.users[last.winnerId],true)}<h1>${esc(label(last.winnerId))} VENCEU</h1><p class="x1-win">+1 PONTO · #${x1Order(x).findIndex(p=>p.id===last.winnerId)+1} na classificação</p><p>${esc(label(last.loserId))} · −1 PONTO</p>`);return wrap('<h2>BATALHA CANCELADA</h2>');}const c=x.pending[0];return wrap(c?`<p class="overlay-kicker">⚔ DESAFIO RECEBIDO</p><h2>${c.players.map(id=>esc(label(id))).join(' × ')}</h2><p>${esc(label(c.players[1]))}, use <strong>!aceitar</strong> ou !recusar</p><strong class="x1-clock">${clock(Math.max(0,c.expiresAt-now))}</strong>`:`<h2>⚔ BATALHAS / X1</h2><p>${x.queue.length?'Desafio aceito · aguardando fila':x.notice&&now-x.notice.time<8000?esc(x.notice.message):'Aguardando desafio'}</p><p><code>@usuario desafiar</code></p>`);}
+ if(!m){const last=x.history[0];if(x1ResultVisible(x,now))return wrap(`<p class="overlay-kicker">BATALHA FINALIZADA</p>${avatar(s.users[last.winnerId],true)}<h1>${esc(label(last.winnerId))} VENCEU</h1><p class="x1-win">+1 PONTO · #${x1Order(x).findIndex(p=>p.id===last.winnerId)+1} na classificação</p><p>${esc(label(last.loserId))} · −1 PONTO</p>`);const c=x.pending.find(c=>c.expiresAt>now);if(!c)return '';return wrap(`<p class="overlay-kicker">⚔ DESAFIO RECEBIDO</p><h2>${c.players.map(id=>esc(label(id))).join(' × ')}</h2><p>${esc(label(c.players[1]))}, use <strong>!aceitar</strong> ou !recusar</p><strong class="x1-clock">${clock(Math.max(0,c.expiresAt-now))}</strong>`);}
  const statuses={preparing:'PREPARANDO',active:'FIGHT',sudden:'EMPATE · MORTE SÚBITA',decision:'AGUARDANDO DECISÃO',paused:m.pauseReason==='connection'?'CONEXÃO PERDIDA · X1 PAUSADO':'X1 PAUSADO'};
  const max=Math.max(1,...m.coins),time=m.status==='preparing'?Math.max(1,Math.ceil(x1Remaining(m,now)/1000)):['sudden','decision'].includes(m.status)?'—':clock(x1Remaining(m,now));
  return wrap(`<p class="overlay-kicker">${statuses[m.status]||''}</p><div class="x1-fighters">${m.players.map((id,i)=>`<section>${avatar(s.users[id],true)}${person(id)}<strong class="x1-coins"><span class="x1-coin-icon" aria-label="moedas">●</span> ${fmt(m.coins[i])}</strong><progress max="${max}" value="${m.coins[i]}"></progress><small>${fmt(x.players[id]?.points||0)} pontos X1</small></section>${i===0?'<b class="x1-vs">VS</b>':''}`).join('')}</div><strong class="x1-clock ${m.status==='preparing'?'x1-countdown':''}">${time}</strong><small>${{coins:'Moedas',manual:'Manual',hybrid:'Híbrido'}[m.rules.mode]} · Melhor de 1</small>`);
 }
+
+function x1ResultVisible(x,now=Date.now()){const h=x.history[0];return !!(h&&h.status==='finished'&&!h.reverted&&now-h.endedAt<Math.max(1,x.config.interval)*1000);}
+function x1BattleVisible(x,now=Date.now()){return !!x.active||x1ResultVisible(x,now)||(!x.queuePaused&&x.config.enabled&&x.queue.length>0);}
 
 // chest.js
 // Chest accounting consumes accepted gift deltas; it never connects to TikFinity.
@@ -361,6 +434,7 @@ function presetText(value,max,label){const text=String(value??'').trim();if(!tex
 function presetNumber(value,min,max,label){const n=Number(value);if(!Number.isInteger(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
 function presetId(value){const id=String(value??'');if(!/^[a-zA-Z0-9_-]{1,100}$/.test(id))throw Error('Identificador de preset/macro inválido.');return id;}
 function cleanMacro(p){
+ if(p.ctrl||p.alt||p.shift)throw Error('Use somente teclas individuais. Ctrl, Alt e Shift não são aceitos nesta versão.');
  const key=String(p.key??'').toUpperCase();if(!MACRO_KEYS.includes(key))throw Error('Tecla não suportada.');
  const trigger=p.trigger??'gift';if(!['gift','likes-user','likes-total','follow','coins'].includes(trigger))throw Error('Gatilho inválido.');
  const fields={trigger,giftId:trigger==='gift'?presetText(p.giftId,120,'ID do presente'):''};
@@ -372,7 +446,7 @@ function cleanMacro(p){
 function cleanPreset(p){
  if(!p||!Array.isArray(p.macros))throw Error('Preset inválido.');
  const ids=new Set(),macros=p.macros.map(m=>{const row=cleanMacro(m);if(ids.has(row.id))throw Error('Macro duplicado.');ids.add(row.id);return row;});
- return {id:presetId(p.id),name:presetText(p.name,100,'Nome do preset'),macros};
+ return {id:presetId(p.id),name:presetText(p.name,100,'Nome do preset'),simultaneous:p.simultaneous===true,macros};
 }
 function restorePresets(input=[]){if(!Array.isArray(input))throw Error('Lista de presets inválida.');const ids=new Set();return input.map(p=>{const row=cleanPreset(p);if(ids.has(row.id))throw Error('Preset duplicado.');ids.add(row.id);return row;});}
 function recommendMacros(count,confirmedCount){if(count>RECOMMENDED_MACROS&&confirmedCount!==count)throw Error('Este preset ultrapassa 30 macros. Confirme o aviso antes de continuar.');}
@@ -384,7 +458,8 @@ function changePreset(s,command,p){
  if(command==='preset-create'){const item=cleanPreset(p);if(presets.some(x=>x.id===item.id))throw Error('Este preset já existe.');recommendMacros(item.macros.length,p.confirmedCount);presets.push(item);return;}
  const item=presets.find(x=>x.id===p.presetId);if(!item)throw Error('Preset não encontrado.');
  if(command==='macro-delete-many'){const ids=selection(p.macroIds,item.macros);item.macros=item.macros.filter(m=>!ids.has(m.id));return;}
- if(command==='macro-enabled'){const macro=item.macros.find(m=>m.id===p.macroId);if(!macro||typeof p.enabled!=='boolean')throw Error('Macro ou estado inválido.');macro.enabled=p.enabled;}
+ if(command==='preset-mode'){if(typeof p.simultaneous!=='boolean')throw Error('Modo inválido.');item.simultaneous=p.simultaneous;}
+ else if(command==='macro-enabled'){const macro=item.macros.find(m=>m.id===p.macroId);if(!macro||typeof p.enabled!=='boolean')throw Error('Macro ou estado inválido.');macro.enabled=p.enabled;}
  else if(command==='preset-rename')item.name=presetText(p.name,100,'Nome do preset');
  else if(command==='preset-delete')s.extra.presets=presets.filter(x=>x.id!==item.id);
  else if(command==='macro-save'){
@@ -393,8 +468,8 @@ function changePreset(s,command,p){
  }else if(command==='macro-delete')item.macros=item.macros.filter(m=>m.id!==p.macroId);
  else throw Error('Comando de preset desconhecido.');
 }
-function presetPackage(p){return {format:'amarillou-preset',version:4,preset:cleanPreset(p)};}
-function readPresetPackage(p){if(p?.format!=='amarillou-preset'||![1,2,3,4].includes(p.version))throw Error('Arquivo de preset incompatível.');return cleanPreset(p.preset);}
+function presetPackage(p){return {format:'amarillou-preset',version:5,preset:cleanPreset(p)};}
+function readPresetPackage(p){if(p?.format!=='amarillou-preset'||![1,2,3,4,5].includes(p.version))throw Error('Arquivo de preset incompatível.');return cleanPreset(p.preset);}
 
 function macroTriggerLabel(m){
  if(m.trigger==='likes-user')return 'A cada '+m.threshold+' curtidas por pessoa';
@@ -492,13 +567,13 @@ function dateAt(t,zone){const a=new Intl.DateTimeFormat('en-CA',{timeZone:zone,y
 function calendarRange(period,t,zone){const d=dateAt(t,zone);if(period==='month')return [d.slice(0,7)+'-01',d];if(period==='week'){const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()-(x.getUTCDay()+6)%7);return [x.toISOString().slice(0,10),d];}return [d,d];}
 function levelThreshold(level){return Math.floor(50*1.03*(Math.pow(1.03,Math.max(0,Math.min(1000,level)-1))-1)/.03+1e-8);}
 function levelProgress(points){points=nonneg(points);let lo=1,hi=1000;while(lo<hi){const m=Math.ceil((lo+hi)/2);if(levelThreshold(m)<=points)lo=m;else hi=m-1;}const start=levelThreshold(lo),next=lo<1000?levelThreshold(lo+1):null;return {level:lo,points,start,next,remaining:next===null?0:Math.max(0,next-points),percent:next===null?100:Math.min(100,100*(points-start)/(next-start))};}
-function defaultVisual(){return {container:true,color:'#191b1e',showLevel:true,style:'classic',layout:'vertical',rankLimit:10,showName:true,showHandle:true,showCrown:true,animate:true,customText:false,textColor:'#ffffff',resolution:'hd'};}
-function cleanVisual(v={}){return {resolution:['standard','hd','vertical'].includes(v.resolution)?v.resolution:'hd',container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:['ribbon','portrait'].includes(v.style)?v.style:'classic',layout:v.layout==='horizontal'?'horizontal':'vertical',rankLimit:[1,3,5,10].includes(Number(v.rankLimit))?Number(v.rankLimit):10,showName:v.showName!==false,showHandle:v.showHandle!==false,showCrown:v.showCrown!==false,animate:v.animate!==false,customText:v.customText===true,textColor:/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'};}
-function newExtras(){return {x1:newX1(),chest:chestDefaults(),live:newLiveData(),giftGoal:{target:1000,current:0},channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],macroFollows:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['x1','x1-ranking','x1-queue','x1-tutorial','chest','rankLikes','rankCoins','gifts','roles','goal','giftGoal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
+function defaultVisual(){return {side:'left',rotationSeconds:10,container:true,color:'#191b1e',showLevel:true,style:'classic',layout:'vertical',rankLimit:10,showName:true,showHandle:true,showCrown:true,animate:true,customText:false,textColor:'#ffffff',resolution:'hd'};}
+function cleanVisual(v={}){return {side:v.side==='right'?'right':'left',rotationSeconds:Number.isInteger(+v.rotationSeconds)&&+v.rotationSeconds>=2&&+v.rotationSeconds<=300?+v.rotationSeconds:10,resolution:['standard','hd','vertical'].includes(v.resolution)?v.resolution:'hd',container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:['ribbon','portrait'].includes(v.style)?v.style:'classic',layout:v.layout==='horizontal'?'horizontal':'vertical',rankLimit:[1,3,5,10].includes(Number(v.rankLimit))?Number(v.rankLimit):10,showName:v.showName!==false,showHandle:v.showHandle!==false,showCrown:v.showCrown!==false,animate:v.animate!==false,customText:v.customText===true,textColor:/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'};}
+function newExtras(){return {communityBattle:newCommunityBattle(),roleAutomation:newRoleAutomation(),x1:newX1(),chest:chestDefaults(),live:newLiveData(),giftGoal:{target:1000,current:0},channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],macroFollows:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['communityBattle','x1','x1-ranking','x1-queue','x1-tutorial','chest','rankLikes','rankCoins','gifts','roles','goal','giftGoal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
 function timerRemaining(timer,now=Date.now()){return Math.max(0,timer.running?timer.endAt-now:timer.remainingMs);}
 function addTimer(timer,seconds,now){const rem=Math.min(31536000000,timerRemaining(timer,now)+seconds*1000);timer.remainingMs=rem;if(timer.running)timer.endAt=now+rem;}
-function sessionHeartbeat(s,now=Date.now(),connected=false){const matchChanged=tickX1(s,now,connected);s.extra.x1.savedAt=now;const a=s.extra.activeSession;if(!a)return matchChanged;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
-function recordExtras(s,e,uid,delta,now){const x=s.extra;const coins=e.type==='gift'?delta*(e.unit??0):0,likes=e.type==='like'?e.likes:0;receiveX1(s,e,uid,coins,now);earnPoints(s,uid,coins*x.weights.coins,likes*x.weights.likes);x.goal.current+=likes;
+function sessionHeartbeat(s,now=Date.now(),connected=false){if(!connected)pauseCommunity(s.extra.communityBattle,now);const communityChanged=tickCommunity(s.extra.communityBattle,now);const matchChanged=tickX1(s,now,connected)||communityChanged;s.extra.x1.savedAt=now;const a=s.extra.activeSession;if(!a)return matchChanged;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
+function recordExtras(s,e,uid,delta,now){const x=s.extra;const coins=e.type==='gift'?delta*(e.unit??0):0,likes=e.type==='like'?e.likes:0;receiveX1(s,e,uid,coins,now);receiveCommunity(x.communityBattle,e,uid,coins,now);receiveRoleAutomation(s,e,uid,delta);earnPoints(s,uid,coins*x.weights.coins,likes*x.weights.likes);x.goal.current+=likes;
  if(e.type==='follow'){x.followers=x.followers.filter(f=>f.userId!==uid);x.followers.unshift({userId:uid,time:now});x.followers=x.followers.slice(0,50);}
  if(e.type==='gift'){chestReceive(x.chest,coins,dateAt(now,s.settings.zone),now,{userId:uid,name:e.giftName});x.giftGoal.current+=coins;recordLiveGift(s,e,uid,delta,now);
   if(e.giftId){const old=x.catalog['$'+e.giftId];x.catalog['$'+e.giftId]={id:e.giftId,name:e.giftName,image:e.giftImage||old?.image||'',unit:e.unit??old?.unit??null};}
@@ -515,7 +590,9 @@ function resetRanking(s,period,metric,now=Date.now()){
 function boundedInput(v,min,max,label){const n=Number(v);if(!Number.isFinite(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
 function applyCommand(s,command,p={},now=Date.now()){
  const x=s.extra;
- if(command.startsWith('x1-'))commandX1(s,command,p,now);
+ if(command==='role-automation')x.roleAutomation=cleanRoleAutomation(p);
+ else if(command.startsWith('community-'))commandCommunity(s,command,p,now);
+ else if(command.startsWith('x1-'))commandX1(s,command,p,now);
  else if(command.startsWith('chest-'))chestCommand(x.chest,command,p,dateAt(now,s.settings.zone),now);
  else if(command==='capture-auto'){if(typeof p.enabled!=='boolean')throw Error('Opção inválida.');if(x.live.autoCapture!==p.enabled){x.live.autoCapture=p.enabled;pauseLive(s);if(x.live.current)x.live.current.recordId='';}}
  else if(command==='live-new'){if(p.confirmed!==true)throw Error('Confirme a nova transmissão.');beginLive(s,now);}
@@ -585,7 +662,7 @@ function validateExtras(s,input,oldVersion){
  for(const [id,v] of Object.entries(input.points||{}))if(known(id))x.points[id]=count(v);
  restorePointSources({...s,extra:x},input.pointSources,oldVersion);
  x.live=restoreLiveData(input.live,known,catalogImage);if(input.giftGoal)x.giftGoal={target:boundedInput(input.giftGoal.target,1,1e12,'Meta'),current:count(input.giftGoal.current)};
- x.x1=restoreX1(input.x1,known);
+ x.x1=restoreX1(input.x1,known);x.communityBattle=restoreCommunity(input.communityBattle,known);x.roleAutomation=cleanRoleAutomation(input.roleAutomation);
  x.chest=restoreChest(input.chest);
  x.presets=restorePresets(input.presets);
  for(const [key,value] of Object.entries(input.macroFollows||{})){if(!key.startsWith('$')||key.length>400)throw Error('Proteção de seguidores inválida.');x.macroFollows[key]=count(value);}
@@ -691,7 +768,7 @@ class Engine {
     if (!e) {s.diagnostics.invalid++; return false;}
     const typeKey = '$'+e.type;
     s.diagnostics.types[typeKey] = (s.diagnostics.types[typeKey] || 0) + 1;
-    if(e.type==='streamend'){if(e.roomId&&s.extra.live.current?.roomId&&e.roomId!==s.extra.live.current.roomId)return false;pauseX1(s,'connection',now);finishLive(s,now,'sinal streamEnd');s.updatedAt=now;return true;}
+    if(e.type==='streamend'){if(e.roomId&&s.extra.live.current?.roomId&&e.roomId!==s.extra.live.current.roomId)return false;pauseX1(s,'connection',now);pauseCommunity(s.extra.communityBattle,now);finishLive(s,now,'sinal streamEnd');s.updatedAt=now;return true;}
     if (!supported.has(e.type)) {s.diagnostics.unknown++; return false;}
     if (!e.id) {s.diagnostics.invalid++; return false;}
     // A message id can be shared by streak updates, so count/end form part of its identity.
@@ -847,7 +924,7 @@ const giftTitles={last:'Último presente',recentCombo:'Combo recente',bestCombo:
 function avatar(user,large=false){return `<span class="avatar ${large?'large':''}"><span>${esc((user?.name||user?.handle||'?').slice(0,2).toUpperCase())}</span>${user?.avatar?`<img alt="" src="${esc(user.avatar)}" loading="lazy">`:''}</span>`;}
 function watchImages(root){for(const i of root.querySelectorAll('img')){if(i.complete&&i.naturalWidth===0)i.remove();else i.addEventListener('error',()=>i.remove(),{once:true});}for(const el of root.querySelectorAll('[data-bg]'))el.style.setProperty('--overlay-bg',validColor(el.dataset.bg));for(const el of root.querySelectorAll('[data-text-color]'))if(/^#[0-9a-f]{6}$/i.test(el.dataset.textColor))el.style.setProperty('--overlay-text',el.dataset.textColor);}
 function visualOf(s,key,override={}){return {...defaultVisual(),...s.extra?.visuals[key],...override};}
-function cardAttrs(v,classes){return `class="overlay-card ${classes} ${v.container?'boxed':'bare'} ${v.style==='ribbon'?'ribbon':v.style==='portrait'?'portrait':''}${v.customText?' custom-text':''}" data-animate="${v.animate!==false?'1':'0'}" data-text-color="${/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'}" data-rank-layout="${v.layout==='horizontal'?'horizontal':'vertical'}" data-bg="${validColor(v.color)}"`;}
+function cardAttrs(v,classes){return `class="overlay-card ${classes} ${v.container?'boxed':'bare'} ${v.style==='ribbon'?'ribbon':v.style==='portrait'?'portrait':''}${v.customText?' custom-text':''}" data-animate="${v.animate!==false?'1':'0'}" data-text-color="${/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'}" data-side="${v.side==='right'?'right':'left'}" data-rank-layout="${v.layout==='horizontal'?'horizontal':'vertical'}" data-bg="${validColor(v.color)}"`;}
 function rankAvatar(user,first,v){return `<span class="rank-avatar">${first&&v.showCrown!==false?'<span class="rank-crown" role="img" aria-label="Primeiro lugar"><svg viewBox="0 0 24 20" aria-hidden="true"><path fill="currentColor" d="M2 4l5 4 5-7 5 7 5-4-2 12H4zM4 18h16v2H4z"/></svg></span>':''}${avatar(user)}</span>`;}
 function identityView(user,v,id=''){return `${v.showName!==false?`<strong class="identity-name">${esc(user?.name||user?.handle||'Participante')}</strong>`:''}${v.showHandle!==false?`<small class="identity-handle">@${esc(user?.handle||id.replace(/^\$/,''))}</small>`:''}`;}
 function rankView(s,{period='day',metric='coins',limit=5,start='',end='',...overrides}={}){
@@ -873,6 +950,9 @@ function giftRankingView(s,kind,overrides={}){
 function overlayView(s,params){const kind=params.get('kind')||'ranking',v={};if(params.has('container'))v.container=params.get('container')!=='0';if(params.has('color'))v.color=validColor(params.get('color'));if(params.has('level'))v.showLevel=params.get('level')!=='0';if(params.has('style'))v.style=params.get('style');
  if(params.has('layout'))v.layout=params.get('layout')==='horizontal'?'horizontal':'vertical';if(params.has('rankLimit'))v.rankLimit=[1,3,5,10].includes(Number(params.get('rankLimit')))?Number(params.get('rankLimit')):10;
  for(const [param,key] of [['name','showName'],['handle','showHandle'],['crown','showCrown'],['animate','animate'],['customText','customText']])if(params.has(param))v[key]=params.get(param)!=='0';if(/^#[0-9a-f]{6}$/i.test(params.get('textColor')||''))v.textColor=params.get('textColor');
+ if(params.has('side'))v.side=params.get('side')==='right'?'right':'left';if(params.has('rotationSeconds'))v.rotationSeconds=Math.max(2,Math.min(300,Number(params.get('rotationSeconds'))||10));
+ if(kind==='communityBattle')return communityView(s,v);
+ if(kind==='giftRotation'){const seconds=v.rotationSeconds||s.extra.visuals.gifts.rotationSeconds||10;return giftView(s,Object.keys(giftTitles)[Math.floor(Date.now()/(seconds*1000))%4],v);}
  if(kind==='chest')return chestView(s,Date.now(),v);
  if(kind.startsWith('x1'))return x1OverlayView(s,kind,v);
  if(kind==='ranking')return rankView(s,{period:['day','week','month'].includes(params.get('period'))?params.get('period'):'day',metric:params.get('metric')==='likes'?'likes':'coins',limit:Math.min(20,Math.max(1,Number(params.get('limit'))||5)),start:params.get('start')||'',end:params.get('end')||'',...v});
@@ -941,7 +1021,7 @@ let fitFrame=0;new ResizeObserver(()=>{if(!fitFrame)fitFrame=requestAnimationFra
 root.addEventListener('load',fitOverlay,true);
 window.addEventListener('resize',fitOverlay);
 let lastPacket=0,current=freshState(),lastHTML='';
-function render(){const html=overlayView(current,params);if(html!==lastHTML){const before=captureRankPositions(root);root.innerHTML=html;composeOverlay();const chest=root.querySelector('[data-chest-width]');root.style.width=chest?chest.dataset.chestWidth+'px':'';watchImages(root);lastHTML=html;fitOverlay();animateRankPositions(root,before);}}
+function render(){const html=overlayView(current,params);document.body.classList.toggle('overlay-silent',!html&&['x1','x1-ranking'].includes(params.get('kind')));if(html!==lastHTML){const before=captureRankPositions(root);root.innerHTML=html;composeOverlay();const chest=root.querySelector('[data-chest-width]');root.style.width=chest?chest.dataset.chestWidth+'px':'';watchImages(root);lastHTML=html;fitOverlay();animateRankPositions(root,before);}}
 function receive(packet){if(packet.state?.version!==7||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.8.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
 if(params.get('demo')==='1'){
   current=demoState();render();badge.textContent='DEMONSTRAÇÃO';

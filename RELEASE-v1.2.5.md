@@ -1,4 +1,4 @@
-# v1.2.5 — Batalhas X1, overlays em alta resolução e correção do baú
+# v1.3.0 — Batalhas X1, overlays em alta resolução e correção do baú
 
 ## Novidades
 - Batalhas entre dois viewers por comandos de chat: `@usuario desafiar`, `@usuario !desafiar`, `!desafiar @usuario` e `desafiar @usuario`.
@@ -21,4 +21,4 @@ O X1 vem desativado. Abra Batalhas / X1, configure e ative. A aplicação não c
 
 Este X1 substitui a proposta anterior de disputa geral com sniper. Não inclui melhor de 3, torneios, apostas ou prorrogação por troca do top global.
 
-Validação e limitações: consulte `docs/VALIDACAO-v1.2.5.md`. O EXE precisa ser testado no Windows com sua live e OBS antes do uso em produção.
+Validação e limitações: consulte `docs/VALIDACAO-v1.3.0.md`. O EXE precisa ser testado no Windows com sua live e OBS antes do uso em produção.

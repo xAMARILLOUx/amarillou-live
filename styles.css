@@ -131,3 +131,27 @@ dialog,#points-edit-dialog,#macro-warning-dialog{background:#151517;border-color
 .x1-card{padding:26px;text-align:center;overflow-wrap:anywhere}.x1-card>h1{font-size:32px}.x1-card>h2{font-size:25px}.x1-fighters{display:grid;grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);align-items:center;gap:10px;margin:22px 0}.x1-fighters section{min-width:0;display:flex;align-items:center;flex-direction:column;gap:8px}.x1-fighters .avatar{width:100px;height:100px}.x1-fighters .identity-name{font-size:26px;max-width:100%}.x1-fighters .identity-handle{font-size:16px;max-width:100%}.x1-coins{font-size:30px}.x1-clock{display:block;font-size:44px;font-variant-numeric:tabular-nums;margin:12px}.x1-vs{font-size:28px;color:var(--accent)}.x1-card progress{width:100%;height:12px;accent-color:#ffd100}.x1-win{color:#7ceaa1;font-weight:800}.x1-queue-item{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:12px;border-bottom:1px solid #ffffff19}.x1-scroll{max-height:300px;overflow:auto}.x1-tutorial{--accent:#bb86ff;background:linear-gradient(135deg,#211332,#121018);border:1px solid #a865d988}.x1-tutorial.bare{background:transparent;border:0}.x1-tutorial h1,.x1-tutorial h2{color:#d3a9ff}.x1-steps{text-align:left;font-size:20px;line-height:1.5}.x1-formats{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:17px}.x1-recommended{color:#dfc6ff;border-left:3px solid #b275ff;padding:10px}.overlay-body:has(.x1-card) #overlay-root{width:740px}.x1-card .rank-row{text-align:left}.x1-card.custom-text :is(h1,h2,p,small,strong,b,code,li){color:var(--overlay-text)}
 @media(max-width:600px){#x1-preview .x1-card{padding:12px}#x1-preview .x1-fighters{grid-template-columns:minmax(0,1fr) 25px minmax(0,1fr)}#x1-preview .avatar{width:60px;height:60px}#x1-preview .identity-name{font-size:18px}#x1-preview .x1-coins{font-size:18px}}
 .x1-fighters .avatar.large{flex:none;width:100px;height:100px;aspect-ratio:1;margin:6px 0 12px;border-color:#ffd100;background:#302b16;color:#ffd100}.x1-coin-icon{color:#ffd100;font-size:.7em;text-shadow:0 0 1px #000}.x1-formats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.x1-formats code{display:block;min-width:0;padding:10px 6px;font-size:16px;background:#8d57c51a;border:1px solid #ac7add44;border-radius:8px}.x1-countdown{animation:x1-pulse .6s ease-out}.x1-win{animation:x1-pulse .8s ease-out}@keyframes x1-pulse{from{opacity:.45;transform:scale(.9)}to{opacity:1;transform:scale(1)}}@media(prefers-reduced-motion:reduce){.x1-countdown,.x1-win{animation:none}}@media(max-width:600px){#x1-preview .x1-fighters .avatar.large{width:60px;height:60px}}
+/* v1.3: directional composition is visual, never mirror text. */
+.overlay-silent #overlay-status{display:none!important}
+.overlay-card[data-side="right"] .rank-row{flex-direction:row-reverse;justify-content:flex-start}
+.overlay-card[data-side="right"] .rank-row .person{text-align:right}
+.overlay-card[data-side="right"] .rank-row .score{text-align:left;margin-left:0;margin-right:0}
+.overlay-card[data-side="right"] .rank-row .position{order:-1}
+.community-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.community-battle-card{text-align:center}
+.community-battle-card .rank-row{gap:8px;text-align:left}
+.community-battle-card .person{min-width:0;flex:1}
+.community-battle-card .identity-name,.community-battle-card .identity-handle{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.community-battle-card .score{font-size:21px}
+.community-battle-card .avatar{width:44px;height:44px;flex-basis:44px}
+.round-winner,.sniper-flash{color:var(--accent,#ffd52c);font-weight:800}
+.x1-next{margin-top:20px;border-top:1px solid #ffffff25;padding-top:12px;font-size:17px}
+.x1-next p{margin:6px 0}.x1-next h3{font-size:15px}
+.battle-tabs{margin-bottom:24px}.role-auto-form{margin-top:24px;padding-top:18px;border-top:1px solid #ffffff25}
+#community-preview .community-columns{gap:10px}#community-preview .avatar{width:30px;height:30px;flex-basis:30px}
+#auto-role-gift-picker{max-width:640px;width:90vw}#macro-test-quantity{max-width:160px}
+@media(max-width:600px){#community-preview .community-columns{grid-template-columns:1fr}}
+.overlay-body:has(.community-battle-card) #overlay-root{width:1040px}
+.x1-tutorial .x1-formats{grid-template-columns:1fr}
+.community-battle-card .person{flex:0 1 auto}
+.community-battle-card .score{flex:0 0 auto;white-space:nowrap}
