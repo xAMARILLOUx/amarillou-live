@@ -1,4 +1,4 @@
-# AMARILLOU Live Control v1.2.0
+# AMARILLOU Live Control v1.2.5
 
 [Usar online](https://xamarilloux.github.io/amarillou-live/) · [Baixar executável](https://github.com/xAMARILLOUx/amarillou-live/releases)
 
@@ -55,3 +55,11 @@ Node.js ≥22.15: `npm start` inicia a ponte; `npm run build` gera `index.html`,
 TikTok, TikFinity e OBS são produtos de terceiros. Windows nativo e compatibilidade com cada jogo precisam ser testados no computador do streamer.
 
 Criador: [TikTok](https://www.tiktok.com/@xamarilloux) · [Site](https://amarillou.com.br/) · [Apoiar](https://livepix.gg/xamarilloux)
+
+## v1.2.5 — Batalhas / X1 e qualidade das overlays
+
+Novo módulo nativo de desafios pelo chat, fila, modos Moedas/Manual/Híbrido, classificação própria e quatro overlays. Leia [Como usar o X1](docs/X1.md) e [Notas da versão](RELEASE-v1.2.5.md).
+
+Forma recomendada no celular: toque no nome da pessoa e escreva `desafiar`, formando `@usuario desafiar`. Também funcionam `@usuario !desafiar`, `!desafiar @usuario` e `desafiar @usuario`. Somente o desafiado aceita com `!aceitar`.
+
+O módulo começa desativado. Dados antigos continuam compatíveis. A prévia do baú foi corrigida e as fontes podem renderizar em 1600 × 1200 ou 1080 × 1920, além de 800 × 600. O site compilado está incluído neste código-fonte; não é necessário duplicar uma pasta de site para o GitHub Pages.
