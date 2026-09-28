@@ -155,16 +155,75 @@ dialog,#points-edit-dialog,#macro-warning-dialog{background:#151517;border-color
 .x1-tutorial .x1-formats{grid-template-columns:1fr}
 .community-battle-card .person{flex:0 1 auto}
 .community-battle-card .score{flex:0 0 auto;white-space:nowrap}
+
+.rank-unit{width:1em;height:1em;vertical-align:-.12em;display:inline-block}.scoreboard-card{text-align:center;min-width:300px}.scoreboard-card h1,.score-value{font-size:64px}.local-only{padding:18px;border:1px solid #d9aa28;border-radius:12px;background:#211d10;margin-bottom:20px}.macro-modifiers{display:flex;gap:16px;flex-wrap:wrap}#record-dialog{max-width:600px;width:90vw}#record-form select{max-width:100%}
+
+.alert-media{width:640px;max-width:100%;text-align:center}.alert-media video,.alert-media img{display:block;max-width:100%;max-height:500px;margin:auto}.alert-media audio{display:none}#alert-rules p{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v1.3.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v1.4.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
 })();</script><script>(async function(){
 'use strict';
 try{
+
+// alerts.js
+// Bounded alert queue; independent of keyboard execution. Time belongs to the central collector.
+function newAlerts(){return {rules:[],queue:[],current:null,serial:0,dropped:0,seen:[],paused:false};}
+function alertRule(p){
+ const id=String(p.id||'');if(!/^[\w-]{1,100}$/.test(id))throw Error('ID de alerta inválido.');
+ if(!['gift','follow'].includes(p.trigger)||!['audio','video','image'].includes(p.mediaType))throw Error('Tipo de alerta inválido.');
+ const source=String(p.source||'');if(source.length>2000)throw Error('URL muito longa.');if(!/^media-[a-f0-9]{32}\.(mp3|wav|ogg|mp4|webm|gif|png)$/.test(source)){let u;try{u=new URL(source);}catch{throw Error('Selecione um arquivo local ou URL HTTPS.');}if(u.protocol!=='https:'||u.username||u.password)throw Error('Use uma URL HTTPS de mídia.');}
+ const duration=Number(p.duration),volume=Number(p.volume);if(!Number.isFinite(duration)||duration<1||duration>30||!Number.isFinite(volume)||volume<0||volume>1)throw Error('Duração de 1 a 30 segundos e volume de 0 a 1.');
+ const giftId=String(p.giftId||'').trim().slice(0,120);if(p.trigger==='gift'&&!giftId)throw Error('Informe o ID do presente.');
+ return {id,name:String(p.name||'Alerta').slice(0,100),enabled:p.enabled!==false,trigger:p.trigger,giftId,mediaType:p.mediaType,source,duration,volume,perUnit:p.perUnit===true};
+}
+function enqueueAlert(a,rule,userId,now,count=1){const n=Math.min(Math.floor(count),Math.max(0,50-a.queue.length));a.dropped+=Math.max(0,count-n);for(let i=0;i<n;i++)a.queue.push({id:'alert-'+now+'-'+ ++a.serial,rule:{...rule},userId});tickAlerts(a,now);}
+function tickAlerts(a,now){let changed=false;if(a.current&&now>=a.current.endAt){a.current=null;changed=true;}if(!a.paused&&!a.current&&a.queue.length){a.current={...a.queue.shift(),startAt:now,endAt:0};a.current.endAt=now+a.current.rule.duration*1000;changed=true;}return changed;}
+function receiveAlerts(s,e,id,delta,now){const a=s.extra.alerts;for(const rule of a.rules){if(!rule.enabled||rule.trigger!==e.type||e.type==='gift'&&(rule.giftId!==e.giftId||delta<=0))continue;if(e.type==='gift'&&!rule.perUnit){const key=rule.id+':'+(e.sequence||e.msgId||now+':'+id);if(a.seen.includes(key))continue;a.seen.push(key);if(a.seen.length>2000)a.seen.shift();}enqueueAlert(a,rule,id,now,rule.perUnit&&e.type==='gift'?delta:1);}}
+function commandAlerts(s,c,p,now){const a=s.extra.alerts;
+ if(c==='alert-save'){const r=alertRule(p);const i=a.rules.findIndex(x=>x.id===r.id);if(i<0){if(a.rules.length>=100)throw Error('Limite de 100 alertas.');a.rules.push(r);}else a.rules[i]=r;}
+ else if(c==='alert-delete'){if(!p.confirmed)throw Error('Confirme a exclusão.');a.rules=a.rules.filter(r=>r.id!==p.id);}
+ else if(c==='alert-test'){const r=a.rules.find(r=>r.id===p.id);if(!r)throw Error('Alerta não encontrado.');enqueueAlert(a,r,'',now);}
+ else if(c==='alert-skip'){a.current=null;tickAlerts(a,now);}
+ else if(c==='alert-clear'){if(!p.confirmed)throw Error('Confirme a limpeza.');a.current=null;a.queue=[];}
+ else if(c==='alert-pause')a.paused=p.paused===true;
+ else throw Error('Comando de alerta inválido.');
+}
+function restoreAlerts(v){const a=newAlerts();if(!v)return a;a.rules=(v.rules||[]).slice(0,100).map(alertRule);if(new Set(a.rules.map(r=>r.id)).size!==a.rules.length)throw Error('Alerta duplicado no backup.');a.serial=Number.isSafeInteger(v.serial)&&v.serial>=0?v.serial:0;a.paused=v.paused===true;return a;}
+
+// record-edit.js
+// Administrative records never enter the event bus or macro queue.
+function editGiftRecord(s,p,now){
+ if(p.confirmed!==true)throw Error('Confirme a alteração do recorde.');
+ if(!s.users[p.userId])throw Error('Selecione um participante conhecido.');
+ if(!['combos','gifts'].includes(p.kind))throw Error('Ranking inválido.');
+ const count=Number(p.count),unit=Number(p.unit),time=Number(p.time);
+ if(!Number.isSafeInteger(count)||count<1||count>1e9||!Number.isSafeInteger(unit)||unit<0||unit>1e9||!Number.isSafeInteger(time)||time<0||time>now)throw Error('Quantidade, valor ou data inválida.');
+ if(!Number.isSafeInteger((p.kind==='combos'?count:1)*unit))throw Error('Valor total excede o limite seguro.');
+ const gift=s.extra.catalog['$'+p.giftId];if(!gift)throw Error('Selecione um presente do catálogo recebido.');
+ const table=p.kind==='combos'?s.extra.live.bestCombos:s.extra.live.bestGifts,before=table[p.userId],amount=p.kind==='combos'?count:1;
+ table[p.userId]={key:'manual-'+now,userId:p.userId,giftId:gift.id,name:gift.name,image:gift.image,unit,count:amount,coins:amount*unit,time,lastTime:time};
+ s.extra.recordEdits.push({time:now,userId:p.userId,kind:p.kind,before:before?{count:before.count,unit:before.unit}:null,after:{count:amount,unit}});s.extra.recordEdits=s.extra.recordEdits.slice(-500);
+}
+
+// duel.js
+function joinDuel(s,id,now){const x=s.extra.x1;
+ x.waiting=x.waiting.filter(w=>w.expiresAt>now);
+ if(futureX1(x,id))throw Error('Você já possui uma batalha agendada.');
+ if(x.pending.some(c=>c.players.includes(id)))throw Error('Você possui um convite antigo pendente. Cancele-o no painel.');
+ if(x.waiting.some(w=>w.userId===id))throw Error('Você já está aguardando uma dupla.');
+ if(now-(x.cooldowns[id]??-Infinity)<x.config.cooldown*1000)throw Error('Aguarde o cooldown antes de entrar novamente.');
+ x1Player(s,id,now);x.cooldowns[id]=now;
+ while(x.waiting.length){const w=x.waiting.shift();if(!s.users[w.userId]||futureX1(x,w.userId)||x.pending.some(c=>c.players.includes(w.userId)))continue;
+ const m={matchId:x1ID(x,'x1',now),challengeId:x1ID(x,'duel',now),players:[w.userId,id],acceptedAt:now,rules:{...x.config},status:'queued'};
+ x.queue.push(m);x1Log(x,'queued','Dupla formada por ordem de chegada.',now,{matchId:m.matchId});x1Notice(x,'Dupla formada · aguardando fila',now,'accepted');return 'Dupla formada / fila';}
+ x.waiting.push({userId:id,createdAt:now,expiresAt:now+x.config.acceptSeconds*1000});x1Notice(x,'Aguardando o próximo !duelo',now);return 'Aguardando o próximo participante';
+}
+function cancelDuel(s,id,now){const x=s.extra.x1;if(!x.waiting.some(w=>w.userId===id))throw Error('Você não está aguardando uma dupla.');x.waiting=x.waiting.filter(w=>w.userId!==id);x1Log(x,'waiting-cancel','Espera cancelada.',now,{userId:id});return 'Espera cancelada';}
 
 // community-battle.js
 // Independent round counters. Never mutate community points, X1 statistics or live totals.
@@ -204,16 +263,10 @@ function communityView(s,overrides={},now=Date.now()){const b=s.extra.communityB
 }
 
 // x1-parser.js
-// Deliberately anchored: free sentences never become commands.
-function parseX1(message){
- const text=String(message??'').trim().replace(/\s+/g,' ').toLowerCase();
- const m=text.match(/^!desafiar @([a-z0-9_.]{1,24})$/);
- if(m)return {type:'challenge',handle:m[1]||m[2]};
- return ({'!aceitar':{type:'accept'},'!recusar':{type:'decline'},'!cancelardesafio':{type:'cancel'}})[text]||null;
-}
+function parseX1(message){const t=String(message??'').trim().toLowerCase();return t==='!duelo'?{type:'duel'}:t==='!cancelarduelo'?{type:'cancel-duel'}:null;}
 
 // x1-state.js
-function newX1(){return {config:{enabled:false,mode:'coins',duration:60,acceptSeconds:30,interval:5,cooldown:10,tie:'sudden',extraSeconds:30,queueLimit:3,rankLimit:5,rankingBattleOnly:false},diagnostics:{chatCount:0,lastChatAt:0,commands:[]},serial:0,queuePaused:false,players:{},pending:[],queue:[],active:null,history:[],logs:[],cooldowns:{},nextAt:0,notice:null,tutorial:{visible:true,until:0}};}
+function newX1(){return {config:{enabled:false,mode:'coins',duration:60,acceptSeconds:30,interval:5,cooldown:10,tie:'sudden',extraSeconds:30,queueLimit:3,rankLimit:5,rankingBattleOnly:false},diagnostics:{chatCount:0,lastChatAt:0,commands:[]},waiting:[],serial:0,queuePaused:false,players:{},pending:[],queue:[],active:null,history:[],logs:[],cooldowns:{},nextAt:0,notice:null,tutorial:{visible:true,until:0}};}
 function x1ID(x,prefix,now){return prefix+'_'+now+'_'+ ++x.serial;}
 function x1Log(x,type,message,now,detail={}){x.logs.unshift({type,message,time:now,...detail});x.logs=x.logs.slice(0,500);}
 function x1Notice(x,message,now,type='info'){x.notice={message,time:now,type};}
@@ -254,7 +307,7 @@ function answerX1(s,id,type,now){const x=s.extra.x1;const i=x.pending.findIndex(
 
 // x1.js
 function tickX1(s,now=Date.now(),connected=true){
- const x=s.extra.x1;let changed=false;
+ const x=s.extra.x1;let changed=false;const waiting=x.waiting.filter(w=>w.expiresAt>now);if(waiting.length!==x.waiting.length){x.waiting=waiting;changed=true;x1Notice(x,'Espera por dupla expirada',now,'expired');}
  for(const c of [...x.pending])if(c.expiresAt<=now){x.pending=x.pending.filter(v=>v!==c);x1Notice(x,'DESAFIO EXPIRADO',now,'expired');x1Log(x,'expired','Convite expirado.',now,{challengeId:c.challengeId});changed=true;}
  if(x.tutorial.visible&&x.tutorial.until&&now>=x.tutorial.until){x.tutorial.visible=false;changed=true;}
  if(tickX1Match(s,now))changed=true;
@@ -266,12 +319,11 @@ function receiveX1(s,e,uid,coins,now){const x=s.extra.x1;
  if(e.type!=='chat')return;
  const d=x.diagnostics;d.chatCount++;d.lastChatAt=now;
  const text=String(e.comment||'').slice(0,1000),cmd=parseX1(text);
- if(!cmd&&!/(?:desafiar|!aceitar|!recusar|!cancelardesafio)/i.test(text))return;
+ if(!cmd&&!/(?:!duelo|!cancelarduelo|desafiar|!aceitar|!recusar|!cancelardesafio)/i.test(text))return;
  const record=outcome=>{d.commands.unshift({time:now,userId:uid,text,outcome});d.commands=d.commands.slice(0,100);};
  if(!x.config.enabled){record('Módulo desativado');return;}
- if(!cmd){record('Formato inválido. Use !desafiar @usuario');return;}
- try{if(cmd.type==='challenge'){x1Player(s,uid,now);const matches=Object.entries(s.users).filter(([,u])=>u.handle.toLowerCase()===cmd.handle);if(matches.length!==1)throw Error('Usuário ainda não identificado de forma única na live. Peça para ele mandar uma mensagem no chat.');challengeX1(s,uid,matches[0][0],now);}else answerX1(s,uid,cmd.type,now);
- record({challenge:'Desafio criado',accept:'Desafio aceito / fila',decline:'Convite recusado',cancel:'Convite cancelado'}[cmd.type]);}
+ if(!cmd){record('Use !duelo para entrar ou !cancelarduelo para sair da espera.');return;}
+ try{record(cmd.type==='duel'?joinDuel(s,uid,now):cancelDuel(s,uid,now));}
  catch(error){record(error.message);x1Notice(x,error.message,now,'error');}
 
 }
@@ -288,9 +340,9 @@ function commandX1(s,command,p,now){const x=s.extra.x1,m=x.active;
  else if(command==='x1-queue'){const i=x.queue.findIndex(v=>v.matchId===p.id);if(i<0)throw Error('Item não encontrado.');if(p.operation==='remove'){confirmed();x.queue.splice(i,1);x1Log(x,'queue-remove','Item removido da fila.',now,{matchId:p.id});}else if(p.operation==='start'){if(!x.config.enabled)throw Error('Ative o módulo X1.');x.queuePaused=false;startQueuedX1(s,i,now);}else if(['up','down'].includes(p.operation)){const j=i+(p.operation==='up'?-1:1);if(j>=0&&j<x.queue.length){[x.queue[i],x.queue[j]]=[x.queue[j],x.queue[i]];x1Log(x,'queue-move','Ordem alterada pelo streamer.',now,{matchId:p.id});}}else throw Error('Ação de fila inválida.');}
  else if(command==='x1-undo'){confirmed();undoX1(s,now);}
  else if(command==='x1-adjust'){const delta=Number(p.delta);if(![-1,1].includes(delta)||!x.players[p.id])throw Error('Ajuste inválido.');x.players[p.id].points+=delta;x.players[p.id].reachedAt=now;x1Log(x,'adjust','Ajuste administrativo de '+delta+' ponto(s).',now,{userId:p.id,delta});}
- else if(command==='x1-reset'){if(p.confirmation!=='ZERAR X1')throw Error('Digite ZERAR X1.');if(x.active||x.queue.length||x.pending.length)throw Error('Encerre a batalha e remova fila/convites antes do reset.');for(const id of Object.keys(x.players))x.players[id]={points:0,wins:0,losses:0,matches:0,firstPlayedAt:0,lastPlayedAt:0,reachedAt:now};for(const h of x.history)h.reverted=true;if(p.history===true){x.history=[];x.logs=[];}x1Log(x,'reset','Classificação zerada'+(p.history?' com histórico.':'; histórico preservado sem possibilidade de desfazer.'),now);}
+ else if(command==='x1-reset'){if(p.confirmation!=='ZERAR X1')throw Error('Digite ZERAR X1.');if(x.active||x.queue.length||x.pending.length||x.waiting.length)throw Error('Encerre a batalha e remova fila/convites antes do reset.');for(const id of Object.keys(x.players))x.players[id]={points:0,wins:0,losses:0,matches:0,firstPlayedAt:0,lastPlayedAt:0,reachedAt:now};for(const h of x.history)h.reverted=true;if(p.history===true){x.history=[];x.logs=[];}x1Log(x,'reset','Classificação zerada'+(p.history?' com histórico.':'; histórico preservado sem possibilidade de desfazer.'),now);}
  else if(command==='x1-tutorial'){const seconds=Number(p.seconds||0);if(!Number.isFinite(seconds)||seconds<0||seconds>3600)throw Error('Duração inválida.');x.tutorial={visible:p.visible===true,until:p.visible&&seconds?now+seconds*1000:0};}
- else if(command==='x1-clear-invites'){confirmed();x.pending=[];x1Log(x,'invites-clear','Convites cancelados pelo streamer.',now);}
+ else if(command==='x1-clear-invites'){confirmed();x.pending=[];x.waiting=[];x1Log(x,'invites-clear','Convites cancelados pelo streamer.',now);}
  else throw Error('Comando X1 desconhecido.');
 }
 
@@ -307,6 +359,7 @@ function restoreX1(v,known,now=Date.now()){
  x.queuePaused=true;x.config=x1Config(v.config);x.serial=n(v.serial);x.nextAt=n(v.nextAt);if(Object.keys(v.players||{}).length>100000)throw Error('Muitos jogadores X1.');
  for(const [key,p] of Object.entries(v.players||{}))x.players[id(key)]=stats(p);
  x.pending=(v.pending||[]).map(c=>({challengeId:t(c.challengeId),players:pair(c.players),createdAt:n(c.createdAt),expiresAt:n(c.expiresAt)}));
+ x.waiting=(v.waiting||[]).map(w=>({userId:id(w.userId),createdAt:n(w.createdAt),expiresAt:n(w.expiresAt)}));if(new Set(x.waiting.map(w=>w.userId)).size!==x.waiting.length)throw Error('Espera duplicada.');
  x.queue=(v.queue||[]).map(m=>({...base(m),status:'queued'}));
  const snapshots=p=>Object.fromEntries(Object.entries(p||{}).map(([key,value])=>[id(key),stats(value)]));
  x.history=(v.history||[]).map(h=>{if(!['finished','cancelled'].includes(h.status))throw Error('Histórico X1 inválido.');const out={...fight(h),endedAt:n(h.endedAt),reverted:h.reverted===true};if(h.status==='finished'){out.winnerId=id(h.winnerId);out.loserId=id(h.loserId);if(!out.players.includes(out.winnerId)||!out.players.includes(out.loserId)||out.winnerId===out.loserId)throw Error('Resultado X1 inválido.');out.before=snapshots(h.before);out.after=snapshots(h.after);}return out;});
@@ -325,11 +378,11 @@ function x1OverlayView(s,kind='x1',overrides={},now=Date.now()){
  const x=s.extra.x1,v=visualOf(s,kind,overrides),m=x.active,person=id=>identityView(s.users[id],v,id),label=id=>[v.showName!==false?(s.users[id]?.name||s.users[id]?.handle||'Participante'):'',v.showHandle!==false&&s.users[id]?.handle?'@'+s.users[id].handle:''].filter(Boolean).join(' · ');
  const next=()=>x.config.queueLimit&&x.queue.length?`<div class="x1-next"><h3>PRÓXIMAS BATALHAS</h3>${x.queue.slice(0,x.config.queueLimit).map((q,i)=>`<p>${i+1}. ${q.players.map(id=>esc(label(id))).join(' × ')}</p>`).join('')}</div>`:'';
  const wrap=body=>`<div ${cardAttrs(v,'x1-card '+(kind==='x1-tutorial'?'x1-tutorial':''))}>${body}${kind==='x1'?next():''}</div>`;
- if(kind==='x1-tutorial')return !x.tutorial.visible||x.tutorial.until&&now>=x.tutorial.until?'':wrap(`<h1>⚔️ COMO DESAFIAR NO X1</h1><p>Envie no chat:</p><div class="x1-formats"><code>!desafiar @ricardo</code></div><p>Troque @ricardo pelo @ da pessoa que deseja desafiar.</p><p><strong>Só a pessoa marcada pode aceitar:</strong><br><b>!aceitar</b></p><p>Recusar: !recusar · Cancelar seu convite: !cancelardesafio</p>`);
+ if(kind==='x1-tutorial')return !x.tutorial.visible||x.tutorial.until&&now>=x.tutorial.until?'':wrap(`<h1>⚔️ COMO ENTRAR NO X1</h1><p>Envie no chat:</p><div class="x1-formats"><code>!duelo</code></div><p>Os dois primeiros participantes disponíveis formam uma dupla e entram na fila.</p><p>Não precisa de @ nem aceitar.</p><p>Cancelar espera: <b>!cancelarduelo</b></p>`);
  if(kind==='x1-ranking'&&x.config.rankingBattleOnly&&!x1BattleVisible(x,now))return '';
  if(kind==='x1-ranking')return wrap(`<h2>🏆 CLASSIFICAÇÃO X1</h2>${x1Order(x).slice(0,x.config.rankLimit).map((p,i)=>`<div class="rank-row" data-rank-key="x1:${esc(p.id)}"><b class="position">${i+1}</b>${rankAvatar(s.users[p.id],i===0,v)}<div class="person">${person(p.id)}</div><b class="score">${fmt(p.points)} pts</b></div>`).join('')||'<p>Aguardando desafios</p>'}`);
  if(kind==='x1-queue')return wrap(`<h2>⚔️ AGORA</h2><p>${m?m.players.map(id=>esc(label(id))).join(' × '):'Aguardando batalha'}</p>${x.config.queueLimit?`<h2>A SEGUIR</h2>${x.queue.slice(0,x.config.queueLimit).map((q,i)=>`<p>${i+1}. ${q.players.map(id=>esc(label(id))).join(' × ')}</p>`).join('')||'<p>Fila vazia</p>'}`:''}`);
- if(!m){const last=x.history[0];if(x1ResultVisible(x,now))return wrap(`<p class="overlay-kicker">BATALHA FINALIZADA</p>${avatar(s.users[last.winnerId],true)}<h1>${esc(label(last.winnerId))} VENCEU</h1><p class="x1-win">+1 PONTO · #${x1Order(x).findIndex(p=>p.id===last.winnerId)+1} na classificação</p><p>${esc(label(last.loserId))} · −1 PONTO</p>`);const c=x.pending.find(c=>c.expiresAt>now);if(!c)return '';return wrap(`<p class="overlay-kicker">⚔ DESAFIO RECEBIDO</p><h2>${c.players.map(id=>esc(label(id))).join(' × ')}</h2><p>${esc(label(c.players[1]))}, use <strong>!aceitar</strong> ou !recusar</p><strong class="x1-clock">${clock(Math.max(0,c.expiresAt-now))}</strong>`);}
+ if(!m){const last=x.history[0];if(x1ResultVisible(x,now))return wrap(`<p class="overlay-kicker">BATALHA FINALIZADA</p>${avatar(s.users[last.winnerId],true)}<h1>${esc(label(last.winnerId))} VENCEU</h1><p class="x1-win">+1 PONTO · #${x1Order(x).findIndex(p=>p.id===last.winnerId)+1} na classificação</p><p>${esc(label(last.loserId))} · −1 PONTO</p>`);const c=x.pending.find(c=>c.expiresAt>now);if(!c){const w=x.waiting.find(w=>w.expiresAt>now);return w?wrap(`<h2>${esc(label(w.userId))}</h2><p>Aguardando adversário · envie <b>!duelo</b></p>`):'';}return wrap(`<p class="overlay-kicker">⚔ DESAFIO RECEBIDO</p><h2>${c.players.map(id=>esc(label(id))).join(' × ')}</h2><p>${esc(label(c.players[1]))}, use <strong>!aceitar</strong> ou !recusar</p><strong class="x1-clock">${clock(Math.max(0,c.expiresAt-now))}</strong>`);}
  const statuses={preparing:'PREPARANDO',active:'FIGHT',sudden:'EMPATE · MORTE SÚBITA',decision:'AGUARDANDO DECISÃO',paused:m.pauseReason==='connection'?'CONEXÃO PERDIDA · X1 PAUSADO':'X1 PAUSADO'};
  const max=Math.max(1,...m.coins),time=m.status==='preparing'?Math.max(1,Math.ceil(x1Remaining(m,now)/1000)):['sudden','decision'].includes(m.status)?'—':clock(x1Remaining(m,now));
  return wrap(`<p class="overlay-kicker">${statuses[m.status]||''}</p><div class="x1-fighters">${m.players.map((id,i)=>`<section>${avatar(s.users[id],true)}${person(id)}<strong class="x1-coins"><span class="x1-coin-icon" aria-label="moedas">●</span> ${fmt(m.coins[i])}</strong><progress max="${max}" value="${m.coins[i]}"></progress><small>${fmt(x.players[id]?.points||0)} pontos X1</small></section>${i===0?'<b class="x1-vs">VS</b>':''}`).join('')}</div><strong class="x1-clock ${m.status==='preparing'?'x1-countdown':''}">${time}</strong><small>${{coins:'Moedas',manual:'Manual',hybrid:'Híbrido'}[m.rules.mode]} · Melhor de 1</small>`);
@@ -340,7 +393,7 @@ function x1BattleVisible(x,now=Date.now()){return !!x.active||x1ResultVisible(x,
 
 // chest.js
 // Chest accounting consumes accepted gift deltas; it never connects to TikFinity.
-function chestDefaults(){return {config:{target:25,hours:4,chestCoins:20,coinCost:.01,payout:.005,reinvest:10},paused:false,progress:0,batches:[],received:0,adjustment:0,generated:0,released:0,spent:0,earnedAt:0,lastGift:null,days:{},overlay:{title:'Meta do Baú',showTitle:true,showCurrent:true,showTarget:true,showPercent:true,showBar:true,showIcon:true,showAvailable:true,width:560}};}
+function chestDefaults(){return {config:{target:25,hours:4,chestCoins:20,coinCost:.01,payout:.005,reinvest:10},paused:false,progress:0,batches:[],received:0,adjustment:0,generated:0,released:0,spent:0,earnedAt:0,lastGift:null,days:{},overlay:{availableLabel:'Baús disponíveis',title:'Meta do Baú',showTitle:true,showCurrent:true,showTarget:true,showPercent:true,showBar:true,showIcon:true,showAvailable:true,width:560}};}
 function chestNumber(v,min=0,max=1e12,integer=false){if(typeof v!=='number'||!Number.isFinite(v)||v<min||v>max||(integer&&!Number.isSafeInteger(v)))throw Error('Valor inválido na Meta de Baú.');return v;}
 function chestConfig(v){return {target:chestNumber(v.target),hours:chestNumber(v.hours,.01,8760),chestCoins:chestNumber(v.chestCoins,1,1e9,true),coinCost:chestNumber(v.coinCost,.000001,100),payout:chestNumber(v.payout,.0000001,100),reinvest:chestNumber(v.reinvest,0,90)};}
 function chestMath(c,target=c.target,hours=c.hours){const share=c.reinvest/100,cost=c.chestCoins*c.coinCost,raw=share?cost/(share*c.payout):null,threshold=raw===null?null:Math.max(1,Math.ceil(raw-1e-9)),gross=target/(1-share),budget=gross*share,coins=Math.ceil(gross/c.payout-1e-9);return {cost,threshold,gross,budget,coins,coinsPerHour:coins/hours,chests:budget/cost,chestsPerHour:budget/cost/hours};}
@@ -369,7 +422,7 @@ function chestCommand(c,command,p,day,now){
  else if(command==='chest-overlay')c.overlay=chestOverlayConfig(p);
  else throw Error('Comando de baú desconhecido.');
 }
-function chestOverlayConfig(v){const defaults=chestDefaults().overlay,out={title:String(v.title??defaults.title).slice(0,80),width:chestNumber(v.width??defaults.width,240,760,true)};for(const k of ['showTitle','showCurrent','showTarget','showPercent','showBar','showIcon','showAvailable'])out[k]=v[k]!==false;return out;}
+function chestOverlayConfig(v){const defaults=chestDefaults().overlay,out={availableLabel:String(v.availableLabel??defaults.availableLabel).slice(0,80),title:String(v.title??defaults.title).slice(0,80),width:chestNumber(v.width??defaults.width,240,760,true)};for(const k of ['showTitle','showCurrent','showTarget','showPercent','showBar','showIcon','showAvailable'])out[k]=v[k]!==false;return out;}
 function restoreChest(v){const c=chestDefaults();if(v==null)return c;c.config=chestConfig(v.config);const threshold=chestMath(c.config).threshold;if(threshold!==null&&!Number.isSafeInteger(threshold))throw Error('Meta de baú inválida no backup.');c.paused=v.paused===true;for(const k of ['progress','received','generated','released'])c[k]=chestNumber(v[k],0,1e12,true);c.earnedAt=chestNumber(v.earnedAt,0,Number.MAX_SAFE_INTEGER,true);c.spent=chestNumber(v.spent);c.adjustment=chestNumber(v.adjustment,-1e12,1e12,true);chestNumber(c.received+c.adjustment);if(!Array.isArray(v.batches))throw Error('Baús inválidos.');c.batches=v.batches.map(b=>({count:chestNumber(b.count,1,1e12,true),threshold:chestNumber(b.threshold,1,Number.MAX_SAFE_INTEGER,true),cost:chestNumber(b.cost),chestCoins:chestNumber(b.chestCoins??c.config.chestCoins,1,1e9,true)}));chestNumber(chestAvailable(c));c.overlay=chestOverlayConfig(v.overlay||{});for(const [day,row] of Object.entries(v.days||{})){if(!/^\d{4}-\d{2}-\d{2}$/.test(day))throw Error('Data de baú inválida.');c.days[day]={};for(const k of ['coins','generated','released'])c.days[day][k]=chestNumber(row[k],0,1e12,true);c.days[day].adjustment=chestNumber(row.adjustment,-1e12,1e12,true);c.days[day].spent=chestNumber(row.spent);}
  if(v.lastGift)c.lastGift={userId:String(v.lastGift.userId||'').slice(0,150),name:String(v.lastGift.name||'').slice(0,120),coins:chestNumber(v.lastGift.coins),time:chestNumber(v.lastGift.time,0,Number.MAX_SAFE_INTEGER,true)};return c;
 }
@@ -379,7 +432,7 @@ const chestEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','
 const chestFmt=n=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1}).format(n);
 function chestView(s,now=Date.now(),overrides={}){
  const c=s.extra.chest||chestDefaults(),o=c.overlay,m=chestMath(c.config),available=chestAvailable(c),percent=m.threshold?Math.min(100,c.progress/m.threshold*100):0,v={container:true,color:'#191b1e',...s.extra.visuals.chest,...overrides},flash=available>0&&now-c.earnedAt>=0&&now-c.earnedAt<2500;
- return `<div class="overlay-card chest-card ${v.container?'boxed':'bare'} ${v.customText?'custom-text':''} ${flash?'chest-earned':''}" data-text-color="${/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'}" data-chest-width="${o.width}" data-bg="${/^#[0-9a-f]{6}$/i.test(v.color)?v.color:'#191b1e'}">${o.showTitle?`<div class="overlay-kicker">${o.showIcon?'🎁 ':''}${chestEsc(o.title)}</div>`:''}${flash?'<strong class="chest-celebrate">BAÚ DISPONÍVEL!</strong>':''}${o.showCurrent||o.showTarget?`<div class="chest-amount">${o.showCurrent?chestFmt(c.progress):''}${o.showCurrent&&o.showTarget?' <small>/</small> ':''}${o.showTarget?`<small>${m.threshold?chestFmt(m.threshold):'—'}</small>`:''}${o.showIcon?' <span aria-label="moedas">🪙</span>':''}</div>`:''}${o.showBar?`<progress value="${flash?100:percent}" max="100" aria-label="Progresso do próximo baú"></progress>`:''}<div class="chest-caption">${o.showPercent?`<span>${chestFmt(percent)}%</span>`:''}${o.showAvailable?`<strong>${chestFmt(available)} baú${available===1?'':'s'} disponíve${available===1?'l':'is'}</strong>`:''}</div>${c.paused?'<small>CONTADOR PAUSADO</small>':!m.threshold?'<small>REINVESTIMENTO DESATIVADO</small>':''}</div>`;
+ return `<div class="overlay-card chest-card ${v.container?'boxed':'bare'} ${v.customText?'custom-text':''} ${flash?'chest-earned':''}" data-text-color="${/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'}" data-chest-width="${o.width}" data-bg="${/^#[0-9a-f]{6}$/i.test(v.color)?v.color:'#191b1e'}">${o.showTitle?`<div class="overlay-kicker">${o.showIcon?'🎁 ':''}${chestEsc(o.title)}</div>`:''}${flash?`<strong class="chest-celebrate">${chestEsc(o.availableLabel)}</strong>`:''}${o.showCurrent||o.showTarget?`<div class="chest-amount">${o.showCurrent?chestFmt(c.progress):''}${o.showCurrent&&o.showTarget?' <small>/</small> ':''}${o.showTarget?`<small>${m.threshold?chestFmt(m.threshold):'—'}</small>`:''}${o.showIcon?' <span aria-label="moedas">🪙</span>':''}</div>`:''}${o.showBar?`<progress value="${flash?100:percent}" max="100" aria-label="Progresso do próximo baú"></progress>`:''}<div class="chest-caption">${o.showPercent?`<span>${chestFmt(percent)}%</span>`:''}${o.showAvailable?`<strong>${chestEsc(o.availableLabel)}: ${chestFmt(available)}</strong>`:''}</div>${c.paused?'<small>CONTADOR PAUSADO</small>':!m.threshold?'<small>REINVESTIMENTO DESATIVADO</small>':''}</div>`;
 }
 
 // points.js
@@ -429,12 +482,11 @@ function parseLiveDuration(value){
 // presets.js
 // Presets are portable configuration; keyboard execution belongs to a local adapter.
 const RECOMMENDED_MACROS=30;
-const MACRO_KEYS=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ',...'0123456789',...Array.from({length:24},(_,i)=>'F'+(i+1)),'SPACE','ENTER','TAB','ESC','UP','DOWN','LEFT','RIGHT','BACKSPACE','DELETE','HOME','END','PAGEUP','PAGEDOWN'];
+const MACRO_KEYS=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ',...'0123456789',...Array.from({length:24},(_,i)=>'F'+(i+1)),'SPACE','ENTER','TAB','ESC','UP','DOWN','LEFT','RIGHT','BACKSPACE','DELETE','HOME','END','PAGEUP','PAGEDOWN','CTRL','ALT','SHIFT','EQUAL','MINUS',...Array.from({length:10},(_,i)=>'NUM'+i),'NUMADD','NUMSUBTRACT','NUMMULTIPLY','NUMDIVIDE','NUMDECIMAL','NUMENTER'];
 function presetText(value,max,label){const text=String(value??'').trim();if(!text||text.length>max)throw Error(label+' inválido.');return text;}
 function presetNumber(value,min,max,label){const n=Number(value);if(!Number.isInteger(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
 function presetId(value){const id=String(value??'');if(!/^[a-zA-Z0-9_-]{1,100}$/.test(id))throw Error('Identificador de preset/macro inválido.');return id;}
 function cleanMacro(p){
- if(p.ctrl||p.alt||p.shift)throw Error('Use somente teclas individuais. Ctrl, Alt e Shift não são aceitos nesta versão.');
  const key=String(p.key??'').toUpperCase();if(!MACRO_KEYS.includes(key))throw Error('Tecla não suportada.');
  const trigger=p.trigger??'gift';if(!['gift','likes-user','likes-total','follow','coins'].includes(trigger))throw Error('Gatilho inválido.');
  const fields={trigger,giftId:trigger==='gift'?presetText(p.giftId,120,'ID do presente'):''};
@@ -468,8 +520,8 @@ function changePreset(s,command,p){
  }else if(command==='macro-delete')item.macros=item.macros.filter(m=>m.id!==p.macroId);
  else throw Error('Comando de preset desconhecido.');
 }
-function presetPackage(p){return {format:'amarillou-preset',version:5,preset:cleanPreset(p)};}
-function readPresetPackage(p){if(p?.format!=='amarillou-preset'||![1,2,3,4,5].includes(p.version))throw Error('Arquivo de preset incompatível.');return cleanPreset(p.preset);}
+function presetPackage(p){return {format:'amarillou-preset',version:6,preset:cleanPreset(p)};}
+function readPresetPackage(p){if(p?.format!=='amarillou-preset'||![1,2,3,4,5,6].includes(p.version))throw Error('Arquivo de preset incompatível.');return cleanPreset(p.preset);}
 
 function macroTriggerLabel(m){
  if(m.trigger==='likes-user')return 'A cada '+m.threshold+' curtidas por pessoa';
@@ -564,33 +616,38 @@ const nonneg=(v,max=Number.MAX_SAFE_INTEGER)=>Math.min(max,Math.max(0,Number.isF
 const textValue=(v,n=120)=>String(v??'').slice(0,n);
 const validColor=v=>/^#[0-9a-f]{6}$/i.test(String(v))?String(v):'#191b1e';
 function dateAt(t,zone){const a=new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(t);return ['year','month','day'].map(k=>a.find(x=>x.type===k).value).join('-');}
-function calendarRange(period,t,zone){const d=dateAt(t,zone);if(period==='month')return [d.slice(0,7)+'-01',d];if(period==='week'){const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()-(x.getUTCDay()+6)%7);return [x.toISOString().slice(0,10),d];}return [d,d];}
+function calendarRange(period,t,zone,weekStart=1){const d=dateAt(t,zone);if(period==='month')return [d.slice(0,7)+'-01',d];if(period==='week'){const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()-(x.getUTCDay()-weekStart+7)%7);return [x.toISOString().slice(0,10),d];}return [d,d];}
 function levelThreshold(level){return Math.floor(50*1.03*(Math.pow(1.03,Math.max(0,Math.min(1000,level)-1))-1)/.03+1e-8);}
 function levelProgress(points){points=nonneg(points);let lo=1,hi=1000;while(lo<hi){const m=Math.ceil((lo+hi)/2);if(levelThreshold(m)<=points)lo=m;else hi=m-1;}const start=levelThreshold(lo),next=lo<1000?levelThreshold(lo+1):null;return {level:lo,points,start,next,remaining:next===null?0:Math.max(0,next-points),percent:next===null?100:Math.min(100,100*(points-start)/(next-start))};}
-function defaultVisual(){return {side:'left',rotationSeconds:10,container:true,color:'#191b1e',showLevel:true,style:'classic',layout:'vertical',rankLimit:10,showName:true,showHandle:true,showCrown:true,animate:true,customText:false,textColor:'#ffffff',resolution:'hd'};}
-function cleanVisual(v={}){return {side:v.side==='right'?'right':'left',rotationSeconds:Number.isInteger(+v.rotationSeconds)&&+v.rotationSeconds>=2&&+v.rotationSeconds<=300?+v.rotationSeconds:10,resolution:['standard','hd','vertical'].includes(v.resolution)?v.resolution:'hd',container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:['ribbon','portrait'].includes(v.style)?v.style:'classic',layout:v.layout==='horizontal'?'horizontal':'vertical',rankLimit:[1,3,5,10].includes(Number(v.rankLimit))?Number(v.rankLimit):10,showName:v.showName!==false,showHandle:v.showHandle!==false,showCrown:v.showCrown!==false,animate:v.animate!==false,customText:v.customText===true,textColor:/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'};}
-function newExtras(){return {communityBattle:newCommunityBattle(),roleAutomation:newRoleAutomation(),x1:newX1(),chest:chestDefaults(),live:newLiveData(),giftGoal:{target:1000,current:0},channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],macroFollows:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['communityBattle','x1','x1-ranking','x1-queue','x1-tutorial','chest','rankLikes','rankCoins','gifts','roles','goal','giftGoal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
+function defaultVisual(){return {unitDisplay:'text',side:'left',rotationSeconds:10,container:true,color:'#191b1e',showLevel:true,style:'classic',layout:'vertical',rankLimit:10,showName:true,showHandle:true,showCrown:true,animate:true,customText:false,textColor:'#ffffff',resolution:'hd'};}
+function cleanVisual(v={}){return {unitDisplay:['icon','none'].includes(v.unitDisplay)?v.unitDisplay:'text',side:v.side==='right'?'right':'left',rotationSeconds:Number.isInteger(+v.rotationSeconds)&&+v.rotationSeconds>=2&&+v.rotationSeconds<=300?+v.rotationSeconds:10,resolution:['standard','hd','vertical'].includes(v.resolution)?v.resolution:'hd',container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:['ribbon','portrait'].includes(v.style)?v.style:'classic',layout:v.layout==='horizontal'?'horizontal':'vertical',rankLimit:[1,3,5,10].includes(Number(v.rankLimit))?Number(v.rankLimit):10,showName:v.showName!==false,showHandle:v.showHandle!==false,showCrown:v.showCrown!==false,animate:v.animate!==false,customText:v.customText===true,textColor:/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'};}
+function newExtras(){return {alerts:newAlerts(),weekStart:1,scoreboard:{current:0,target:4,hotkeys:false},recordEdits:[],communityBattle:newCommunityBattle(),roleAutomation:newRoleAutomation(),x1:newX1(),chest:chestDefaults(),live:newLiveData(),giftGoal:{target:1000,current:0},channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],macroFollows:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['scoreboard','communityBattle','x1','x1-ranking','x1-queue','x1-tutorial','chest','rankLikes','rankCoins','gifts','roles','goal','giftGoal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{mode:'gift',secondsPerCoin:1,baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
 function timerRemaining(timer,now=Date.now()){return Math.max(0,timer.running?timer.endAt-now:timer.remainingMs);}
 function addTimer(timer,seconds,now){const rem=Math.min(31536000000,timerRemaining(timer,now)+seconds*1000);timer.remainingMs=rem;if(timer.running)timer.endAt=now+rem;}
-function sessionHeartbeat(s,now=Date.now(),connected=false){if(!connected)pauseCommunity(s.extra.communityBattle,now);const communityChanged=tickCommunity(s.extra.communityBattle,now);const matchChanged=tickX1(s,now,connected)||communityChanged;s.extra.x1.savedAt=now;const a=s.extra.activeSession;if(!a)return matchChanged;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
-function recordExtras(s,e,uid,delta,now){const x=s.extra;const coins=e.type==='gift'?delta*(e.unit??0):0,likes=e.type==='like'?e.likes:0;receiveX1(s,e,uid,coins,now);receiveCommunity(x.communityBattle,e,uid,coins,now);receiveRoleAutomation(s,e,uid,delta);earnPoints(s,uid,coins*x.weights.coins,likes*x.weights.likes);x.goal.current+=likes;
+function sessionHeartbeat(s,now=Date.now(),connected=false){if(!connected)pauseCommunity(s.extra.communityBattle,now);const alertsChanged=tickAlerts(s.extra.alerts,now);const communityChanged=tickCommunity(s.extra.communityBattle,now);const matchChanged=tickX1(s,now,connected)||communityChanged||alertsChanged;s.extra.x1.savedAt=now;const a=s.extra.activeSession;if(!a)return matchChanged;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
+function recordExtras(s,e,uid,delta,now){const x=s.extra;const coins=e.type==='gift'?delta*(e.unit??0):0,likes=e.type==='like'?e.likes:0;receiveAlerts(s,e,uid,delta,now);receiveX1(s,e,uid,coins,now);receiveCommunity(x.communityBattle,e,uid,coins,now);receiveRoleAutomation(s,e,uid,delta);earnPoints(s,uid,coins*x.weights.coins,likes*x.weights.likes);x.goal.current+=likes;
  if(e.type==='follow'){x.followers=x.followers.filter(f=>f.userId!==uid);x.followers.unshift({userId:uid,time:now});x.followers=x.followers.slice(0,50);}
  if(e.type==='gift'){chestReceive(x.chest,coins,dateAt(now,s.settings.zone),now,{userId:uid,name:e.giftName});x.giftGoal.current+=coins;recordLiveGift(s,e,uid,delta,now);
   if(e.giftId){const old=x.catalog['$'+e.giftId];x.catalog['$'+e.giftId]={id:e.giftId,name:e.giftName,image:e.giftImage||old?.image||'',unit:e.unit??old?.unit??null};}
   if(coins>0)x.ledger.push({time:now,coins,userId:uid,sessionId:x.activeSession?.id||''});
-  if(delta>0){const rule=x.timer.rules.find(r=>r.giftId===e.giftId);if(rule)addTimer(x.timer,rule.seconds*delta,now);}
+  if(x.timer.mode==='coins'){if(coins>0)addTimer(x.timer,coins*x.timer.secondsPerCoin,now);}else if(delta>0){const rule=x.timer.rules.find(r=>r.giftId===e.giftId);if(rule)addTimer(x.timer,rule.seconds*delta,now);}
  }
 }
 function rawRangeRows(s,start,end,metric){const out={};for(const [day,rows] of Object.entries(s.days))if(day>=start&&day<=end)for(const [id,r] of Object.entries(rows))out[id]=(out[id]||0)+(r[metric]||0);return out;}
 function historicalRanking(s,start,end,metric){return Object.entries(rawRangeRows(s,start,end,metric)).filter(([,v])=>v>0).map(([id,value])=>({...s.users[id],id,value})).sort((a,b)=>b.value-a.value||a.id.localeCompare(b.id));}
 function resetRanking(s,period,metric,now=Date.now()){
  if(!['day','week','month'].includes(period)||!['likes','coins'].includes(metric))throw Error('Ranking inválido.');
- for(const p of period==='month'?['day','week','month']:[period]){const [start,end]=calendarRange(p,now,s.settings.zone),key=metric+':'+p;const before=rawRangeRows(s,start,end,metric),old=s.extra.resets[key];const rows=Object.fromEntries(Object.entries(before).map(([id,value])=>[id,Math.max(0,value-(old?.calendar===start?old.baseline[id]||0:0))]).filter(([,v])=>v>0));s.extra.archives.unshift({period:p,metric,time:now,start:old?.calendar===start?old.startedAt:0,calendar:start,rows});s.extra.resets[key]={calendar:start,startedAt:now,baseline:before};}
+ for(const p of period==='month'?['day','week','month']:[period]){const [start,end]=calendarRange(p,now,s.settings.zone,s.extra.weekStart),key=metric+':'+p;const before=rawRangeRows(s,start,end,metric),old=s.extra.resets[key];const rows=Object.fromEntries(Object.entries(before).map(([id,value])=>[id,Math.max(0,value-(old?.calendar===start?old.baseline[id]||0:0))]).filter(([,v])=>v>0));s.extra.archives.unshift({period:p,metric,time:now,start:old?.calendar===start?old.startedAt:0,calendar:start,rows});s.extra.resets[key]={calendar:start,startedAt:now,baseline:before};}
 }
 function boundedInput(v,min,max,label){const n=Number(v);if(!Number.isFinite(n)||n<min||n>max)throw Error(label+' inválido.');return n;}
 function applyCommand(s,command,p={},now=Date.now()){
  const x=s.extra;
- if(command==='role-automation')x.roleAutomation=cleanRoleAutomation(p);
+ if(command.startsWith('alert-'))commandAlerts(s,command,p,now);
+ else if(command==='week-start'){const day=boundedInput(p.day,0,6,'Dia');if(!Number.isInteger(day))throw Error('Dia inválido.');if(day!==x.weekStart){if(Object.entries(x.resets).some(([k,v])=>k.endsWith(':week')&&v.calendar===calendarRange('week',now,s.settings.zone,x.weekStart)[0]))throw Error('Existe um reset semanal ativo. Preserve o backup e conclua essa competição antes de mudar o início da semana.');x.weekStart=day;}}
+ else if(command.startsWith('score-')){const b=x.scoreboard;if(command==='score-config'){const target=boundedInput(p.target,1,1000000,'Meta');if(!Number.isInteger(target))throw Error('Meta inteira obrigatória.');b.target=target;b.hotkeys=p.hotkeys===true;}else if(command==='score-adjust'){if(![-1,1].includes(p.delta))throw Error('Ajuste inválido.');b.current=Math.max(0,Math.min(1000000,b.current+p.delta));}else if(command==='score-reset'){if(p.confirmed!==true)throw Error('Confirme o reset.');b.current=0;}else throw Error('Comando inválido.');}
+ else if(command==='timer-mode'){if(!['gift','coins'].includes(p.mode))throw Error('Modo inválido.');x.timer.mode=p.mode;x.timer.secondsPerCoin=boundedInput(p.secondsPerCoin,0.001,86400,'Segundos por moeda');}
+ else if(command==='record-edit')editGiftRecord(s,p,now);
+ else if(command==='role-automation')x.roleAutomation=cleanRoleAutomation(p);
  else if(command.startsWith('community-'))commandCommunity(s,command,p,now);
  else if(command.startsWith('x1-'))commandX1(s,command,p,now);
  else if(command.startsWith('chest-'))chestCommand(x.chest,command,p,dateAt(now,s.settings.zone),now);
@@ -658,6 +715,9 @@ function validateExtras(s,input,oldVersion){
  const x=newExtras();
  if(oldVersion===1||!input){for(const [day,rows] of Object.entries(s.days)){for(const [id,r] of Object.entries(rows)){x.points[id]=(x.points[id]||0)+r.coins+r.likes;x.legacyCoins[day]=(x.legacyCoins[day]||0)+r.coins;}}restorePointSources({...s,extra:x},null,oldVersion);return x;}
  const count=v=>{if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>Number.MAX_SAFE_INTEGER)throw Error('Contagem inválida no backup v0.3.');return v;};
+ x.alerts=restoreAlerts(input.alerts);x.weekStart=Number.isInteger(input.weekStart)&&input.weekStart>=0&&input.weekStart<=6?input.weekStart:1;
+ if(input.scoreboard){x.scoreboard={current:boundedInput(input.scoreboard.current,0,1000000,'Placar'),target:boundedInput(input.scoreboard.target,1,1000000,'Meta'),hotkeys:input.scoreboard.hotkeys===true};}
+ x.recordEdits=(input.recordEdits||[]).slice(-500).map(v=>({time:count(v.time),userId:textValue(v.userId),kind:textValue(v.kind),before:v.before?{count:count(v.before.count),unit:count(v.before.unit??0)}:null,after:{count:count(v.after.count),unit:count(v.after.unit)}}));
  const known=id=>Object.hasOwn(s.users,id);for(const [key,n] of Object.entries(input.highlightBaselines||{}))if(key.startsWith('$'))x.highlightBaselines[key]=count(n);
  for(const [id,v] of Object.entries(input.points||{}))if(known(id))x.points[id]=count(v);
  restorePointSources({...s,extra:x},input.pointSources,oldVersion);
@@ -673,7 +733,7 @@ function validateExtras(s,input,oldVersion){
  for(const a of input.archives||[]){if(!['coins','likes'].includes(a.metric)||!['day','week','month'].includes(a.period))throw Error('Arquivo de competição inválido.');const rows={};for(const [id,v] of Object.entries(a.rows||{}))if(known(id))rows[id]=count(v);x.archives.push({metric:a.metric,period:a.period,time:count(a.time),start:count(a.start),calendar:textValue(a.calendar,10),rows});}
  if(input.goal)x.goal={target:boundedInput(input.goal.target,1,1e12,'Meta'),current:count(input.goal.current)};
  x.followers=(input.followers||[]).slice(0,50).filter(f=>known(f.userId)).map(f=>({userId:f.userId,time:count(f.time)}));
- if(input.timer){const t=input.timer;x.timer={baseSeconds:boundedInput(t.baseSeconds,1,31536000,'Timer'),remainingMs:count(t.remainingMs),endAt:count(t.endAt),running:t.running===true,rules:[]};for(const r of t.rules||[])x.timer.rules.push({giftId:textValue(r.giftId),seconds:boundedInput(r.seconds,1,86400,'Regra do timer')});}
+ if(input.timer){const t=input.timer;x.timer={mode:t.mode==='coins'?'coins':'gift',secondsPerCoin:boundedInput(t.secondsPerCoin??1,0.001,86400,'Segundos por moeda'),baseSeconds:boundedInput(t.baseSeconds,1,31536000,'Timer'),remainingMs:count(t.remainingMs),endAt:count(t.endAt),running:t.running===true,rules:[]};for(const r of t.rules||[])x.timer.rules.push({giftId:textValue(r.giftId),seconds:boundedInput(r.seconds,1,86400,'Regra do timer')});}
  for(const [k,v] of Object.entries(input.catalog||{}))if(k.startsWith('$'))x.catalog[k]={id:textValue(v.id),name:textValue(v.name),image:catalogImage(v.image),unit:v.unit==null?null:count(v.unit)};
  x.ledger=(input.ledger||[]).map(r=>({time:count(r.time),coins:count(r.coins),userId:known(r.userId)?r.userId:'',sessionId:textValue(r.sessionId)}));
  for(const [d,v] of Object.entries(input.legacyCoins||{})){if(!/^\d{4}-\d{2}-\d{2}$/.test(d))throw Error('Data legada inválida.');x.legacyCoins[d]=count(v);}
@@ -728,10 +788,10 @@ function dayKey(time = Date.now(), zone = 'America/Sao_Paulo') {
   const parts = new Intl.DateTimeFormat('en-CA', {timeZone: zone, year:'numeric', month:'2-digit', day:'2-digit'}).formatToParts(time);
   return ['year','month','day'].map(k => parts.find(p => p.type === k).value).join('-');
 }
-function periodRange(period, time, zone) {
+function periodRange(period, time, zone, weekStart=1) {
   const today = dayKey(time, zone);
   if (period === 'month') return [today.slice(0, 7) + '-01', today];
-  if (period === 'week') { const d = new Date(today + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return [d.toISOString().slice(0,10), today]; }
+  if (period === 'week') { const d = new Date(today + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() - weekStart + 7) % 7); return [d.toISOString().slice(0,10), today]; }
   return [today, today];
 }
 function freshState() {
@@ -819,7 +879,7 @@ class Engine {
   }
 }
 function ranking(s, period='day', metric='coins', now=Date.now()) {
-  const [start,end] = periodRange(period,now,s.settings.zone); const totals = new Map();
+  const [start,end] = periodRange(period,now,s.settings.zone,s.extra.weekStart); const totals = new Map();
   for (const [day,users] of Object.entries(s.days)) if (day>=start && day<=end) {
     for (const [id,row] of Object.entries(users)) totals.set(id,(totals.get(id)||0)+number(row[metric]));
   }
@@ -929,7 +989,7 @@ function rankAvatar(user,first,v){return `<span class="rank-avatar">${first&&v.s
 function identityView(user,v,id=''){return `${v.showName!==false?`<strong class="identity-name">${esc(user?.name||user?.handle||'Participante')}</strong>`:''}${v.showHandle!==false?`<small class="identity-handle">@${esc(user?.handle||id.replace(/^\$/,''))}</small>`:''}`;}
 function rankView(s,{period='day',metric='coins',limit=5,start='',end='',...overrides}={}){
  const v=visualOf(s,metric==='likes'?'rankLikes':'rankCoins',overrides);const rows=(start&&end?historicalRanking(s,start,end,metric):ranking(s,period,metric)).slice(0,limit);
- return `<div ${cardAttrs(v,'rank-card')}><div class="overlay-kicker">TOP ${start?'DO PERÍODO':esc(periods[period]||periods.day)}</div><h2>${metric==='likes'?'Quem dá mais likes':'Quem manda mais moedas'}</h2>${rows.length?rows.map((u,i)=>{const l=levelProgress(s.extra?.points[u.id]||0);return `<div class="rank-row" data-rank-key="community:${esc(u.id)}"><b class="position">${i+1}</b>${rankAvatar(u,i===0,v)}<div class="person">${identityView(u,v,u.id)}${v.showLevel?`<span class="level-badge">Nível ${l.level}</span>`:''}</div><b class="score">${fmt(u.value)}<small>${metric==='likes'?'likes':'moedas'}</small></b></div>`;}).join(''):'<p class="overlay-empty">Aguardando os primeiros eventos</p>'}</div>`;
+ return `<div ${cardAttrs(v,'rank-card')}><div class="overlay-kicker">TOP ${start?'DO PERÍODO':esc(periods[period]||periods.day)}</div><h2>${metric==='likes'?'Quem dá mais likes':'Quem manda mais moedas'}</h2>${rows.length?rows.map((u,i)=>{const l=levelProgress(s.extra?.points[u.id]||0);return `<div class="rank-row" data-rank-key="community:${esc(u.id)}"><b class="position">${i+1}</b>${rankAvatar(u,i===0,v)}<div class="person">${identityView(u,v,u.id)}${v.showLevel?`<span class="level-badge">Nível ${l.level}</span>`:''}</div><b class="score">${fmt(u.value)}${v.unitDisplay==='none'?'':v.unitDisplay==='icon'?` <svg class="rank-unit" viewBox="0 0 24 24" role="img" aria-label="${metric==='likes'?'likes':'moedas'}">${metric==='likes'?'<path fill="currentColor" d="M12 21C-8 8 4-5 12 5c8-10 20 3 0 16Z"/>':'<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="3" d="M12 6v12"/>'}</svg>`:`<small>${metric==='likes'?'likes':'moedas'}</small>`}</b></div>`;}).join(''):'<p class="overlay-empty">Aguardando os primeiros eventos</p>'}</div>`;
 }
 function giftView(s,key,overrides={}){const v=visualOf(s,'gifts',overrides),item=s.highlights.day===dayKey(Date.now(),s.settings.zone)?s.highlights[key]:null,user=item?s.users[item.userId]:null;
  const gift=item?(item.image?`<img class="gift-image" alt="${esc(item.name)}" src="${esc(item.image)}">`:'<span class="gift-placeholder">✦</span>'):'';
@@ -950,7 +1010,10 @@ function giftRankingView(s,kind,overrides={}){
 function overlayView(s,params){const kind=params.get('kind')||'ranking',v={};if(params.has('container'))v.container=params.get('container')!=='0';if(params.has('color'))v.color=validColor(params.get('color'));if(params.has('level'))v.showLevel=params.get('level')!=='0';if(params.has('style'))v.style=params.get('style');
  if(params.has('layout'))v.layout=params.get('layout')==='horizontal'?'horizontal':'vertical';if(params.has('rankLimit'))v.rankLimit=[1,3,5,10].includes(Number(params.get('rankLimit')))?Number(params.get('rankLimit')):10;
  for(const [param,key] of [['name','showName'],['handle','showHandle'],['crown','showCrown'],['animate','animate'],['customText','customText']])if(params.has(param))v[key]=params.get(param)!=='0';if(/^#[0-9a-f]{6}$/i.test(params.get('textColor')||''))v.textColor=params.get('textColor');
+ if(params.has('unitDisplay'))v.unitDisplay=['icon','none'].includes(params.get('unitDisplay'))?params.get('unitDisplay'):'text';
  if(params.has('side'))v.side=params.get('side')==='right'?'right':'left';if(params.has('rotationSeconds'))v.rotationSeconds=Math.max(2,Math.min(300,Number(params.get('rotationSeconds'))||10));
+ if(kind==='alerts'){const a=s.extra.alerts.current;if(!a)return '';const r=a.rule,tag=r.mediaType==='audio'?'audio':r.mediaType==='video'?'video':'img';return `<div class="alert-media" data-alert-id="${esc(a.id)}"><${tag} data-media-source="${esc(r.source)}" data-volume="${r.volume}" data-start="${a.startAt}" ${tag==='img'?'alt="Alerta"':'autoplay playsinline'}></${tag}>${tag==='audio'?`<p>${esc(s.users[a.userId]?.name||r.name)}</p>`:''}</div>`;}
+ if(kind==='scoreboard'){const b=s.extra.scoreboard;return `<div ${cardAttrs(visualOf(s,'scoreboard',v),'scoreboard-card')}><div class="overlay-kicker">PLACAR DE VITÓRIAS</div><h1>${fmt(b.current)} / ${fmt(b.target)}</h1></div>`;}
  if(kind==='communityBattle')return communityView(s,v);
  if(kind==='giftRotation'){const seconds=v.rotationSeconds||s.extra.visuals.gifts.rotationSeconds||10;return giftView(s,Object.keys(giftTitles)[Math.floor(Date.now()/(seconds*1000))%4],v);}
  if(kind==='chest')return chestView(s,Date.now(),v);
@@ -1021,7 +1084,10 @@ let fitFrame=0;new ResizeObserver(()=>{if(!fitFrame)fitFrame=requestAnimationFra
 root.addEventListener('load',fitOverlay,true);
 window.addEventListener('resize',fitOverlay);
 let lastPacket=0,current=freshState(),lastHTML='';
-function render(){const html=overlayView(current,params);document.body.classList.toggle('overlay-silent',!html&&['x1','x1-ranking'].includes(params.get('kind')));if(html!==lastHTML){const before=captureRankPositions(root);root.innerHTML=html;composeOverlay();const chest=root.querySelector('[data-chest-width]');root.style.width=chest?chest.dataset.chestWidth+'px':'';watchImages(root);lastHTML=html;fitOverlay();animateRankPositions(root,before);}}
+function render(){const html=overlayView(current,params);document.body.classList.toggle('overlay-silent',!html&&['alerts','x1','x1-ranking'].includes(params.get('kind')));if(html!==lastHTML){const before=captureRankPositions(root);root.innerHTML=html;composeOverlay();hydrateAlert();const chest=root.querySelector('[data-chest-width]');root.style.width=chest?chest.dataset.chestWidth+'px':'';watchImages(root);lastHTML=html;fitOverlay();animateRankPositions(root,before);}}
+function hydrateAlert(){const media=root.querySelector('[data-media-source]');if(!media)return;media.onerror=()=>{const warning=document.createElement('p');warning.textContent='Não foi possível reproduzir esta mídia. Confira o arquivo, a URL e o codec.';media.replaceWith(warning);};const source=media.dataset.mediaSource;media.src=source.startsWith('media-')?'./media/'+source+'?key='+encodeURIComponent(token||''):source;
+ if(media.tagName!=='IMG'){media.volume=Number(media.dataset.volume);media.onloadedmetadata=()=>{const offset=Math.max(0,(Date.now()-Number(media.dataset.start))/1000);if(Number.isFinite(media.duration)&&offset<media.duration)media.currentTime=offset;media.play().catch(()=>{const b=document.createElement('button');b.textContent='Clique para habilitar áudio';b.onclick=()=>{void media.play();b.remove();};root.append(b);});};}
+}
 function receive(packet){if(packet.state?.version!==7||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.8.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
 if(params.get('demo')==='1'){
   current=demoState();render();badge.textContent='DEMONSTRAÇÃO';

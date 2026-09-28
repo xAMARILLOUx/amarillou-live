@@ -1,3 +1,7 @@
+# v1.4.0
+
+Consulte [as notas da versão](RELEASE-v1.4.0.md) e [o guia](docs/V1.4.md).
+
 # Histórico de versões
 
 ## 1.3.0

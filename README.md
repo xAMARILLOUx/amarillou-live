@@ -1,18 +1,20 @@
-# AMARILLOU Live Control v1.3.0
+# AMARILLOU Live Control v1.4.0
 
 [Usar online](https://xamarilloux.github.io/amarillou-live/) · [Baixar EXE / Releases](https://github.com/xAMARILLOUx/amarillou-live/releases)
 
 TikTok LIVE → TikFinity → uma conexão central → rankings, presentes, pontos, baús, batalhas, análises e macros locais. Criado por **xAMARILLOUx**.
 
-## Novidades desta versão
-- Macros simultâneos opcionais por preset, com fila exclusiva por tecla e fila única como padrão.
-- Teste de quantidade pela fila, sem produzir eventos fictícios. Somente teclas individuais.
-- Ranking com composição à esquerda ou à direita.
-- X1 com ativação explícita, diagnóstico dos comandos, próximas batalhas na overlay principal e transparência ao ficar ocioso.
-- Herói/Vilão automáticos com filtros de presentes; destaque de presentes alternado em um único overlay.
-- Batalha da comunidade: todos participam nos rankings de moedas e likes de uma rodada; somente viradas na liderança de moedas podem prorrogar o tempo.
+## Novidades v1.4.0
+- X1 por ordem de chegada com `!duelo`, sem @ ou código. Cancelar espera: `!cancelarduelo`.
+- Placar independente, com overlay e atalhos globais locais (Beta).
+- Ctrl, Alt, Shift e teclado numérico; presets com modificadores são executados em fila sequencial.
+- Opções avançadas para macros simultâneos (Beta).
+- Início da semana configurável nos rankings e ícones de unidade opcionais.
+- Correção manual de recordes, texto de baús disponíveis e timer por moeda.
+- Alertas de som/vídeo/GIF (Beta), upload local ou URL HTTPS, fila independente.
+- Supervisor com log persistente e gravações de estado agrupadas. A causa do erro 134 ainda não foi confirmada.
 
-[Notas completas](RELEASE-v1.3.0.md) · [Guia de uso](GUIA.html) · [Novas funções](docs/V1.3.md)
+[Notas completas](RELEASE-v1.4.0.md) · [Guia](GUIA.html) · [Detalhes v1.4](docs/V1.4.md)
 
 ## Arquivos para cada finalidade
 - **EXECUTAVEL-WINDOWS:** abra o `.exe` portátil no Windows 10/11 x64. Node.js incluído. Feche a ponte anterior e mantenha o terminal do novo serviço aberto.
@@ -25,14 +27,14 @@ O EXE abre o navegador em `http://127.0.0.1:8787/`. Não há instalador nem íco
 ## X1 e batalha da comunidade
 Em **Batalhas / X1**, escolha a subcategoria.
 
-**X1 entre viewers:** clique **Ativar módulo**. O chat usa somente `!desafiar @usuario`. A pessoa marcada responde `!aceitar` ou `!recusar`; o desafiante pode usar `!cancelardesafio`. O participante precisa ter aparecido em eventos recebidos. Convites e fila não alteram uma luta em andamento. Vitória +1, derrota −1 em classificação independente.
+**X1 entre viewers:** clique **Ativar módulo**. Cada pessoa envia `!duelo`. Dois participantes disponíveis formam uma dupla e entram na fila FIFO. `!cancelarduelo` sai da espera antes de formar dupla. Uma inscrição por pessoa e no máximo uma batalha futura confirmada. Não há @ nem `!aceitar`. Convites antigos salvos permanecem visíveis e podem ser limpos pelo painel; fila, batalhas e resultados antigos são preservados.
 
 **Batalha da comunidade:** configure a rodada e clique **Iniciar rodada**. Todos podem pontuar com moedas e likes recebidos após o início. Padrão: 5 minutos, janela final de 10 segundos e tempo restante de 60 segundos após uma troca estrita de líder nas moedas. Likes, empates e primeiro líder não prorrogam.
 
-[X1 completo](docs/X1.md) · [Novas regras e testes](docs/V1.3.md)
+[X1 completo](docs/X1.md) · [Novas regras e testes](docs/V1.4.md)
 
 ## Macros
-Abra o modo local no Windows. A fila única continua padrão. Marque **Executar macros simultaneamente** no preset se quiser teclas diferentes em paralelo; a mesma tecla continua sequencial. Alterar a configuração para a execução e exige reativar.
+Abra o modo local no Windows. A fila única continua padrão. Selecione o preset e vá a **Studio → Opções avançadas** para marcar **Executar macros simultaneamente · Beta** se quiser teclas diferentes em paralelo; a mesma tecla continua sequencial. Presets que contêm Ctrl, Alt ou Shift ficam inteiramente sequenciais, mesmo com essa opção marcada. Alterar a configuração para a execução e exige reativar.
 
 **Ativo por macro:** desmarcar remove apenas os pendentes dele e ignora seus próximos gatilhos. **Pausar:** mantém a fila e recebe novos gatilhos. **Retomar:** espera 5 segundos. **Parar:** limpa tudo. As teclas já pressionadas terminam antes da pausa; Parar solicita liberação imediata ao executor.
 
@@ -50,7 +52,11 @@ O X1 principal desaparece quando ocioso. O ranking X1 pode acompanhar a atividad
 ## Dados e compatibilidade
 Web: IndexedDB do navegador e endereço do site. Local: `%USERPROFILE%\.amarillou-live`, fora do EXE. São históricos separados; use exportação/importação para transferir. Backup inclui os novos módulos e configurações. A fila de teclas é temporária e nunca é restaurada automaticamente.
 
-Presets exportados nesta versão usam formato 5; formatos 1–4 com teclas individuais continuam aceitos. Modificadores são recusados com mensagem clara. Guarde backup antes de voltar a versões antigas, que não conhecem estes campos.
+Presets exportados usam formato 6; formatos 1–5 continuam aceitos. Não volte a versões antigas usando o mesmo save sem ter backup compatível. Recordes de maior combo e maior presente não são apagados pela atualização.
+
+Mídias de alertas ficam em `%USERPROFILE%\.amarillou-live\media`. O backup JSON guarda referências, não os arquivos: copie essa pasta junto ao backup ao trocar de computador. Filas de alertas e teclas não são reproduzidas após reiniciar.
+
+Atalhos globais, entrada nativa de teclado e interação entre macros e atalhos precisam de validação no Windows. O teste automatizado usa executor simulado; não equivale a uma live real no OBS/TikFinity.
 
 ## Desenvolvimento
 Node.js ≥22.15. `npm start` inicia a ponte, `npm run build` gera as três páginas independentes e `npm test` executa os testes. `INICIAR-LOCAL.bat` é alternativa para quem executa o código-fonte; o EXE é a forma principal para o usuário final.
