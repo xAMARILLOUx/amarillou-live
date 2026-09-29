@@ -1,3 +1,11 @@
+# v1.5.1 — oficial
+
+Promove a correção NUMPAD validada pelo usuário na prévia. O executor de teclado permanece idêntico ao testado; identificação, documentação e empacotamento atualizados. Presets e dados preservados.
+
+# v1.5.1-test.1
+
+NUM0–NUM9 e NUMDECIMAL usam scan codes no executor Windows. Comparação opcional com o modo virtual anterior pela variável AMARILLOU_NUMPAD_MODE=virtual. Serviço/launcher identificam a versão e o modo para evitar reutilizar um processo diferente. Sem alteração de fila, combos, presets ou dados. Compatibilidade com Roblox pendente de teste real.
+
 # v1.5.0
 
 Top 3 personalizável, placar negativo e hotkeys configuráveis, alertas visuais com áudio e enquadramento, comando X1 editável, duplas manuais e empate 0 × 0 com prazo. Consulte RELEASE-v1.5.0.md e docs/V1.5.md.

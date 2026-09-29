@@ -1,8 +1,11 @@
-# AMARILLOU Live Control v1.5.0
+# AMARILLOU Live Control v1.5.1
 
 [Usar online](https://xamarilloux.github.io/amarillou-live/) · [Baixar EXE / Releases](https://github.com/xAMARILLOUx/amarillou-live/releases)
 
 TikTok LIVE → TikFinity → uma conexão central → rankings, presentes, pontos, baús, batalhas, análises e macros locais. Criado por **xAMARILLOUx**.
+
+## Correção v1.5.1
+NUM0–NUM9 e NUMDECIMAL agora usam scan codes. O usuário confirmou que o ajuste resolveu a entrada no jogo testado, inclusive com Num Lock desligado. A implementação de teclado é idêntica à v1.5.1-test.1 aprovada. [Notas v1.5.1](RELEASE-v1.5.1.md) · [Teclado numérico](docs/NUMPAD.md)
 
 ## Novidades v1.5.0
 - Ouro, prata e bronze e destaque de tamanho configurável no Top 3 de likes e moedas.
