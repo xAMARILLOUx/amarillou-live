@@ -1,20 +1,17 @@
-# AMARILLOU Live Control v1.4.0
+# AMARILLOU Live Control v1.5.0
 
 [Usar online](https://xamarilloux.github.io/amarillou-live/) · [Baixar EXE / Releases](https://github.com/xAMARILLOUx/amarillou-live/releases)
 
 TikTok LIVE → TikFinity → uma conexão central → rankings, presentes, pontos, baús, batalhas, análises e macros locais. Criado por **xAMARILLOUx**.
 
-## Novidades v1.4.0
-- X1 por ordem de chegada com `!duelo`, sem @ ou código. Cancelar espera: `!cancelarduelo`.
-- Placar independente, com overlay e atalhos globais locais (Beta).
-- Ctrl, Alt, Shift e teclado numérico; presets com modificadores são executados em fila sequencial.
-- Opções avançadas para macros simultâneos (Beta).
-- Início da semana configurável nos rankings e ícones de unidade opcionais.
-- Correção manual de recordes, texto de baús disponíveis e timer por moeda.
-- Alertas de som/vídeo/GIF (Beta), upload local ou URL HTTPS, fila independente.
-- Supervisor com log persistente e gravações de estado agrupadas. A causa do erro 134 ainda não foi confirmada.
+## Novidades v1.5.0
+- Ouro, prata e bronze e destaque de tamanho configurável no Top 3 de likes e moedas.
+- Placar com valores negativos e atalhos globais personalizáveis (Windows local, Beta).
+- Alertas com imagem/GIF + áudio, controle de som do vídeo e enquadramento na fonte.
+- X1 com comando editável (padrão `!batalha`) e montagem manual de duplas.
+- Empate 0 × 0 com prazo adicional, encerramento sem vencedor e avanço da fila.
 
-[Notas completas](RELEASE-v1.4.0.md) · [Guia](GUIA.html) · [Detalhes v1.4](docs/V1.4.md)
+[Notas do release](RELEASE-v1.5.0.md) · [Guia](GUIA.html) · [Detalhes v1.5](docs/V1.5.md)
 
 ## Arquivos para cada finalidade
 - **EXECUTAVEL-WINDOWS:** abra o `.exe` portátil no Windows 10/11 x64. Node.js incluído. Feche a ponte anterior e mantenha o terminal do novo serviço aberto.
@@ -27,11 +24,11 @@ O EXE abre o navegador em `http://127.0.0.1:8787/`. Não há instalador nem íco
 ## X1 e batalha da comunidade
 Em **Batalhas / X1**, escolha a subcategoria.
 
-**X1 entre viewers:** clique **Ativar módulo**. Cada pessoa envia `!duelo`. Dois participantes disponíveis formam uma dupla e entram na fila FIFO. `!cancelarduelo` sai da espera antes de formar dupla. Uma inscrição por pessoa e no máximo uma batalha futura confirmada. Não há @ nem `!aceitar`. Convites antigos salvos permanecem visíveis e podem ser limpos pelo painel; fila, batalhas e resultados antigos são preservados.
+**X1 entre viewers:** clique **Ativar módulo**. Cada pessoa envia o comando configurado (padrão `!batalha`). Dois participantes disponíveis formam uma dupla e entram na fila FIFO. `!cancelarduelo` sai da espera antes de formar dupla. Uma inscrição por pessoa e no máximo uma batalha futura confirmada. Não há @ nem `!aceitar`. Convites antigos salvos permanecem visíveis e podem ser limpos pelo painel; fila, batalhas e resultados antigos são preservados.
 
 **Batalha da comunidade:** configure a rodada e clique **Iniciar rodada**. Todos podem pontuar com moedas e likes recebidos após o início. Padrão: 5 minutos, janela final de 10 segundos e tempo restante de 60 segundos após uma troca estrita de líder nas moedas. Likes, empates e primeiro líder não prorrogam.
 
-[X1 completo](docs/X1.md) · [Novas regras e testes](docs/V1.4.md)
+[X1 completo](docs/X1.md) · [Novas regras e testes](docs/V1.5.md)
 
 ## Macros
 Abra o modo local no Windows. A fila única continua padrão. Selecione o preset e vá a **Studio → Opções avançadas** para marcar **Executar macros simultaneamente · Beta** se quiser teclas diferentes em paralelo; a mesma tecla continua sequencial. Presets que contêm Ctrl, Alt ou Shift ficam inteiramente sequenciais, mesmo com essa opção marcada. Alterar a configuração para a execução e exige reativar.
@@ -48,6 +45,8 @@ Copie os links no **modo local** para OBS. Selecione 1600 × 1200 (padrão), 108
 O X1 principal desaparece quando ocioso. O ranking X1 pode acompanhar a atividade da batalha; a opção desmarcada o mantém visível. Tutorial e fila continuam disponíveis separadamente. A Meta de Baú mantém seu preview e suas configurações atualizadas no mesmo link.
 
 [Meta de Baú](docs/META-DE-BAU.md)
+
+Alertas de imagem e vídeo usam a dimensão real da fonte. Em cada alerta, escolha Encaixar inteiro, Preencher ou Esticar.
 
 ## Dados e compatibilidade
 Web: IndexedDB do navegador e endereço do site. Local: `%USERPROFILE%\.amarillou-live`, fora do EXE. São históricos separados; use exportação/importação para transferir. Backup inclui os novos módulos e configurações. A fila de teclas é temporária e nunca é restaurada automaticamente.

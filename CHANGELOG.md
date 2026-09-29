@@ -1,3 +1,7 @@
+# v1.5.0
+
+Top 3 personalizável, placar negativo e hotkeys configuráveis, alertas visuais com áudio e enquadramento, comando X1 editável, duplas manuais e empate 0 × 0 com prazo. Consulte RELEASE-v1.5.0.md e docs/V1.5.md.
+
 # v1.4.0
 
 Consulte [as notas da versão](RELEASE-v1.4.0.md) e [o guia](docs/V1.4.md).

@@ -159,10 +159,27 @@ dialog,#points-edit-dialog,#macro-warning-dialog{background:#151517;border-color
 .rank-unit{width:1em;height:1em;vertical-align:-.12em;display:inline-block}.scoreboard-card{text-align:center;min-width:300px}.scoreboard-card h1,.score-value{font-size:64px}.local-only{padding:18px;border:1px solid #d9aa28;border-radius:12px;background:#211d10;margin-bottom:20px}.macro-modifiers{display:flex;gap:16px;flex-wrap:wrap}#record-dialog{max-width:600px;width:90vw}#record-form select{max-width:100%}
 
 .alert-media{width:640px;max-width:100%;text-align:center}.alert-media video,.alert-media img{display:block;max-width:100%;max-height:500px;margin:auto}.alert-media audio{display:none}#alert-rules p{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* Podium uses typography and row height rather than transforms: avatars keep aligned. */
+.rank-card[data-podium-colors="1"] [data-place="1"]>.position{color:#ffd166!important}
+.rank-card[data-podium-colors="1"] [data-place="2"]>.position{color:#d3dce8!important}
+.rank-card[data-podium-colors="1"] [data-place="3"]>.position{color:#d9975a!important}
+.rank-card[data-podium-size="1"] [data-place="1"]{min-height:78px}.rank-card[data-podium-size="1"] [data-place="1"] .identity-name{font-size:23px}.rank-card[data-podium-size="1"] [data-place="1"] .score{font-size:27px}
+.rank-card[data-podium-size="1"] [data-place="2"]{min-height:70px}.rank-card[data-podium-size="1"] [data-place="2"] .identity-name{font-size:21px}.rank-card[data-podium-size="1"] [data-place="2"] .score{font-size:24px}
+.rank-card[data-podium-size="1"] [data-place="3"] .identity-name{font-size:19px}
+#score-bindings{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}#score-bindings[hidden]{display:none}#score-bindings fieldset{min-width:0;border:1px solid #48484c;border-radius:8px}
+
+.overlay-body #overlay-root .alert-media{position:relative;width:100%;height:100%;max-width:none;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.overlay-body .alert-media>img,.overlay-body .alert-media>video{display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;object-position:center}
+.overlay-body .alert-media[data-fit="cover"]>img,.overlay-body .alert-media[data-fit="cover"]>video{object-fit:cover}
+.overlay-body .alert-media[data-fit="fill"]>img,.overlay-body .alert-media[data-fit="fill"]>video{object-fit:fill}
+.overlay-body .alert-media>audio{display:none}
+
+body.overlay-body.alert-canvas{width:100vw!important;height:100vh!important}
 </style></head><body class="overlay-body"><div id="overlay-root"></div><div id="overlay-status" class="overlay-status">Aguardando painel…</div><div id="boot-error" role="alert" hidden></div><noscript>Ative o JavaScript para usar o painel. A demonstração não precisa de TikFinity.</noscript><script>(function(){
 window.__amarillouFailure=function(error){
 var box=document.getElementById('boot-error');if(!box)return;
-box.hidden=false;box.textContent='Falha ao iniciar o painel v1.4.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
+box.hidden=false;box.textContent='Falha ao iniciar o painel v1.5.0: '+(error&&error.message||String(error))+'. Recarregue com Ctrl+F5. Se continuar, envie esta mensagem e o endereço da página.';
 };
 window.addEventListener('error',function(e){window.__amarillouFailure(e.error||e.message||'Arquivo não carregado');});
 window.addEventListener('unhandledrejection',function(e){window.__amarillouFailure(e.reason||'Inicialização interrompida');});
@@ -170,16 +187,23 @@ window.addEventListener('unhandledrejection',function(e){window.__amarillouFailu
 'use strict';
 try{
 
+// score-keys.js
+function defaultScoreBindings(){return {custom:false,increase:{key:'EQUAL',ctrl:false,alt:true,shift:true},decrease:{key:'MINUS',ctrl:false,alt:true,shift:true}};}
+function cleanScoreBindings(p={}){const defaults=defaultScoreBindings();if(p.custom!==true)return defaults;
+ const clean=v=>{const key=String(v?.key||'').toUpperCase();if(!/^(?:[A-Z0-9]|F(?:[1-9]|1[0-9]|2[0-4])|NUM[0-9]|EQUAL|MINUS|SPACE|ENTER|TAB|ESC|UP|DOWN|LEFT|RIGHT|HOME|END|PAGEUP|PAGEDOWN|INSERT|DELETE|BACKSPACE|NUMADD|NUMSUBTRACT|NUMMULTIPLY|NUMDIVIDE|NUMDECIMAL)$/.test(key))throw Error('Tecla de atalho inválida.');return {key,ctrl:v.ctrl===true,alt:v.alt===true,shift:v.shift===true};};
+ const increase=clean(p.increase),decrease=clean(p.decrease);if(JSON.stringify(increase)===JSON.stringify(decrease))throw Error('Os dois atalhos devem ser diferentes.');return {custom:true,increase,decrease};}
+
 // alerts.js
+function cleanAlertSource(value){const source=String(value||'');if(source.length>2000)throw Error('URL muito longa.');if(!/^media-[a-f0-9]{32}\.(mp3|wav|ogg|mp4|webm|gif|png)$/.test(source)){let u;try{u=new URL(source);}catch{throw Error('Selecione um arquivo local ou URL HTTPS.');}if(u.protocol!=='https:'||u.username||u.password)throw Error('Use uma URL HTTPS de mídia.');}return source;}
 // Bounded alert queue; independent of keyboard execution. Time belongs to the central collector.
 function newAlerts(){return {rules:[],queue:[],current:null,serial:0,dropped:0,seen:[],paused:false};}
 function alertRule(p){
  const id=String(p.id||'');if(!/^[\w-]{1,100}$/.test(id))throw Error('ID de alerta inválido.');
  if(!['gift','follow'].includes(p.trigger)||!['audio','video','image'].includes(p.mediaType))throw Error('Tipo de alerta inválido.');
- const source=String(p.source||'');if(source.length>2000)throw Error('URL muito longa.');if(!/^media-[a-f0-9]{32}\.(mp3|wav|ogg|mp4|webm|gif|png)$/.test(source)){let u;try{u=new URL(source);}catch{throw Error('Selecione um arquivo local ou URL HTTPS.');}if(u.protocol!=='https:'||u.username||u.password)throw Error('Use uma URL HTTPS de mídia.');}
+ const source=cleanAlertSource(p.source);
  const duration=Number(p.duration),volume=Number(p.volume);if(!Number.isFinite(duration)||duration<1||duration>30||!Number.isFinite(volume)||volume<0||volume>1)throw Error('Duração de 1 a 30 segundos e volume de 0 a 1.');
  const giftId=String(p.giftId||'').trim().slice(0,120);if(p.trigger==='gift'&&!giftId)throw Error('Informe o ID do presente.');
- return {id,name:String(p.name||'Alerta').slice(0,100),enabled:p.enabled!==false,trigger:p.trigger,giftId,mediaType:p.mediaType,source,duration,volume,perUnit:p.perUnit===true};
+ return {id,name:String(p.name||'Alerta').slice(0,100),enabled:p.enabled!==false,trigger:p.trigger,giftId,mediaType:p.mediaType,source,audioSource:p.audioSource?cleanAlertSource(p.audioSource):'',videoAudio:p.videoAudio!==false,fit:['contain','cover','fill'].includes(p.fit)?p.fit:'contain',duration,volume,perUnit:p.perUnit===true};
 }
 function enqueueAlert(a,rule,userId,now,count=1){const n=Math.min(Math.floor(count),Math.max(0,50-a.queue.length));a.dropped+=Math.max(0,count-n);for(let i=0;i<n;i++)a.queue.push({id:'alert-'+now+'-'+ ++a.serial,rule:{...rule},userId});tickAlerts(a,now);}
 function tickAlerts(a,now){let changed=false;if(a.current&&now>=a.current.endAt){a.current=null;changed=true;}if(!a.paused&&!a.current&&a.queue.length){a.current={...a.queue.shift(),startAt:now,endAt:0};a.current.endAt=now+a.current.rule.duration*1000;changed=true;}return changed;}
@@ -221,9 +245,19 @@ function joinDuel(s,id,now){const x=s.extra.x1;
  while(x.waiting.length){const w=x.waiting.shift();if(!s.users[w.userId]||futureX1(x,w.userId)||x.pending.some(c=>c.players.includes(w.userId)))continue;
  const m={matchId:x1ID(x,'x1',now),challengeId:x1ID(x,'duel',now),players:[w.userId,id],acceptedAt:now,rules:{...x.config},status:'queued'};
  x.queue.push(m);x1Log(x,'queued','Dupla formada por ordem de chegada.',now,{matchId:m.matchId});x1Notice(x,'Dupla formada · aguardando fila',now,'accepted');return 'Dupla formada / fila';}
- x.waiting.push({userId:id,createdAt:now,expiresAt:now+x.config.acceptSeconds*1000});x1Notice(x,'Aguardando o próximo !duelo',now);return 'Aguardando o próximo participante';
+ x.waiting.push({userId:id,createdAt:now,expiresAt:now+x.config.acceptSeconds*1000});x1Notice(x,'Aguardando o próximo '+x.config.entryCommand,now);return 'Aguardando o próximo participante';
 }
 function cancelDuel(s,id,now){const x=s.extra.x1;if(!x.waiting.some(w=>w.userId===id))throw Error('Você não está aguardando uma dupla.');x.waiting=x.waiting.filter(w=>w.userId!==id);x1Log(x,'waiting-cancel','Espera cancelada.',now,{userId:id});return 'Espera cancelada';}
+
+function manualDuel(s,a,b,now){const x=s.extra.x1;
+ if(!x.config.enabled)throw Error('Ative o módulo X1.');
+ if(!s.users[a]||!s.users[b]||a===b)throw Error('Selecione dois participantes diferentes já identificados.');
+ if([a,b].some(id=>futureX1(x,id)||x.pending.some(c=>c.players.includes(id))))throw Error('Participante já possui batalha futura ou convite pendente.');
+ const match={matchId:x1ID(x,'x1',now),challengeId:x1ID(x,'manual',now),players:[a,b],acceptedAt:now,rules:{...x.config},status:'queued'};
+ for(const id of [a,b])x1Player(s,id,now);
+ x.waiting=x.waiting.filter(w=>![a,b].includes(w.userId));x.queue.push(match);
+ x1Log(x,'manual-queue','Batalha adicionada pelo streamer.',now,{matchId:match.matchId});x1Notice(x,'Batalha manual adicionada à fila',now,'accepted');return match;
+}
 
 // community-battle.js
 // Independent round counters. Never mutate community points, X1 statistics or live totals.
@@ -263,16 +297,16 @@ function communityView(s,overrides={},now=Date.now()){const b=s.extra.communityB
 }
 
 // x1-parser.js
-function parseX1(message){const t=String(message??'').trim().toLowerCase();return t==='!duelo'?{type:'duel'}:t==='!cancelarduelo'?{type:'cancel-duel'}:null;}
+function parseX1(message,config={entryCommand:'!batalha'}){const t=String(message??'').trim().toLowerCase();return t===(config.entryCommand||'!batalha')?{type:'duel'}:t==='!cancelarduelo'?{type:'cancel-duel'}:null;}
 
 // x1-state.js
-function newX1(){return {config:{enabled:false,mode:'coins',duration:60,acceptSeconds:30,interval:5,cooldown:10,tie:'sudden',extraSeconds:30,queueLimit:3,rankLimit:5,rankingBattleOnly:false},diagnostics:{chatCount:0,lastChatAt:0,commands:[]},waiting:[],serial:0,queuePaused:false,players:{},pending:[],queue:[],active:null,history:[],logs:[],cooldowns:{},nextAt:0,notice:null,tutorial:{visible:true,until:0}};}
+function newX1(){return {config:{enabled:false,entryCommand:'!batalha',zeroTie:'sudden',zeroSeconds:30,mode:'coins',duration:60,acceptSeconds:30,interval:5,cooldown:10,tie:'sudden',extraSeconds:30,queueLimit:3,rankLimit:5,rankingBattleOnly:false},diagnostics:{chatCount:0,lastChatAt:0,commands:[]},waiting:[],serial:0,queuePaused:false,players:{},pending:[],queue:[],active:null,history:[],logs:[],cooldowns:{},nextAt:0,notice:null,tutorial:{visible:true,until:0}};}
 function x1ID(x,prefix,now){return prefix+'_'+now+'_'+ ++x.serial;}
 function x1Log(x,type,message,now,detail={}){x.logs.unshift({type,message,time:now,...detail});x.logs=x.logs.slice(0,500);}
 function x1Notice(x,message,now,type='info'){x.notice={message,time:now,type};}
 function x1Player(s,id,now){const x=s.extra.x1;if(!s.users[id])throw Error('Participante não identificado.');x.players[id]||={points:0,wins:0,losses:0,matches:0,firstPlayedAt:0,lastPlayedAt:0,reachedAt:now};return x.players[id];}
 function x1Order(x){return Object.entries(x.players).map(([id,p])=>({id,...p})).sort((a,b)=>b.points-a.points||b.wins-a.wins||a.losses-b.losses||a.reachedAt-b.reachedAt||a.id.localeCompare(b.id));}
-function x1Config(p){const c={};for(const [k,min,max] of [['duration',1,86400],['acceptSeconds',5,600],['interval',0,300],['cooldown',0,600],['extraSeconds',1,600]]){const n=Number(p[k]);if(!Number.isSafeInteger(n)||n<min||n>max)throw Error('Configuração X1 inválida: '+k);c[k]=n;}if(!['coins','manual','hybrid'].includes(p.mode)||!['sudden','extra','manual'].includes(p.tie))throw Error('Modo X1 inválido.');c.rankingBattleOnly=p.rankingBattleOnly===true;c.mode=p.mode;c.tie=p.tie;c.enabled=p.enabled===true;c.queueLimit=[0,1,3,5].includes(+p.queueLimit)?+p.queueLimit:3;c.rankLimit=[3,5,10].includes(+p.rankLimit)?+p.rankLimit:5;return c;}
+function x1Config(p){const c={};c.entryCommand=String(p.entryCommand??'!batalha').trim().toLowerCase();if(!/^![a-z0-9_]{1,24}$/.test(c.entryCommand)||c.entryCommand==='!cancelarduelo')throw Error('Use ! e uma palavra de até 24 letras, números ou _. Não use !cancelarduelo.');c.zeroTie=p.zeroTie??'sudden';if(!['sudden','extra','manual','draw'].includes(c.zeroTie))throw Error('Tratamento de empate inválido.');c.zeroSeconds=Number(p.zeroSeconds??30);if(!Number.isInteger(c.zeroSeconds)||c.zeroSeconds<1||c.zeroSeconds>600)throw Error('Prazo de desempate: 1 a 600 segundos.');for(const [k,min,max] of [['duration',1,86400],['acceptSeconds',5,600],['interval',0,300],['cooldown',0,600],['extraSeconds',1,600]]){const n=Number(p[k]);if(!Number.isSafeInteger(n)||n<min||n>max)throw Error('Configuração X1 inválida: '+k);c[k]=n;}if(!['coins','manual','hybrid'].includes(p.mode)||!['sudden','extra','manual'].includes(p.tie))throw Error('Modo X1 inválido.');c.rankingBattleOnly=p.rankingBattleOnly===true;c.mode=p.mode;c.tie=p.tie;c.enabled=p.enabled===true;c.queueLimit=[0,1,3,5].includes(+p.queueLimit)?+p.queueLimit:3;c.rankLimit=[3,5,10].includes(+p.rankLimit)?+p.rankLimit:5;return c;}
 
 // x1-ranking.js
 function finishX1(s,winnerId,now){
@@ -287,13 +321,19 @@ function finishX1(s,winnerId,now){
 }
 function undoX1(s,now){const x=s.extra.x1,h=x.history.find(h=>h.status==='finished'&&!h.reverted);if(!h)throw Error('Nenhum resultado para desfazer.');for(const id of h.players){const p=x.players[id];if(!p)throw Error('Jogador removido após reset.');p.points+=id===h.winnerId?-1:1;p.wins-=id===h.winnerId?1:0;p.losses-=id===h.loserId?1:0;p.matches--;const other=x.history.filter(v=>v!==h&&v.status==='finished'&&!v.reverted&&v.players.includes(id));p.firstPlayedAt=other.length?Math.min(...other.map(v=>v.endedAt)):0;p.lastPlayedAt=other.length?Math.max(...other.map(v=>v.endedAt)):0;p.reachedAt=now;}h.reverted=true;x1Log(x,'undo','Resultado desfeito; registro preservado.',now,{matchId:h.matchId});}
 
+function drawX1(s,now){const x=s.extra.x1,m=x.active;if(!m||!m.startedAt||x.history.some(h=>h.matchId===m.matchId))return false;
+ x.history.unshift({...m,status:'draw',endedAt:now,reverted:false});x.active=null;x.nextAt=now+x.config.interval*1000;
+ x1Log(x,'draw','Empate / batalha anulada sem alteração de pontos ou estatísticas.',now,{matchId:m.matchId});x1Notice(x,'EMPATE · Sem vencedor',now,'draw');return true;}
+
 // x1-match.js
 function x1Remaining(m,now){return !m?0:m.status==='paused'?m.remaining:Math.max(0,(m.status==='preparing'?m.prepareAt:m.endAt)-now);}
 function pauseX1(s,reason='manual',now=Date.now()){const x=s.extra.x1,m=x.active;if(reason==='connection')x.queuePaused=true;if(!m||m.status==='paused')return false;m.resumeStatus=m.status;m.remaining=x1Remaining(m,now);m.status='paused';m.pauseReason=reason;x1Log(x,'pause',reason==='connection'?'Conexão perdida: X1 pausado.':'X1 pausado.',now);return true;}
 function startQueuedX1(s,index,now){const x=s.extra.x1;if(x.active)throw Error('Já existe uma batalha ativa.');const m=x.queue.splice(index,1)[0];if(!m)return false;if(m.players.length!==2||m.players[0]===m.players[1]||m.players.some(id=>!s.users[id])||x.history.some(h=>h.matchId===m.matchId)){x1Log(x,'invalid-queue','Item inválido removido da fila.',now);return false;}x.active={...m,status:'preparing',prepareAt:now+3000,endAt:0,startedAt:0,coins:[0,0],remaining:0};x1Notice(x,'Preparando batalha',now);return true;}
-function tickX1Match(s,now){const x=s.extra.x1,m=x.active;if(!m)return false;if(m.status==='preparing'&&now>=m.prepareAt){m.status='active';m.startedAt=now;m.endAt=now+m.rules.duration*1000;x1Log(x,'start','FIGHT — batalha iniciada.',now,{matchId:m.matchId});return true;}if(m.status!=='active'||now<m.endAt)return false;
+function tickX1Match(s,now){const x=s.extra.x1,m=x.active;if(!m)return false;if(m.status==='preparing'&&now>=m.prepareAt){m.status='active';m.startedAt=now;m.endAt=now+m.rules.duration*1000;x1Log(x,'start','FIGHT — batalha iniciada.',now,{matchId:m.matchId});return true;}if(m.status==='sudden'&&m.zeroOvertime&&now>=m.endAt)return drawX1(s,now);if(m.status!=='active'||now<m.endAt)return false;
  if(m.rules.mode!=='coins'){m.status='decision';x1Notice(x,'Tempo encerrado. Aguardando decisão manual.',now);return true;}
  if(m.coins[0]!==m.coins[1])return finishX1(s,m.players[m.coins[0]>m.coins[1]?0:1],now);
+ if(m.zeroOvertime)return drawX1(s,now);
+ if(m.coins[0]===0&&m.coins[1]===0){const policy=m.rules.zeroTie||'sudden';if(policy==='draw')return drawX1(s,now);if(policy==='manual'){m.status='decision';x1Notice(x,'0 × 0 · Decisão manual',now);return true;}m.zeroOvertime=true;m.endAt=now+(m.rules.zeroSeconds||30)*1000;m.status=policy==='sudden'?'sudden':'active';x1Notice(x,'0 × 0 · Última chance por '+(m.rules.zeroSeconds||30)+' segundos',now);return true;}
  if(m.rules.tie==='sudden'){m.status='sudden';x1Notice(x,'EMPATE · MORTE SÚBITA',now);}
  else if(m.rules.tie==='extra'){m.endAt=now+m.rules.extraSeconds*1000;x1Notice(x,'EMPATE · TEMPO EXTRA',now);}
  else {m.status='decision';x1Notice(x,'EMPATE · Decisão manual',now);}return true;
@@ -318,11 +358,11 @@ function receiveX1(s,e,uid,coins,now){const x=s.extra.x1;
  if(e.type==='gift')giftX1(s,uid,coins,now);
  if(e.type!=='chat')return;
  const d=x.diagnostics;d.chatCount++;d.lastChatAt=now;
- const text=String(e.comment||'').slice(0,1000),cmd=parseX1(text);
- if(!cmd&&!/(?:!duelo|!cancelarduelo|desafiar|!aceitar|!recusar|!cancelardesafio)/i.test(text))return;
+ const text=String(e.comment||'').slice(0,1000),cmd=parseX1(text,x.config);
+ if(!cmd&&!text.trim().startsWith('!'))return;
  const record=outcome=>{d.commands.unshift({time:now,userId:uid,text,outcome});d.commands=d.commands.slice(0,100);};
  if(!x.config.enabled){record('Módulo desativado');return;}
- if(!cmd){record('Use !duelo para entrar ou !cancelarduelo para sair da espera.');return;}
+ if(!cmd){record('Use '+x.config.entryCommand+' para entrar ou !cancelarduelo para sair da espera.');return;}
  try{record(cmd.type==='duel'?joinDuel(s,uid,now):cancelDuel(s,uid,now));}
  catch(error){record(error.message);x1Notice(x,error.message,now,'error');}
 
@@ -331,9 +371,11 @@ function commandX1(s,command,p,now){const x=s.extra.x1,m=x.active;
  const confirmed=()=>{if(p.confirmed!==true)throw Error('Confirme esta ação.');};
  const current=()=>{if(!m||p.matchId!==m.matchId)throw Error('Batalha mudou. Confira antes de tentar novamente.');};
  if(command==='x1-config'){const c=x1Config(p);x.config=c;if(!c.enabled)pauseX1(s,'manual',now);}
+ else if(command==='x1-manual'){manualDuel(s,p.player1,p.player2,now);}
+ else if(command==='x1-draw'){confirmed();current();if(!m.startedAt)throw Error('A batalha ainda não começou.');drawX1(s,now);}
  else if(command==='x1-start'){if(!x.config.enabled)throw Error('Ative o módulo X1.');x.queuePaused=false;if(!startQueuedX1(s,0,now))throw Error('Fila vazia ou item inválido.');}
  else if(command==='x1-pause'){current();pauseX1(s,'manual',now);}
- else if(command==='x1-resume'){current();if(m.status!=='paused')throw Error('A batalha não está pausada.');if(!x.config.enabled)throw Error('Ative o módulo X1.');m.status=m.resumeStatus||'active';if(m.status==='preparing')m.prepareAt=now+m.remaining;else if(m.status==='active')m.endAt=now+m.remaining;m.pauseReason='';x.queuePaused=false;x1Log(x,'resume','Batalha retomada.',now);}
+ else if(command==='x1-resume'){current();if(m.status!=='paused')throw Error('A batalha não está pausada.');if(!x.config.enabled)throw Error('Ative o módulo X1.');m.status=m.resumeStatus||'active';if(m.status==='preparing')m.prepareAt=now+m.remaining;else if(['active','sudden'].includes(m.status))m.endAt=now+m.remaining;m.pauseReason='';x.queuePaused=false;x1Log(x,'resume','Batalha retomada.',now);}
  else if(command==='x1-cancel'){confirmed();current();x.history.unshift({...m,status:'cancelled',endedAt:now,reverted:false});x1Log(x,'cancel','Batalha cancelada sem pontuação.',now,{matchId:m.matchId});x.active=null;x.nextAt=now+x.config.interval*1000;x1Notice(x,'Batalha cancelada',now,'cancelled');}
  else if(command==='x1-win'){confirmed();current();if(!m.startedAt||!m.players.includes(p.winnerId))throw Error('Inicie a batalha antes de escolher o vencedor.');finishX1(s,p.winnerId,now);}
  else if(command==='x1-finish'){confirmed();current();if(!m.startedAt)throw Error('A batalha ainda não começou.');if(m.rules.mode==='coins'&&m.coins[0]!==m.coins[1])finishX1(s,m.players[m.coins[0]>m.coins[1]?0:1],now);else{m.status='decision';m.endAt=now;x1Notice(x,'Escolha o vencedor manualmente.',now);}}
@@ -355,17 +397,17 @@ function restoreX1(v,known,now=Date.now()){
  const stats=p=>({points:n(p.points,-Number.MAX_SAFE_INTEGER),wins:n(p.wins),losses:n(p.losses),matches:n(p.matches),firstPlayedAt:n(p.firstPlayedAt),lastPlayedAt:n(p.lastPlayedAt),reachedAt:n(p.reachedAt)});
  const pair=v=>{if(!Array.isArray(v)||v.length!==2||v[0]===v[1])throw Error('Dupla X1 inválida.');return v.map(id);};
  const base=m=>({matchId:t(m.matchId),challengeId:t(m.challengeId),players:pair(m.players),acceptedAt:n(m.acceptedAt),rules:x1Config(m.rules)});
- const fight=m=>({...base(m),status:String(m.status),prepareAt:n(m.prepareAt||0),endAt:n(m.endAt||0),startedAt:n(m.startedAt||0),coins:[n(m.coins?.[0]||0),n(m.coins?.[1]||0)],remaining:n(m.remaining||0),resumeStatus:['preparing','active','sudden','decision'].includes(m.resumeStatus)?m.resumeStatus:'active',pauseReason:t(m.pauseReason)});
+ const fight=m=>({...base(m),status:String(m.status),zeroOvertime:m.zeroOvertime===true,prepareAt:n(m.prepareAt||0),endAt:n(m.endAt||0),startedAt:n(m.startedAt||0),coins:[n(m.coins?.[0]||0),n(m.coins?.[1]||0)],remaining:n(m.remaining||0),resumeStatus:['preparing','active','sudden','decision'].includes(m.resumeStatus)?m.resumeStatus:'active',pauseReason:t(m.pauseReason)});
  x.queuePaused=true;x.config=x1Config(v.config);x.serial=n(v.serial);x.nextAt=n(v.nextAt);if(Object.keys(v.players||{}).length>100000)throw Error('Muitos jogadores X1.');
  for(const [key,p] of Object.entries(v.players||{}))x.players[id(key)]=stats(p);
  x.pending=(v.pending||[]).map(c=>({challengeId:t(c.challengeId),players:pair(c.players),createdAt:n(c.createdAt),expiresAt:n(c.expiresAt)}));
  x.waiting=(v.waiting||[]).map(w=>({userId:id(w.userId),createdAt:n(w.createdAt),expiresAt:n(w.expiresAt)}));if(new Set(x.waiting.map(w=>w.userId)).size!==x.waiting.length)throw Error('Espera duplicada.');
  x.queue=(v.queue||[]).map(m=>({...base(m),status:'queued'}));
  const snapshots=p=>Object.fromEntries(Object.entries(p||{}).map(([key,value])=>[id(key),stats(value)]));
- x.history=(v.history||[]).map(h=>{if(!['finished','cancelled'].includes(h.status))throw Error('Histórico X1 inválido.');const out={...fight(h),endedAt:n(h.endedAt),reverted:h.reverted===true};if(h.status==='finished'){out.winnerId=id(h.winnerId);out.loserId=id(h.loserId);if(!out.players.includes(out.winnerId)||!out.players.includes(out.loserId)||out.winnerId===out.loserId)throw Error('Resultado X1 inválido.');out.before=snapshots(h.before);out.after=snapshots(h.after);}return out;});
+ x.history=(v.history||[]).map(h=>{if(!['finished','cancelled','draw'].includes(h.status))throw Error('Histórico X1 inválido.');const out={...fight(h),endedAt:n(h.endedAt),reverted:h.reverted===true};if(h.status==='finished'){out.winnerId=id(h.winnerId);out.loserId=id(h.loserId);if(!out.players.includes(out.winnerId)||!out.players.includes(out.loserId)||out.winnerId===out.loserId)throw Error('Resultado X1 inválido.');out.before=snapshots(h.before);out.after=snapshots(h.after);}return out;});
  const ids=[...x.history,...x.queue,...(v.active?[v.active]:[])].map(m=>m.matchId);if(ids.some(v=>!v)||new Set(ids).size!==ids.length)throw Error('Match ID duplicado no backup X1.');
  const future=x.queue.flatMap(m=>m.players);if(new Set(future).size!==future.length)throw Error('Jogador com duas batalhas futuras.');
- if(v.active){const m=fight(v.active);if(!['preparing','active','sudden','decision','paused'].includes(m.status))throw Error('Estado X1 inválido.');if(m.status!=='paused'){m.resumeStatus=m.status;m.remaining=['preparing','active'].includes(m.status)?Math.min(m.status==='preparing'?3000:m.rules.duration*1000,Math.max(0,(m.status==='preparing'?m.prepareAt:m.endAt)-(v.savedAt||now))):0;}m.status='paused';m.pauseReason='restored';x.active=m;}
+ if(v.active){const m=fight(v.active);if(!['preparing','active','sudden','decision','paused'].includes(m.status))throw Error('Estado X1 inválido.');if(m.status!=='paused'){m.resumeStatus=m.status;m.remaining=(['preparing','active'].includes(m.status)||m.status==='sudden'&&m.zeroOvertime)?Math.min(m.status==='preparing'?3000:Math.max(m.rules.duration,m.rules.zeroSeconds||30,m.rules.extraSeconds)*1000,Math.max(0,(m.status==='preparing'?m.prepareAt:m.endAt)-(v.savedAt||now))):0;}m.status='paused';m.pauseReason='restored';x.active=m;}
  for(const [key,value] of Object.entries(v.cooldowns||{}))if(known(key))x.cooldowns[key]=n(value);
  x.logs=(v.logs||[]).slice(0,500).map(l=>({type:t(l.type),message:t(l.message),time:n(l.time),matchId:t(l.matchId),challengeId:t(l.challengeId),userId:known(l.userId)?l.userId:'',delta:[-1,1].includes(l.delta)?l.delta:0}));
  if(v.notice)x.notice={message:t(v.notice.message),time:n(v.notice.time),type:t(v.notice.type)};
@@ -378,17 +420,17 @@ function x1OverlayView(s,kind='x1',overrides={},now=Date.now()){
  const x=s.extra.x1,v=visualOf(s,kind,overrides),m=x.active,person=id=>identityView(s.users[id],v,id),label=id=>[v.showName!==false?(s.users[id]?.name||s.users[id]?.handle||'Participante'):'',v.showHandle!==false&&s.users[id]?.handle?'@'+s.users[id].handle:''].filter(Boolean).join(' · ');
  const next=()=>x.config.queueLimit&&x.queue.length?`<div class="x1-next"><h3>PRÓXIMAS BATALHAS</h3>${x.queue.slice(0,x.config.queueLimit).map((q,i)=>`<p>${i+1}. ${q.players.map(id=>esc(label(id))).join(' × ')}</p>`).join('')}</div>`:'';
  const wrap=body=>`<div ${cardAttrs(v,'x1-card '+(kind==='x1-tutorial'?'x1-tutorial':''))}>${body}${kind==='x1'?next():''}</div>`;
- if(kind==='x1-tutorial')return !x.tutorial.visible||x.tutorial.until&&now>=x.tutorial.until?'':wrap(`<h1>⚔️ COMO ENTRAR NO X1</h1><p>Envie no chat:</p><div class="x1-formats"><code>!duelo</code></div><p>Os dois primeiros participantes disponíveis formam uma dupla e entram na fila.</p><p>Não precisa de @ nem aceitar.</p><p>Cancelar espera: <b>!cancelarduelo</b></p>`);
+ if(kind==='x1-tutorial')return !x.tutorial.visible||x.tutorial.until&&now>=x.tutorial.until?'':wrap(`<h1>⚔️ COMO ENTRAR NO X1</h1><p>Envie no chat:</p><div class="x1-formats"><code>${esc(x.config.entryCommand)}</code></div><p>Os dois primeiros participantes disponíveis formam uma dupla e entram na fila.</p><p>Não precisa de @ nem aceitar.</p><p>Cancelar espera: <b>!cancelarduelo</b></p>`);
  if(kind==='x1-ranking'&&x.config.rankingBattleOnly&&!x1BattleVisible(x,now))return '';
  if(kind==='x1-ranking')return wrap(`<h2>🏆 CLASSIFICAÇÃO X1</h2>${x1Order(x).slice(0,x.config.rankLimit).map((p,i)=>`<div class="rank-row" data-rank-key="x1:${esc(p.id)}"><b class="position">${i+1}</b>${rankAvatar(s.users[p.id],i===0,v)}<div class="person">${person(p.id)}</div><b class="score">${fmt(p.points)} pts</b></div>`).join('')||'<p>Aguardando desafios</p>'}`);
  if(kind==='x1-queue')return wrap(`<h2>⚔️ AGORA</h2><p>${m?m.players.map(id=>esc(label(id))).join(' × '):'Aguardando batalha'}</p>${x.config.queueLimit?`<h2>A SEGUIR</h2>${x.queue.slice(0,x.config.queueLimit).map((q,i)=>`<p>${i+1}. ${q.players.map(id=>esc(label(id))).join(' × ')}</p>`).join('')||'<p>Fila vazia</p>'}`:''}`);
- if(!m){const last=x.history[0];if(x1ResultVisible(x,now))return wrap(`<p class="overlay-kicker">BATALHA FINALIZADA</p>${avatar(s.users[last.winnerId],true)}<h1>${esc(label(last.winnerId))} VENCEU</h1><p class="x1-win">+1 PONTO · #${x1Order(x).findIndex(p=>p.id===last.winnerId)+1} na classificação</p><p>${esc(label(last.loserId))} · −1 PONTO</p>`);const c=x.pending.find(c=>c.expiresAt>now);if(!c){const w=x.waiting.find(w=>w.expiresAt>now);return w?wrap(`<h2>${esc(label(w.userId))}</h2><p>Aguardando adversário · envie <b>!duelo</b></p>`):'';}return wrap(`<p class="overlay-kicker">⚔ DESAFIO RECEBIDO</p><h2>${c.players.map(id=>esc(label(id))).join(' × ')}</h2><p>${esc(label(c.players[1]))}, use <strong>!aceitar</strong> ou !recusar</p><strong class="x1-clock">${clock(Math.max(0,c.expiresAt-now))}</strong>`);}
+ if(!m){const last=x.history[0];if(x1ResultVisible(x,now)&&last.status==='draw')return wrap('<h1>EMPATE</h1><p>Batalha encerrada sem vencedor · pontuação preservada</p>');if(x1ResultVisible(x,now))return wrap(`<p class="overlay-kicker">BATALHA FINALIZADA</p>${avatar(s.users[last.winnerId],true)}<h1>${esc(label(last.winnerId))} VENCEU</h1><p class="x1-win">+1 PONTO · #${x1Order(x).findIndex(p=>p.id===last.winnerId)+1} na classificação</p><p>${esc(label(last.loserId))} · −1 PONTO</p>`);const c=x.pending.find(c=>c.expiresAt>now);if(!c){const w=x.waiting.find(w=>w.expiresAt>now);return w?wrap(`<h2>${esc(label(w.userId))}</h2><p>Aguardando adversário · envie <b>${esc(x.config.entryCommand)}</b></p>`):'';}return wrap(`<p class="overlay-kicker">⚔ DESAFIO RECEBIDO</p><h2>${c.players.map(id=>esc(label(id))).join(' × ')}</h2><p>${esc(label(c.players[1]))}, use <strong>!aceitar</strong> ou !recusar</p><strong class="x1-clock">${clock(Math.max(0,c.expiresAt-now))}</strong>`);}
  const statuses={preparing:'PREPARANDO',active:'FIGHT',sudden:'EMPATE · MORTE SÚBITA',decision:'AGUARDANDO DECISÃO',paused:m.pauseReason==='connection'?'CONEXÃO PERDIDA · X1 PAUSADO':'X1 PAUSADO'};
- const max=Math.max(1,...m.coins),time=m.status==='preparing'?Math.max(1,Math.ceil(x1Remaining(m,now)/1000)):['sudden','decision'].includes(m.status)?'—':clock(x1Remaining(m,now));
+ const max=Math.max(1,...m.coins),time=m.status==='preparing'?Math.max(1,Math.ceil(x1Remaining(m,now)/1000)):(m.status==='decision'||m.status==='sudden'&&!m.zeroOvertime)?'—':clock(x1Remaining(m,now));
  return wrap(`<p class="overlay-kicker">${statuses[m.status]||''}</p><div class="x1-fighters">${m.players.map((id,i)=>`<section>${avatar(s.users[id],true)}${person(id)}<strong class="x1-coins"><span class="x1-coin-icon" aria-label="moedas">●</span> ${fmt(m.coins[i])}</strong><progress max="${max}" value="${m.coins[i]}"></progress><small>${fmt(x.players[id]?.points||0)} pontos X1</small></section>${i===0?'<b class="x1-vs">VS</b>':''}`).join('')}</div><strong class="x1-clock ${m.status==='preparing'?'x1-countdown':''}">${time}</strong><small>${{coins:'Moedas',manual:'Manual',hybrid:'Híbrido'}[m.rules.mode]} · Melhor de 1</small>`);
 }
 
-function x1ResultVisible(x,now=Date.now()){const h=x.history[0];return !!(h&&h.status==='finished'&&!h.reverted&&now-h.endedAt<Math.max(1,x.config.interval)*1000);}
+function x1ResultVisible(x,now=Date.now()){const h=x.history[0];return !!(h&&['finished','draw'].includes(h.status)&&!h.reverted&&now-h.endedAt<Math.max(1,x.config.interval)*1000);}
 function x1BattleVisible(x,now=Date.now()){return !!x.active||x1ResultVisible(x,now)||(!x.queuePaused&&x.config.enabled&&x.queue.length>0);}
 
 // chest.js
@@ -619,9 +661,9 @@ function dateAt(t,zone){const a=new Intl.DateTimeFormat('en-CA',{timeZone:zone,y
 function calendarRange(period,t,zone,weekStart=1){const d=dateAt(t,zone);if(period==='month')return [d.slice(0,7)+'-01',d];if(period==='week'){const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()-(x.getUTCDay()-weekStart+7)%7);return [x.toISOString().slice(0,10),d];}return [d,d];}
 function levelThreshold(level){return Math.floor(50*1.03*(Math.pow(1.03,Math.max(0,Math.min(1000,level)-1))-1)/.03+1e-8);}
 function levelProgress(points){points=nonneg(points);let lo=1,hi=1000;while(lo<hi){const m=Math.ceil((lo+hi)/2);if(levelThreshold(m)<=points)lo=m;else hi=m-1;}const start=levelThreshold(lo),next=lo<1000?levelThreshold(lo+1):null;return {level:lo,points,start,next,remaining:next===null?0:Math.max(0,next-points),percent:next===null?100:Math.min(100,100*(points-start)/(next-start))};}
-function defaultVisual(){return {unitDisplay:'text',side:'left',rotationSeconds:10,container:true,color:'#191b1e',showLevel:true,style:'classic',layout:'vertical',rankLimit:10,showName:true,showHandle:true,showCrown:true,animate:true,customText:false,textColor:'#ffffff',resolution:'hd'};}
-function cleanVisual(v={}){return {unitDisplay:['icon','none'].includes(v.unitDisplay)?v.unitDisplay:'text',side:v.side==='right'?'right':'left',rotationSeconds:Number.isInteger(+v.rotationSeconds)&&+v.rotationSeconds>=2&&+v.rotationSeconds<=300?+v.rotationSeconds:10,resolution:['standard','hd','vertical'].includes(v.resolution)?v.resolution:'hd',container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:['ribbon','portrait'].includes(v.style)?v.style:'classic',layout:v.layout==='horizontal'?'horizontal':'vertical',rankLimit:[1,3,5,10].includes(Number(v.rankLimit))?Number(v.rankLimit):10,showName:v.showName!==false,showHandle:v.showHandle!==false,showCrown:v.showCrown!==false,animate:v.animate!==false,customText:v.customText===true,textColor:/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'};}
-function newExtras(){return {alerts:newAlerts(),weekStart:1,scoreboard:{current:0,target:4,hotkeys:false},recordEdits:[],communityBattle:newCommunityBattle(),roleAutomation:newRoleAutomation(),x1:newX1(),chest:chestDefaults(),live:newLiveData(),giftGoal:{target:1000,current:0},channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],macroFollows:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['scoreboard','communityBattle','x1','x1-ranking','x1-queue','x1-tutorial','chest','rankLikes','rankCoins','gifts','roles','goal','giftGoal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{mode:'gift',secondsPerCoin:1,baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
+function defaultVisual(){return {podiumColors:true,podiumSize:true,unitDisplay:'text',side:'left',rotationSeconds:10,container:true,color:'#191b1e',showLevel:true,style:'classic',layout:'vertical',rankLimit:10,showName:true,showHandle:true,showCrown:true,animate:true,customText:false,textColor:'#ffffff',resolution:'hd'};}
+function cleanVisual(v={}){return {podiumColors:v.podiumColors!==false,podiumSize:v.podiumSize!==false,unitDisplay:['icon','none'].includes(v.unitDisplay)?v.unitDisplay:'text',side:v.side==='right'?'right':'left',rotationSeconds:Number.isInteger(+v.rotationSeconds)&&+v.rotationSeconds>=2&&+v.rotationSeconds<=300?+v.rotationSeconds:10,resolution:['standard','hd','vertical'].includes(v.resolution)?v.resolution:'hd',container:v.container!==false,color:validColor(v.color),showLevel:v.showLevel!==false,style:['ribbon','portrait'].includes(v.style)?v.style:'classic',layout:v.layout==='horizontal'?'horizontal':'vertical',rankLimit:[1,3,5,10].includes(Number(v.rankLimit))?Number(v.rankLimit):10,showName:v.showName!==false,showHandle:v.showHandle!==false,showCrown:v.showCrown!==false,animate:v.animate!==false,customText:v.customText===true,textColor:/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'};}
+function newExtras(){return {alerts:newAlerts(),weekStart:1,scoreboard:{current:0,target:4,hotkeys:false,bindings:defaultScoreBindings()},recordEdits:[],communityBattle:newCommunityBattle(),roleAutomation:newRoleAutomation(),x1:newX1(),chest:chestDefaults(),live:newLiveData(),giftGoal:{target:1000,current:0},channel:'',highlightBaselines:{},manualLives:[],fx:{mode:'auto',date:'',fetchedAt:0,source:''},points:{},pointSources:{},presets:[],macroFollows:{},weights:{coins:1,likes:1},resets:{},archives:[],visuals:Object.fromEntries(['scoreboard','communityBattle','x1','x1-ranking','x1-queue','x1-tutorial','chest','rankLikes','rankCoins','gifts','roles','goal','giftGoal','followers','timer'].map(k=>[k,defaultVisual()])),goal:{target:10000,current:0},followers:[],timer:{mode:'gift',secondsPerCoin:1,baseSeconds:300,remainingMs:300000,endAt:0,running:false,rules:[]},catalog:{},ledger:[],legacyCoins:{},sessions:[],activeSession:null,conversion:{usdPerCoin:0,brlPerUsd:0,updatedAt:0,source:'manual'},trackingSince:Date.now()};}
 function timerRemaining(timer,now=Date.now()){return Math.max(0,timer.running?timer.endAt-now:timer.remainingMs);}
 function addTimer(timer,seconds,now){const rem=Math.min(31536000000,timerRemaining(timer,now)+seconds*1000);timer.remainingMs=rem;if(timer.running)timer.endAt=now+rem;}
 function sessionHeartbeat(s,now=Date.now(),connected=false){if(!connected)pauseCommunity(s.extra.communityBattle,now);const alertsChanged=tickAlerts(s.extra.alerts,now);const communityChanged=tickCommunity(s.extra.communityBattle,now);const matchChanged=tickX1(s,now,connected)||communityChanged||alertsChanged;s.extra.x1.savedAt=now;const a=s.extra.activeSession;if(!a)return matchChanged;const gap=now-a.lastTick;if(connected&&a.connected&&gap>0&&gap<=6000){const last=a.segments.at(-1);if(last&&last[1]===a.lastTick)last[1]=now;else a.segments.push([a.lastTick,now]);}a.lastTick=now;a.connected=connected;return true;}
@@ -644,7 +686,7 @@ function applyCommand(s,command,p={},now=Date.now()){
  const x=s.extra;
  if(command.startsWith('alert-'))commandAlerts(s,command,p,now);
  else if(command==='week-start'){const day=boundedInput(p.day,0,6,'Dia');if(!Number.isInteger(day))throw Error('Dia inválido.');if(day!==x.weekStart){if(Object.entries(x.resets).some(([k,v])=>k.endsWith(':week')&&v.calendar===calendarRange('week',now,s.settings.zone,x.weekStart)[0]))throw Error('Existe um reset semanal ativo. Preserve o backup e conclua essa competição antes de mudar o início da semana.');x.weekStart=day;}}
- else if(command.startsWith('score-')){const b=x.scoreboard;if(command==='score-config'){const target=boundedInput(p.target,1,1000000,'Meta');if(!Number.isInteger(target))throw Error('Meta inteira obrigatória.');b.target=target;b.hotkeys=p.hotkeys===true;}else if(command==='score-adjust'){if(![-1,1].includes(p.delta))throw Error('Ajuste inválido.');b.current=Math.max(0,Math.min(1000000,b.current+p.delta));}else if(command==='score-reset'){if(p.confirmed!==true)throw Error('Confirme o reset.');b.current=0;}else throw Error('Comando inválido.');}
+ else if(command.startsWith('score-')){const b=x.scoreboard;if(command==='score-config'){const target=boundedInput(p.target,1,1000000,'Meta');if(!Number.isInteger(target))throw Error('Meta inteira obrigatória.');const bindings=cleanScoreBindings(p.bindings??b.bindings);b.target=target;b.hotkeys=p.hotkeys===true;b.bindings=bindings;}else if(command==='score-adjust'){if(![-1,1].includes(p.delta))throw Error('Ajuste inválido.');b.current=Math.max(-1000000,Math.min(1000000,b.current+p.delta));}else if(command==='score-reset'){if(p.confirmed!==true)throw Error('Confirme o reset.');b.current=0;}else throw Error('Comando inválido.');}
  else if(command==='timer-mode'){if(!['gift','coins'].includes(p.mode))throw Error('Modo inválido.');x.timer.mode=p.mode;x.timer.secondsPerCoin=boundedInput(p.secondsPerCoin,0.001,86400,'Segundos por moeda');}
  else if(command==='record-edit')editGiftRecord(s,p,now);
  else if(command==='role-automation')x.roleAutomation=cleanRoleAutomation(p);
@@ -716,7 +758,7 @@ function validateExtras(s,input,oldVersion){
  if(oldVersion===1||!input){for(const [day,rows] of Object.entries(s.days)){for(const [id,r] of Object.entries(rows)){x.points[id]=(x.points[id]||0)+r.coins+r.likes;x.legacyCoins[day]=(x.legacyCoins[day]||0)+r.coins;}}restorePointSources({...s,extra:x},null,oldVersion);return x;}
  const count=v=>{if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>Number.MAX_SAFE_INTEGER)throw Error('Contagem inválida no backup v0.3.');return v;};
  x.alerts=restoreAlerts(input.alerts);x.weekStart=Number.isInteger(input.weekStart)&&input.weekStart>=0&&input.weekStart<=6?input.weekStart:1;
- if(input.scoreboard){x.scoreboard={current:boundedInput(input.scoreboard.current,0,1000000,'Placar'),target:boundedInput(input.scoreboard.target,1,1000000,'Meta'),hotkeys:input.scoreboard.hotkeys===true};}
+ if(input.scoreboard){x.scoreboard={current:boundedInput(input.scoreboard.current,-1000000,1000000,'Placar'),target:boundedInput(input.scoreboard.target,1,1000000,'Meta'),hotkeys:input.scoreboard.hotkeys===true,bindings:cleanScoreBindings(input.scoreboard.bindings)};}
  x.recordEdits=(input.recordEdits||[]).slice(-500).map(v=>({time:count(v.time),userId:textValue(v.userId),kind:textValue(v.kind),before:v.before?{count:count(v.before.count),unit:count(v.before.unit??0)}:null,after:{count:count(v.after.count),unit:count(v.after.unit)}}));
  const known=id=>Object.hasOwn(s.users,id);for(const [key,n] of Object.entries(input.highlightBaselines||{}))if(key.startsWith('$'))x.highlightBaselines[key]=count(n);
  for(const [id,v] of Object.entries(input.points||{}))if(known(id))x.points[id]=count(v);
@@ -984,12 +1026,12 @@ const giftTitles={last:'Último presente',recentCombo:'Combo recente',bestCombo:
 function avatar(user,large=false){return `<span class="avatar ${large?'large':''}"><span>${esc((user?.name||user?.handle||'?').slice(0,2).toUpperCase())}</span>${user?.avatar?`<img alt="" src="${esc(user.avatar)}" loading="lazy">`:''}</span>`;}
 function watchImages(root){for(const i of root.querySelectorAll('img')){if(i.complete&&i.naturalWidth===0)i.remove();else i.addEventListener('error',()=>i.remove(),{once:true});}for(const el of root.querySelectorAll('[data-bg]'))el.style.setProperty('--overlay-bg',validColor(el.dataset.bg));for(const el of root.querySelectorAll('[data-text-color]'))if(/^#[0-9a-f]{6}$/i.test(el.dataset.textColor))el.style.setProperty('--overlay-text',el.dataset.textColor);}
 function visualOf(s,key,override={}){return {...defaultVisual(),...s.extra?.visuals[key],...override};}
-function cardAttrs(v,classes){return `class="overlay-card ${classes} ${v.container?'boxed':'bare'} ${v.style==='ribbon'?'ribbon':v.style==='portrait'?'portrait':''}${v.customText?' custom-text':''}" data-animate="${v.animate!==false?'1':'0'}" data-text-color="${/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'}" data-side="${v.side==='right'?'right':'left'}" data-rank-layout="${v.layout==='horizontal'?'horizontal':'vertical'}" data-bg="${validColor(v.color)}"`;}
+function cardAttrs(v,classes){return `class="overlay-card ${classes} ${v.container?'boxed':'bare'} ${v.style==='ribbon'?'ribbon':v.style==='portrait'?'portrait':''}${v.customText?' custom-text':''}" data-animate="${v.animate!==false?'1':'0'}" data-text-color="${/^#[0-9a-f]{6}$/i.test(v.textColor||'')?v.textColor:'#ffffff'}" data-side="${v.side==='right'?'right':'left'}" data-podium-colors="${v.podiumColors!==false?1:0}" data-podium-size="${v.podiumSize!==false?1:0}" data-rank-layout="${v.layout==='horizontal'?'horizontal':'vertical'}" data-bg="${validColor(v.color)}"`;}
 function rankAvatar(user,first,v){return `<span class="rank-avatar">${first&&v.showCrown!==false?'<span class="rank-crown" role="img" aria-label="Primeiro lugar"><svg viewBox="0 0 24 20" aria-hidden="true"><path fill="currentColor" d="M2 4l5 4 5-7 5 7 5-4-2 12H4zM4 18h16v2H4z"/></svg></span>':''}${avatar(user)}</span>`;}
 function identityView(user,v,id=''){return `${v.showName!==false?`<strong class="identity-name">${esc(user?.name||user?.handle||'Participante')}</strong>`:''}${v.showHandle!==false?`<small class="identity-handle">@${esc(user?.handle||id.replace(/^\$/,''))}</small>`:''}`;}
 function rankView(s,{period='day',metric='coins',limit=5,start='',end='',...overrides}={}){
  const v=visualOf(s,metric==='likes'?'rankLikes':'rankCoins',overrides);const rows=(start&&end?historicalRanking(s,start,end,metric):ranking(s,period,metric)).slice(0,limit);
- return `<div ${cardAttrs(v,'rank-card')}><div class="overlay-kicker">TOP ${start?'DO PERÍODO':esc(periods[period]||periods.day)}</div><h2>${metric==='likes'?'Quem dá mais likes':'Quem manda mais moedas'}</h2>${rows.length?rows.map((u,i)=>{const l=levelProgress(s.extra?.points[u.id]||0);return `<div class="rank-row" data-rank-key="community:${esc(u.id)}"><b class="position">${i+1}</b>${rankAvatar(u,i===0,v)}<div class="person">${identityView(u,v,u.id)}${v.showLevel?`<span class="level-badge">Nível ${l.level}</span>`:''}</div><b class="score">${fmt(u.value)}${v.unitDisplay==='none'?'':v.unitDisplay==='icon'?` <svg class="rank-unit" viewBox="0 0 24 24" role="img" aria-label="${metric==='likes'?'likes':'moedas'}">${metric==='likes'?'<path fill="currentColor" d="M12 21C-8 8 4-5 12 5c8-10 20 3 0 16Z"/>':'<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="3" d="M12 6v12"/>'}</svg>`:`<small>${metric==='likes'?'likes':'moedas'}</small>`}</b></div>`;}).join(''):'<p class="overlay-empty">Aguardando os primeiros eventos</p>'}</div>`;
+ return `<div ${cardAttrs(v,'rank-card')}><div class="overlay-kicker">TOP ${start?'DO PERÍODO':esc(periods[period]||periods.day)}</div><h2>${metric==='likes'?'Quem dá mais likes':'Quem manda mais moedas'}</h2>${rows.length?rows.map((u,i)=>{const l=levelProgress(s.extra?.points[u.id]||0);return `<div class="rank-row" data-place="${i+1}" data-rank-key="community:${esc(u.id)}"><b class="position">${i+1}</b>${rankAvatar(u,i===0,v)}<div class="person">${identityView(u,v,u.id)}${v.showLevel?`<span class="level-badge">Nível ${l.level}</span>`:''}</div><b class="score">${fmt(u.value)}${v.unitDisplay==='none'?'':v.unitDisplay==='icon'?` <svg class="rank-unit" viewBox="0 0 24 24" role="img" aria-label="${metric==='likes'?'likes':'moedas'}">${metric==='likes'?'<path fill="currentColor" d="M12 21C-8 8 4-5 12 5c8-10 20 3 0 16Z"/>':'<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="3" d="M12 6v12"/>'}</svg>`:`<small>${metric==='likes'?'likes':'moedas'}</small>`}</b></div>`;}).join(''):'<p class="overlay-empty">Aguardando os primeiros eventos</p>'}</div>`;
 }
 function giftView(s,key,overrides={}){const v=visualOf(s,'gifts',overrides),item=s.highlights.day===dayKey(Date.now(),s.settings.zone)?s.highlights[key]:null,user=item?s.users[item.userId]:null;
  const gift=item?(item.image?`<img class="gift-image" alt="${esc(item.name)}" src="${esc(item.image)}">`:'<span class="gift-placeholder">✦</span>'):'';
@@ -1010,9 +1052,11 @@ function giftRankingView(s,kind,overrides={}){
 function overlayView(s,params){const kind=params.get('kind')||'ranking',v={};if(params.has('container'))v.container=params.get('container')!=='0';if(params.has('color'))v.color=validColor(params.get('color'));if(params.has('level'))v.showLevel=params.get('level')!=='0';if(params.has('style'))v.style=params.get('style');
  if(params.has('layout'))v.layout=params.get('layout')==='horizontal'?'horizontal':'vertical';if(params.has('rankLimit'))v.rankLimit=[1,3,5,10].includes(Number(params.get('rankLimit')))?Number(params.get('rankLimit')):10;
  for(const [param,key] of [['name','showName'],['handle','showHandle'],['crown','showCrown'],['animate','animate'],['customText','customText']])if(params.has(param))v[key]=params.get(param)!=='0';if(/^#[0-9a-f]{6}$/i.test(params.get('textColor')||''))v.textColor=params.get('textColor');
+ for(const k of ['podiumColors','podiumSize'])if(params.has(k))v[k]=params.get(k)!=='0';
  if(params.has('unitDisplay'))v.unitDisplay=['icon','none'].includes(params.get('unitDisplay'))?params.get('unitDisplay'):'text';
  if(params.has('side'))v.side=params.get('side')==='right'?'right':'left';if(params.has('rotationSeconds'))v.rotationSeconds=Math.max(2,Math.min(300,Number(params.get('rotationSeconds'))||10));
- if(kind==='alerts'){const a=s.extra.alerts.current;if(!a)return '';const r=a.rule,tag=r.mediaType==='audio'?'audio':r.mediaType==='video'?'video':'img';return `<div class="alert-media" data-alert-id="${esc(a.id)}"><${tag} data-media-source="${esc(r.source)}" data-volume="${r.volume}" data-start="${a.startAt}" ${tag==='img'?'alt="Alerta"':'autoplay playsinline'}></${tag}>${tag==='audio'?`<p>${esc(s.users[a.userId]?.name||r.name)}</p>`:''}</div>`;}
+ if(kind==='alerts'){const a=s.extra.alerts.current;if(!a)return '';const r=a.rule,tag=r.mediaType==='audio'?'audio':r.mediaType==='video'?'video':'img';return `<div class="alert-media" data-alert-id="${esc(a.id)}" data-fit="${['contain','cover','fill'].includes(r.fit)?r.fit:'contain'}"><${tag} data-media-source="${esc(r.source)}" data-volume="${r.volume}" data-start="${a.startAt}" ${tag==='img'?'alt="Alerta"':`autoplay playsinline ${tag==='video'&&r.videoAudio===false?'muted data-muted="1"':''}`}></${tag}>${r.audioSource&&tag!=='audio'?`<audio data-media-source="${esc(r.audioSource)}" data-volume="${r.volume}" data-start="${a.startAt}" autoplay></audio>`:''}${tag==='audio'?`<p>${esc(s.users[a.userId]?.name||r.name)}</p>`:''}</div>`;}
+
  if(kind==='scoreboard'){const b=s.extra.scoreboard;return `<div ${cardAttrs(visualOf(s,'scoreboard',v),'scoreboard-card')}><div class="overlay-kicker">PLACAR DE VITÓRIAS</div><h1>${fmt(b.current)} / ${fmt(b.target)}</h1></div>`;}
  if(kind==='communityBattle')return communityView(s,v);
  if(kind==='giftRotation'){const seconds=v.rotationSeconds||s.extra.visuals.gifts.rotationSeconds||10;return giftView(s,Object.keys(giftTitles)[Math.floor(Date.now()/(seconds*1000))%4],v);}
@@ -1061,6 +1105,7 @@ function animateRankPositions(root,before){
 // overlay.js
 const params=new URLSearchParams(location.search),token=new URLSearchParams(location.hash.slice(1)).get('key');
 const root=document.querySelector('#overlay-root'),badge=document.querySelector('#overlay-status');
+if(params.get('kind')==='alerts')document.body.classList.add('alert-canvas');
 const canvas=overlayDimensions('',{resolution:params.get('canvas')});document.body.style.width=canvas.width+'px';document.body.style.height=canvas.height+'px';root.style.left=canvas.width/2+'px';root.style.top=canvas.height/2+'px';
 // Scale the complete composition, keeping names and scores together.
 function composeOverlay(){
@@ -1074,6 +1119,7 @@ function composeOverlay(){
  }
 }
 function fitOverlay(){
+ if(params.get('kind')==='alerts'){root.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;max-width:none;transform:none';return;}
  const content=root.firstElementChild;if(!content)return;
  const chest=root.querySelector('[data-chest-width]');
  const width=root.offsetWidth,height=root.offsetHeight;
@@ -1085,9 +1131,9 @@ root.addEventListener('load',fitOverlay,true);
 window.addEventListener('resize',fitOverlay);
 let lastPacket=0,current=freshState(),lastHTML='';
 function render(){const html=overlayView(current,params);document.body.classList.toggle('overlay-silent',!html&&['alerts','x1','x1-ranking'].includes(params.get('kind')));if(html!==lastHTML){const before=captureRankPositions(root);root.innerHTML=html;composeOverlay();hydrateAlert();const chest=root.querySelector('[data-chest-width]');root.style.width=chest?chest.dataset.chestWidth+'px':'';watchImages(root);lastHTML=html;fitOverlay();animateRankPositions(root,before);}}
-function hydrateAlert(){const media=root.querySelector('[data-media-source]');if(!media)return;media.onerror=()=>{const warning=document.createElement('p');warning.textContent='Não foi possível reproduzir esta mídia. Confira o arquivo, a URL e o codec.';media.replaceWith(warning);};const source=media.dataset.mediaSource;media.src=source.startsWith('media-')?'./media/'+source+'?key='+encodeURIComponent(token||''):source;
+function hydrateAlert(){for(const media of root.querySelectorAll('[data-media-source]')){if(media.dataset.muted==='1')media.muted=true;media.onerror=()=>{const warning=document.createElement('p');warning.textContent='Não foi possível reproduzir esta mídia. Confira o arquivo, a URL e o codec.';media.replaceWith(warning);};const source=media.dataset.mediaSource;media.src=source.startsWith('media-')?'./media/'+source+'?key='+encodeURIComponent(token||''):source;
  if(media.tagName!=='IMG'){media.volume=Number(media.dataset.volume);media.onloadedmetadata=()=>{const offset=Math.max(0,(Date.now()-Number(media.dataset.start))/1000);if(Number.isFinite(media.duration)&&offset<media.duration)media.currentTime=offset;media.play().catch(()=>{const b=document.createElement('button');b.textContent='Clique para habilitar áudio';b.onclick=()=>{void media.play();b.remove();};root.append(b);});};}
-}
+}}
 function receive(packet){if(packet.state?.version!==7||!packet.state?.extra){badge.hidden=false;badge.textContent='Atualize o painel ou a ponte para v0.8.';return;}current=packet.state;lastPacket=Date.now();render();badge.hidden=packet.status?.code==='connected';badge.textContent=packet.saveError?'Falha ao salvar histórico':packet.status?.message || 'Painel desconectado';if(packet.saveError)badge.hidden=false;}
 if(params.get('demo')==='1'){
   current=demoState();render();badge.textContent='DEMONSTRAÇÃO';
