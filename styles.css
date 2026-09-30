@@ -176,3 +176,30 @@ dialog,#points-edit-dialog,#macro-warning-dialog{background:#151517;border-color
 .overlay-body .alert-media>audio{display:none}
 
 body.overlay-body.alert-canvas{width:100vw!important;height:100vh!important}
+
+/* v1.5.2 · compact identity / value stack. Preserves regular ranking font sizes. */
+.overlay-card .rank-row .person>.score{display:block;margin:5px 0 0;max-width:100%;text-align:inherit;line-height:1.15;white-space:normal;overflow-wrap:anywhere}
+.overlay-card .rank-row .person>.score small{display:inline;margin-left:5px;font-size:12px}
+.rank-card .person .identity-handle{font-size:18px;font-weight:700;white-space:normal}
+.rank-level{position:absolute;bottom:-6px;right:-6px;z-index:2;margin:0;padding:1px 4px;font-size:10px;line-height:15px;background:#151515!important;border-radius:6px;color:#ffd100}
+.rank-card .person .record-gift{display:inline-block;vertical-align:middle;margin-top:4px}
+.overlay-card[data-side="right"] .rank-row .person>.score{text-align:right;margin:5px 0 0}
+.x1-card .rank-row .person{flex:0 1 300px;min-width:0}.x1-card .rank-row{justify-content:flex-start;gap:10px}.x1-card .rank-row .identity-name,.x1-card .rank-row .identity-handle{display:block;overflow-wrap:anywhere}
+.overlay-body:has(.community-battle-card) #overlay-root{width:800px}
+.community-battle-card{padding:20px}.community-columns{gap:18px;align-items:start}.community-columns>section{min-width:0}
+.community-battle-card .rank-row{gap:10px;min-height:80px;padding:10px 4px;justify-content:flex-start}
+.community-battle-card .position{width:24px;flex:0 0 24px;text-align:center;font-size:20px}
+.community-battle-card .rank-avatar{width:56px;height:56px;flex:0 0 56px}
+.community-battle-card .rank-avatar .avatar{width:56px;height:56px;flex:none}
+.community-battle-card .person{flex:1;min-width:0}.community-battle-card .identity-name,.community-battle-card .identity-handle{font-size:22px;font-weight:800;line-height:1.15;white-space:normal;overflow-wrap:anywhere}
+.community-battle-card .score{font-size:27px}.community-battle-card[data-podium-size="1"] [data-place="1"] .rank-avatar,.community-battle-card[data-podium-size="1"] [data-place="1"] .rank-avatar .avatar{width:64px;height:64px;flex-basis:64px}
+.community-battle-card[data-podium-size="1"] [data-place="1"] .identity-name,.community-battle-card[data-podium-size="1"] [data-place="1"] .identity-handle{font-size:25px}
+.community-battle-card[data-podium-size="1"] [data-place="1"] .score{font-size:31px}
+.community-battle-card[data-podium-colors="1"] [data-place="1"]>.position{color:#ffd166!important}.community-battle-card[data-podium-colors="1"] [data-place="2"]>.position{color:#d3dce8!important}.community-battle-card[data-podium-colors="1"] [data-place="3"]>.position{color:#d9975a!important}
+.community-battle-card[data-row-grid="1"] .community-columns{border:1px solid #ffffff50;border-radius:12px;padding:8px;gap:12px}.community-battle-card[data-row-grid="1"] .rank-row{border-bottom:1px solid #ffffff40}.community-battle-card[data-row-grid="1"] .community-columns>section+section{border-left:1px solid #ffffff40;padding-left:12px}
+.x1-fighters .identity-name{font-size:32px;font-weight:900;line-height:1.15}.x1-fighters .identity-handle{font-size:21px;font-weight:700}.x1-fighters .identity-name,.x1-fighters .identity-handle{text-shadow:0 2px 3px #000,1px 0 2px #000,-1px 0 2px #000;overflow-wrap:anywhere}
+.x1-fighters progress{height:18px}
+#macro-diagnostics .check{display:flex;align-items:center;gap:10px}#diagnostics-enabled{width:20px;height:20px}#macro-diagnostics .table-wrap{max-height:360px;overflow:auto}#macro-diagnostics table{min-width:1080px}#diagnostics-error{color:#ffb6a6}
+.community-battle-card .rank-row .person .identity-name,.community-battle-card .rank-row .person .identity-handle{font-size:22px}
+.community-battle-card[data-podium-size="1"] .rank-row[data-place="1"] .person .identity-name,.community-battle-card[data-podium-size="1"] .rank-row[data-place="1"] .person .identity-handle{font-size:25px}
+.rank-card[data-podium-size="1"] [data-place="1"] .identity-handle{font-size:23px}.rank-card[data-podium-size="1"] [data-place="2"] .identity-handle{font-size:21px}.rank-card[data-podium-size="1"] [data-place="3"] .identity-handle{font-size:19px}

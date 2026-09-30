@@ -1,8 +1,16 @@
-# AMARILLOU Live Control v1.5.1
+# AMARILLOU Live Control v1.5.2
 
 [Usar online](https://xamarilloux.github.io/amarillou-live/) · [Baixar EXE / Releases](https://github.com/xAMARILLOUx/amarillou-live/releases)
 
 TikTok LIVE → TikFinity → uma conexão central → rankings, presentes, pontos, baús, batalhas, análises e macros locais. Criado por **xAMARILLOUx**.
+
+## Novidades v1.5.2
+- Diagnóstico opcional de todos os macros, desativado ao abrir a ponte, com tabela e exportação das duas últimas coletas.
+- X1 com mínimo de zero pontos, migração dos negativos e desfazer baseado no valor efetivamente aplicado.
+- Rankings compactos: número abaixo de nome ou @; nível em selo na foto.
+- Batalha da comunidade maior e mais próxima, grade opcional e destaque Top 3; nomes do X1 maiores.
+
+[Notas v1.5.2](RELEASE-v1.5.2.md) · [Diagnóstico e limites](docs/V1.5.2.md)
 
 ## Correção v1.5.1
 NUM0–NUM9 e NUMDECIMAL agora usam scan codes. O usuário confirmou que o ajuste resolveu a entrada no jogo testado, inclusive com Num Lock desligado. A implementação de teclado é idêntica à v1.5.1-test.1 aprovada. [Notas v1.5.1](RELEASE-v1.5.1.md) · [Teclado numérico](docs/NUMPAD.md)
@@ -19,7 +27,7 @@ NUM0–NUM9 e NUMDECIMAL agora usam scan codes. O usuário confirmou que o ajust
 ## Arquivos para cada finalidade
 - **EXECUTAVEL-WINDOWS:** abra o `.exe` portátil no Windows 10/11 x64. Node.js incluído. Feche a ponte anterior e mantenha o terminal do novo serviço aberto.
 - **CODIGO-FONTE:** contém este projeto **e o site compilado**. Envie seu conteúdo à raiz publicada no GitHub Pages, substituindo os arquivos anteriores. Não envie a pasta do executável para o site.
-- **PREVIAS:** imagens de referência dos novos layouts.
+- **SITE-GITHUB-PAGES:** somente os arquivos do site, prontos para upload. Use esta pasta OU o conteúdo de CODIGO-FONTE.
 - **RELEASE.md:** título e descrição para publicar o release.
 
 O EXE abre o navegador em `http://127.0.0.1:8787/`. Não há instalador nem ícone na bandeja nesta versão.
