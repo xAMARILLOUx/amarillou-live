@@ -1,8 +1,17 @@
-# AMARILLOU Live Control v1.5.2
+# AMARILLOU Live Control v1.6.0
 
 [Usar online](https://xamarilloux.github.io/amarillou-live/) · [Baixar EXE / Releases](https://github.com/xAMARILLOUx/amarillou-live/releases)
 
 TikTok LIVE → TikFinity → uma conexão central → rankings, presentes, pontos, baús, batalhas, análises e macros locais. Criado por **xAMARILLOUx**.
+
+## Novidades v1.6.0
+- Cronômetro com moedas, presentes e seguidores combináveis; presentes específicos substituem a regra por moeda.
+- Subathon opcional com reposição automática identificada na overlay. Pausar e Encerrar com comportamentos explícitos.
+- Tops de presentes: valor ao lado por padrão e abaixo como opção; históricos preservados.
+- Otimização do processamento de eventos e das consultas de overlays; diagnóstico ampliado para investigar atrasos.
+- Tratamento de encerramento do console no EXE e mensagens de erro mais precisas.
+
+[Notas v1.6.0](RELEASE-v1.6.0.md) · [Uso, validação e limites](docs/V1.6.0.md)
 
 ## Novidades v1.5.2
 - Diagnóstico opcional de todos os macros, desativado ao abrir a ponte, com tabela e exportação das duas últimas coletas.

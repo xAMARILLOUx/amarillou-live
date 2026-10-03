@@ -1,3 +1,7 @@
+# v1.6.0
+
+Veja [notas e limites](RELEASE-v1.6.0.md). Cronômetro multigatilhos/Subathon, tops com posição opcional, otimizações medidas e diagnóstico de execução ampliado.
+
 # AMARILLOU Live Control v1.5.2 — Diagnóstico dos macros e rankings compactos
 
 - Diagnóstico opcional dos macros no modo local: tabela de tempos, média recente, maior demora e exportação. Desativado ao abrir a ponte; preserva somente as duas últimas coletas.

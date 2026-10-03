@@ -203,3 +203,11 @@ body.overlay-body.alert-canvas{width:100vw!important;height:100vh!important}
 .community-battle-card .rank-row .person .identity-name,.community-battle-card .rank-row .person .identity-handle{font-size:22px}
 .community-battle-card[data-podium-size="1"] .rank-row[data-place="1"] .person .identity-name,.community-battle-card[data-podium-size="1"] .rank-row[data-place="1"] .person .identity-handle{font-size:25px}
 .rank-card[data-podium-size="1"] [data-place="1"] .identity-handle{font-size:23px}.rank-card[data-podium-size="1"] [data-place="2"] .identity-handle{font-size:21px}.rank-card[data-podium-size="1"] [data-place="3"] .identity-handle{font-size:19px}
+
+/* Gift records keep an optional compact side-by-side score. */
+.gift-value-side .rank-row .person{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;align-items:center}
+.gift-value-side .rank-row .person>.identity-name,.gift-value-side .rank-row .person>.identity-handle,.gift-value-side .rank-row .person>small,.gift-value-side .rank-row .person>.record-gift{grid-column:1}
+.gift-value-side .rank-row .person>.score{grid-column:2;grid-row:1 / span 3;margin:0;text-align:right;white-space:nowrap}
+.gift-value-side .rank-row .person{max-width:380px;grid-template-columns:minmax(0,max-content) max-content}
+#timer-mode-form,#timer-subathon-form{margin:24px 0;padding-top:18px;border-top:1px solid var(--line)}
+#timer-subathon-form h3 small{display:inline-block;margin-left:6px;color:var(--yellow)}
